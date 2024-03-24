@@ -1,0 +1,10 @@
+BEGIN TRANSACTION;
+
+CREATE TABLE Genre(
+    genre_id BIGINT PRIMARY KEY NOT NULL,
+    genre_name TEXT UNIQUE NOT NULL,
+    song_count BIGINT NOT NULL,
+    genre_url TEXT UNIQUE NOT NULL,
+);
+
+COMMIT;
