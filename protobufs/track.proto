@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+message Track {
+    int32 track_id = 1;
+    string title = 2;
+    string mix = 3;
+    bool is_remixed = 4;
+    int32 release_id = 5;
+    string release_date = 6;
+    int32 genre_id = 7;
+    int32 subgenre_id = 8;
+    string track_url = 9;
+    int32 bpm = 10;
+    int32 duration = 11;
+}
+
+message GetTrackRequest {
+    int32 track_id = 1;
+}
+
+message GetTrackResponse {
+    Track track = 1;
+}
+
+service TrackService {
+    rpc getTrack (GetTrackRequest) returns (GetTrackResponse);
+}
