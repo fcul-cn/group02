@@ -1,0 +1,298 @@
+openapi: 3.0.0
+info:
+  title: "Cloud Computing Project REST API - Group 2"
+  description: "An API about Beatport's artists, labels, and releases"
+  version: "1.0.0"
+
+servers:
+  - url: "/api"
+
+components:
+  schemas:
+    Artist:
+      type: "object"
+      properties:
+        artist_id:
+          type: "number"
+        artist_name:
+          type: "string"
+        artist_url:
+          type: "string"
+        updated_on:
+          type: "string"
+          format: "date"
+    Genre:
+      type: "object"
+      properties:
+        genre_id:
+          type: "number"
+        genre_name:
+          type: "string"
+        song_count:
+          type: "number"
+        genre_url:
+          type: "string"
+        updated_on:
+          type: "string"
+          format: "date"
+    Track:
+      type: "object"
+      properties:
+        track_id:
+          type: "number"
+        title:
+          type: "string"
+        mix:
+          type: "string"
+        is_remixed:
+          type: "boolean"
+        release_date:
+          type: "string"
+          format: "date"
+        genre_id:
+          type: "number"
+        subgenre_id:
+          type: "number"
+        track_url:
+          type: "string"
+        bpm:
+          type: "number"
+        duration:
+          type: "number"
+    Release:
+      type: "object"
+      properties:
+        release_id:
+          type: "number"
+        release_title:
+          type: "string"
+        release_date:
+          type: "string"
+          format: "date"
+        release_url:
+          type: "string"
+        label_id:
+          type: "number"
+        updated_on:
+          type: "string"
+          format: "date"
+    NewTrack:
+        type: "object"
+        properties:
+          title:
+            type: "string"
+          mix:
+            type: "string"
+          is_remixed:
+            type: "boolean"
+          release_date:
+            type: "string"
+            format: "date"
+          genre_id:
+            type: "number"
+          subgenre_id:
+            type: "number"
+          track_url:
+            type: "string"
+          bpm:
+            type: "number"
+          duration:
+            type: "number"
+    NewRelease:
+      type: "object"
+      properties:
+        release_title:
+          type: "string"
+        release_date:
+          type: "string"
+          format: "date"
+        release_url:
+          type: "string"
+        label_id:
+          type: "number"
+  parameters:
+    artist_id:
+      name: "artist_id"
+      description: "Artist's id"
+      in: path
+      required: True
+      schema:
+        type: "number"
+    genre_id:
+      name: "genre_id"
+      description: "Genre's id"
+      in: path
+      required: True
+      schema:
+        type: "number"
+    track_id:
+      name: "track_id"
+      description: "Track's id"
+      in: path
+      required: True
+      schema:
+        type: "number"
+    release_id:
+      name: "release_id"
+      description: "Release's id"
+      in: path
+      required: True
+      schema:
+        type: "number"
+        
+paths:
+  /artists/{artist_id}:
+    get:
+      operationId: "artists.search"
+      tags:
+        - "Artists"
+      summary: "Search artist by their id"
+      parameters:
+        - $ref: "#/components/parameters/artist_id"
+      responses:
+        "200":
+          description: "Successfully found artist by id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artist'
+        "404":
+          description: "Artist's id not found"
+  /genres:
+    get:
+      operationId: "genres.get_all"
+      tags:
+        - "Genres"
+      summary: "Read all genres"
+      responses:
+        "200":
+          description: "Successfully read all genres"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Genre'
+  /genres/{genre_id}:
+    get:
+      operationId: "genres.search"
+      tags:
+        - "Genres"
+      summary: "Search genre by their id"
+      parameters:
+        - $ref: "#/components/parameters/genre_id"
+      responses:
+        "200":
+          description: "Successfully found genre by id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genre'
+        "404":
+          description: "Artist's id not found"
+  /tracks/{track_id}:
+    get:
+      operationId: "tracks.search"
+      tags:
+        - "Tracks"
+      summary: "Search track by their id"
+      parameters:
+        - $ref: "#/components/parameters/track_id"
+      responses:
+        "200":
+          description: "Successfully found track by id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Track'
+        "404":
+          description: "Track's id not found"
+    delete:
+      operationId: "tracks.delete"
+      tags:
+        - "Tracks"
+      summary: "Delete track by their id"
+      parameters:
+        - $ref: "#/components/parameters/track_id"
+      responses:
+        "200":
+          description: "Successfully deleted track by id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Track'
+        "404":
+          description: "Track's id not found"
+  /tracks:
+    post:
+      operationId: "tracks.add_track"
+      tags:
+        - "Tracks"
+      summary: "Add new track"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTrack'
+      responses:
+        "200":
+          description: "Successfully added track"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Track'
+        "400":
+          description: "Bad request body"
+  /releases/{release_id}:
+    get:
+      operationId: "release.search"
+      tags:
+        - "Releases"
+      summary: "Search release by their id"
+      parameters:
+        - $ref: "#/components/parameters/release_id"
+      responses:
+        "200":
+          description: "Successfully found release by id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Release'
+        "404":
+          description: "Release's id not found"
+    delete:
+      operationId: "release.delete"
+      tags:
+        - "Releases"
+      summary: "Delete release by their id"
+      parameters:
+        - $ref: "#/components/parameters/release_id"
+      responses:
+        "200":
+          description: "Successfully deleted release by id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Release'
+        "404":
+          description: "Release's id not found"
+  /releases:
+    post:
+      operationId: "releases.add_release"
+      tags:
+        - "Releases"
+      summary: "Add new release"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewRelease'
+      responses:
+        "200":
+          description: "Successfully added release"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Release'
+        "400":
+          description: "Bad request body"

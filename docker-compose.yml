@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  track-service:
+      build: ./app/track-service/
+      container_name: track-service
+#      ports:
+#        - "8000:8000"
+#      environment:
+#        POSTGRES_DB: ${POSTGRES_DB}
+#        POSTGRES_USER: ${POSTGRES_USER}
+#        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+#      networks:
+#          idc-net:
+#              ipv4_address: 172.100.10.14
+#      depends_on:
+
+  track-db:
+    container_name: track-db
+    build:
+        context: .
+        dockerfile: ./model/track/Dockerfile
+#    environment:
+#        POSTGRES_DB: ${POSTGRES_DB}
+#        POSTGRES_USER: ${POSTGRES_USER}
+#        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+#    ports: 
+#       - 5432:5432
+#    networks:
+#          idc-net:
+#              ipv4_address: 172.100.10.16
+
+networks:
+  idc-net:
+      driver: bridge
+      ipam:
+        driver: default
+        config:
+          - subnet: 172.100.10.0/24
