@@ -46,6 +46,8 @@ components:
           type: "string"
         is_remixed:
           type: "boolean"
+        release_id:
+          type: "number"
         release_date:
           type: "string"
           format: "date"
@@ -76,6 +78,20 @@ components:
         updated_on:
           type: "string"
           format: "date"
+    NewArtist:
+      type: "object"
+      properties:
+        artist_name:
+          type: "string"
+        artist_url:
+          type: "string"
+    NewGenre:
+      type: "object"
+      properties:
+        genre_name:
+          type: "string"
+        genre_url:
+          type: "string"
     NewTrack:
         type: "object"
         properties:
@@ -158,6 +174,45 @@ paths:
                 $ref: '#/components/schemas/Artist'
         "404":
           description: "Artist's id not found"
+  /artists:
+    post:
+      operationId: "artists.add_artist"
+      tags:
+        - "Artists"
+      summary: "Add new artist"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewArtist'
+      responses:
+        "200":
+          description: "Successfully added artist"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artist'
+        "400":
+          description: "Bad request body"
+  /artists/{artist_id}/releases:
+    get:
+      operationId: "artists.get_releases"
+      tags:
+        - "Artists"
+      summary: "Get an Artist's releases"
+      parameters:
+        - $ref: "#/components/parameters/artist_id"
+      responses:
+        "200":
+          description: "Successfully returned all artist's releases"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Release'
+        "404":
+          description: "Artist's id not found"
   /genres:
     get:
       operationId: "genres.get_all"
@@ -173,6 +228,25 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Genre'
+    post:
+      operationId: "genres.add_genre"
+      tags:
+        - "Genres"
+      summary: "Add new genre"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewGenre'
+      responses:
+        "200":
+          description: "Successfully added genre"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genre'
+        "400":
+          description: "Bad request body"
   /genres/{genre_id}:
     get:
       operationId: "genres.search"
@@ -189,7 +263,61 @@ paths:
               schema:
                 $ref: '#/components/schemas/Genre'
         "404":
-          description: "Artist's id not found"
+          description: "Genre's id not found"
+    delete:
+      operationId: "genres.delete"
+      tags:
+        - "Genres"
+      summary: "Delete genre by their id"
+      parameters:
+        - $ref: "#/components/parameters/genre_id"
+      responses:
+        "200":
+          description: "Successfully deleted genre by id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genre'
+        "404":
+          description: "Genre's id not found"
+    put:
+      operationId: "genres.update"
+      tags:
+        - "Genres"
+      summary: "Update genre by their id"
+      parameters:
+        - $ref: "#/components/parameters/genre_id"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewGenre'
+      responses:
+        "200":
+          description: "Successfully updated genre by id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genre'
+        "404":
+          description: "Genre's id not found"
+  /genres/{genre_id}/tracks:
+    get:
+      operationId: "genres.get_tracks"
+      tags:
+        - "Genres"
+      summary: "Get a Genre's tracks"
+      responses:
+        "200":
+          description: "Successfully got a Genre's tracks"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Track'
+        "404":
+          description: "Genre's id not found"
   /tracks/{track_id}:
     get:
       operationId: "tracks.search"
@@ -243,6 +371,23 @@ paths:
                 $ref: '#/components/schemas/Track'
         "400":
           description: "Bad request body"
+  /tracks/{track_id}/genre:
+    get:
+      operationId: "tracks.get_genre"
+      tags:
+        - "Tracks"
+      summary: "Get a track´s genre"
+      parameters:
+        - $ref: "#/components/parameters/track_id"
+      responses:
+        "200":
+          description: "Successfully found genre of a track"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genre'
+        "404":
+          description: "Track's id not found"
   /releases/{release_id}:
     get:
       operationId: "release.search"
