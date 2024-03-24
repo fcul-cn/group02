@@ -14,7 +14,40 @@ message Track {
     int32 duration = 11;
 }
 
+message NewTrack {
+    string title = 1;
+    string mix = 2;
+    bool is_remixed = 3;
+    int32 release_id = 4;
+    string release_date = 5;
+    int32 genre_id = 6;
+    int32 subgenre_id = 7;
+    string track_url = 8;
+    int32 bpm = 9;
+    int32 duration = 10;
+}
+
+message Genre {
+   int32 genre_id = 1;
+   string genre_name = 2;
+   int32 song_count = 3;
+   string genre_url = 4;
+   string updated_on = 5;
+}
+
 message GetTrackRequest {
+    int32 track_id = 1;
+}
+
+message DeleteTrackRequest {
+    int32 track_id = 1;
+}
+
+message AddTrackRequest {
+    NewTrack track = 1;
+}
+
+message GetTrackGenreRequest {
     int32 track_id = 1;
 }
 
@@ -22,6 +55,21 @@ message GetTrackResponse {
     Track track = 1;
 }
 
+message DeleteTrackResponse {
+    Track track = 1;
+}
+
+message AddTrackResponse {
+    Track track = 1;
+}
+
+message GetTrackGenreResponse {
+    Genre genre = 1;
+}
+
 service TrackService {
     rpc getTrack (GetTrackRequest) returns (GetTrackResponse);
+    rpc deleteTrack (DeleteTrackRequest) returns (DeleteTrackResponse);
+    rpc addTrack (AddTrackRequest) returns (AddTrackResponse);
+    rpc getTrackGenre (GetTrackGenreRequest) returns (GetTrackGenreResponse);
 }
