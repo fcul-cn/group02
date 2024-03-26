@@ -3,6 +3,12 @@ import grpc
 import os
 from track_pb2 import GetTrackRequest, DeleteTrackRequest, AddTrackRequest, GetTrackGenreRequest
 from track_pb2_grpc import TrackServiceStub
+import pathlib
+import connexion
+
+# basedir = pathlib.Path(__file__).parent.resolve()
+# app = connexion.App(__name__, specification_dir=basedir)
+# app.add_api(basedir / "openapi-group2.yaml")
 
 app = Flask(__name__)
 
@@ -12,28 +18,41 @@ track_client = TrackServiceStub(tracks_channel)
 
 @app.get("/api/tracks/<track_id>")
 def get_track(track_id):
-    request = GetTrackRequest(track_id=track_id)
-    response = track_client.getTrack(request)
-    return response
+    try:
+        request = GetTrackRequest(track_id=int(track_id))
+        response = track_client.getTrack(request)
+        return response
+    except grpc.RpcError as rpc_error:
+        if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
+            return "Track´s id not found", 404
     
 @app.delete("/api/tracks/<track_id>")
 def delete_track(track_id):
-    request = DeleteTrackRequest(track_id=track_id)
-    response = track_client.deleteTrack(request)
-    return response
+    try:
+        request = DeleteTrackRequest(track_id=int(track_id))
+        response = track_client.deleteTrack(request)
+        return response
+    except grpc.RpcError as rpc_error:
+        if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
+            return "Track´s id not found", 404
 
 @app.post("/api/tracks")
 def post_track():
-    request_body = request.json
-    request = AddTrackRequest(request_body)
-    response = track_client.addTrack(request)
-    return response
+    try:
+        request_body = request.json
+        request = AddTrackRequest(request_body)
+        response = track_client.addTrack(request)
+        return response
+    except grpc.RpcError as rpc_error:
+        if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
+            return "Bad request body", 400
 
 @app.get("/api/tracks/<track_id>/genre")
 def get_track_genre(track_id):
-    request = GetTrackGenreRequest(track_id=track_id)
-    response = track_client.getTrackGenre(request)
-    return response
-
-if __name__ == '__main__':
-    app.run(host= '0.0.0.0', debug=True)
+    try:
+        request = GetTrackGenreRequest(track_id=int(track_id))
+        response = track_client.getTrackGenre(request)
+        return response
+    except grpc.RpcError as rpc_error:
+        if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
+            return "Track´s id not found", 404

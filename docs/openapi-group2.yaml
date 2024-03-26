@@ -357,6 +357,8 @@ paths:
       tags:
         - "Genres"
       summary: "Get a Genre's tracks"
+      parameters:
+        - $ref: "#/components/parameters/genre_id"
       responses:
         "200":
           description: "Successfully got a Genre's tracks"
@@ -370,7 +372,7 @@ paths:
           description: "Genre's id not found"
   /tracks/{track_id}:
     get:
-      operationId: "tracks.search"
+      operationId: "track_logic.get_track"
       tags:
         - "Tracks"
       summary: "Search track by their id"
@@ -386,7 +388,7 @@ paths:
         "404":
           description: "Track's id not found"
     delete:
-      operationId: "tracks.delete"
+      operationId: "track_logic.delete_track"
       tags:
         - "Tracks"
       summary: "Delete track by their id"
@@ -403,7 +405,7 @@ paths:
           description: "Track's id not found"
   /tracks:
     post:
-      operationId: "tracks.add_track"
+      operationId: "track_logic.post_track"
       tags:
         - "Tracks"
       summary: "Add new track"
@@ -423,7 +425,7 @@ paths:
           description: "Bad request body"
   /tracks/{track_id}/genre:
     get:
-      operationId: "tracks.get_genre"
+      operationId: "track_logic.get_track_genre"
       tags:
         - "Tracks"
       summary: "Get a track´s genre"
