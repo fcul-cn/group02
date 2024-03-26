@@ -78,6 +78,24 @@ components:
         updated_on:
           type: "string"
           format: "date"
+    User:
+      type: "object"
+      properties:
+        user_id:
+          type: "number"
+        username:
+          type: "string"
+        email:
+          type: "string"
+    Playlist:
+      type: "object"
+      properties:
+        playlist_id:
+          type: "number"
+        playlist_name:
+          type: "string"
+        user_id:
+          type: "number"
     NewArtist:
       type: "object"
       properties:
@@ -126,6 +144,24 @@ components:
           type: "string"
         label_id:
           type: "number"
+    NewUser:
+      type: "object"
+      properties:
+        user_id:
+          type: "number"
+        username:
+          type: "string"
+        email:
+          type: "string"
+    NewPlaylist:
+      type: "object"
+      properties:
+        playlist_id:
+          type: "number"
+        playlist_name:
+          type: "string"
+        user_id:
+          type: "number"
   parameters:
     artist_id:
       name: "artist_id"
@@ -151,6 +187,20 @@ components:
     release_id:
       name: "release_id"
       description: "Release's id"
+      in: path
+      required: True
+      schema:
+        type: "number"
+    user_id:
+      name: "user_id"
+      description: "User's id"
+      in: path
+      required: True
+      schema:
+        type: "number"
+    playlist_id:
+      name: "playlist_id"
+      description: "Playlist's id"
       in: path
       required: True
       schema:
@@ -439,5 +489,86 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Release'
+        "400":
+          description: "Bad request body"
+  /playlists/{playlist_id}:
+    get:
+      operationId: "playlists.search"
+      tags:
+        - "Playlists"
+      summary: "Search playlist by their id"
+      parameters:
+        - $ref: "#/components/parameters/playlist_id"
+      responses:
+        "200":
+          description: "Successfully found playlist by id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+        "404":
+          description: "Playlist's id not found"
+    delete:
+      operationId: "playlist.delete"
+      tags:
+        - "Playlists"
+      summary: "Delete playlist by their id"
+      parameters:
+        - $ref: "#/components/parameters/playlist_id"
+      responses:
+        "200":
+          description: "Successfully deleted playlist by id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+        "404":
+          description: "Playlist's id not found"
+  /playlists:
+    post:
+      operationId: "playlists.add_playlist"
+      tags:
+        - "Playlists"
+      summary: "Add new playlist"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewPlaylist'
+      responses:
+        "200":
+          description: "Successfully added playlist"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+        "400":
+          description: "Bad request body"
+  /playlists/{playlist_id}/tracks/{track_id}:
+    post:
+      operationId: "playlists.add_track_to_playlist"
+      tags:
+        - "Playlists"
+      summary: "Add new track to a playlist"
+      parameters:
+        - name: playlist_id
+          in: path
+          required: true
+          description: "Unique identifier for the playlist"
+          schema:
+            type: "number"
+        - name: track_id
+          in: path
+          required: true
+          description: "Unique identifier for the track"
+          schema:
+            type: "number"
+      responses:
+        "200":
+          description: "Successfully added track to playlist"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
         "400":
           description: "Bad request body"
