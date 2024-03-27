@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+message Artist {
+    int32 artist_id = 1;
+    string artist_name = 2;
+    string artist_url = 3;
+    string artist_updated_at = 6;
+}
+
+message Release {
+    int32 release_id = 1;
+    string release_title = 2;
+    string release_date = 3;
+    string release_url = 4;
+    int32 label_id = 5;
+    string updated_on = 6;
+
+}
+
+message GetArtistRequest {
+    int32 artist_id = 1;
+}
+
+message AddArtistRequest {
+    string artist_name = 1;
+    string artist_url = 2;
+}
+
+message GetArtistReleasesRequest {
+    int32 artist_id = 1;
+}
+
+message GetArtistResponse {
+    Artist Artist = 1;
+}
+
+message AddArtistResponse {
+    Artist Artist = 1;
+}
+
+message GetArtistReleasesResponse {
+    repeated Release Releases = 1;
+}
+
+
+service ArtistService {
+    rpc getArtist (GetArtistRequest) returns (GetArtistResponse);
+    rpc addArtist (AddArtistRequest) returns (AddArtistResponse);
+    rpc addTrgetArtistReleaseack (GetArtistReleasesRequest) returns (GetArtistReleasesResponse);
+}
