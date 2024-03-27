@@ -1,16 +1,10 @@
 BEGIN TRANSACTION;
 
-CREATE TABLE User(
-    user_id BIGINT PRIMARY KEY NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    user_name TEXT UNIQUE NOT NULL
-);
-
 CREATE TABLE Playlist(
-    playlist_id BIGINT PRIMARY KEY NOT NULL,
+    playlist_id SERIAL PRIMARY KEY NOT NULL,
     user_id BIGINT NOT NULL,
     playlist_name TEXT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES User(user_id)
+    date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 );
 
 CREATE TABLE Track(
@@ -20,7 +14,7 @@ CREATE TABLE Track(
 CREATE TABLE PlaylistTrack(
     playlist_id BIGINT NOT NULL,
     track_id BIGINT NOT NULL,
-    date_added DATE NOT NULL DEFAULT CURRENT_DATE,
+    date_added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (playlist_id) REFERENCES Playlist(playlist_id),
     FOREIGN KEY (track_id) REFERENCES Track(track_id),
     PRIMARY KEY (playlist_id, track_id)

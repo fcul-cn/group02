@@ -78,15 +78,6 @@ components:
         updated_on:
           type: "string"
           format: "date"
-    User:
-      type: "object"
-      properties:
-        user_id:
-          type: "number"
-        username:
-          type: "string"
-        email:
-          type: "string"
     Playlist:
       type: "object"
       properties:
@@ -96,6 +87,9 @@ components:
           type: "string"
         user_id:
           type: "number"
+        date_created:
+          type: "string"
+          format: "date"
     NewArtist:
       type: "object"
       properties:
@@ -144,15 +138,6 @@ components:
           type: "string"
         label_id:
           type: "number"
-    NewUser:
-      type: "object"
-      properties:
-        user_id:
-          type: "number"
-        username:
-          type: "string"
-        email:
-          type: "string"
     NewPlaylist:
       type: "object"
       properties:
@@ -546,6 +531,25 @@ paths:
                 $ref: '#/components/schemas/Playlist'
         "400":
           description: "Bad request body"
+  /playlists/{playlist_id}/tracks:
+    get:
+      operationId: "playlists.get_tracks"
+      tags:
+        - "Playlists"
+      summary: "Get a Playlist's tracks"
+      parameters:
+        - $ref: "#/components/parameters/playlist_id"
+      responses:
+        "200":
+          description: "Successfully got a Playlist's tracks"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Track'
+        "404":
+          description: "Genre's id not found"
   /playlists/{playlist_id}/tracks/{track_id}:
     post:
       operationId: "playlists.add_track_to_playlist"
@@ -574,3 +578,20 @@ paths:
                 $ref: '#/components/schemas/Playlist'
         "400":
           description: "Bad request body"
+    delete:
+      operationId: "playlist.delete_track_from_playlist"
+      tags:
+        - "Playlists"
+      summary: "Delete track from playlist by their id"
+      parameters:
+        - $ref: "#/components/parameters/playlist_id"
+        - $ref: "#/components/parameters/track_id"
+      responses:
+        "200":
+          description: "Successfully deleted track from playlist by id"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+        "404":
+          description: "Playlist's id not found"
