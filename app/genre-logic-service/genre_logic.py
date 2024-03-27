@@ -13,7 +13,7 @@ import connexion
 app = Flask(__name__)
 
 genre_host = os.getenv("GENRE_HOST", "localhost")
-genres_channel = grpc.insecure_channel(f"{genre_host}:50051")
+genres_channel = grpc.insecure_channel(f"{genre_host}:50055")
 genre_client = GenreServiceStub(genress_channel)
 
 @app.get("/api/genres")
