@@ -12,6 +12,7 @@ from track_pb2 import (
     GetTrackGenreResponse
 )
 import track_pb2_grpc
+from datetime import datetime
 from grpc_interceptor.exceptions import NotFound, InvalidArgument
 
 def connect():
@@ -37,19 +38,18 @@ class TrackService(track_pb2_grpc.TrackServiceServicer):
             row = cur.fetchone()
             conn.commit()
             if not (row is None):
-                return GetTrackResponse(
-                    Track(
-                        row[0],
-                        row[1],
-                        row[2],
-                        row[3],
-                        row[4],
-                        row[5],
-                        row[6],
-                        row[7],
-                        row[8],
-                        row[9],
-                        row[10],
+                return GetTrackResponse(track=Track(
+                        track_id=row[0],
+                        title=row[1],
+                        mix=row[2],
+                        is_remixed=row[3],
+                        release_id=row[4],
+                        release_date=str(row[5]),
+                        genre_id=row[6],
+                        subgenre_id=row[7],
+                        track_url=row[8],
+                        bpm=row[9],
+                        duration=row[10],
                     )
                 )
             raise NotFound()
@@ -67,19 +67,18 @@ class TrackService(track_pb2_grpc.TrackServiceServicer):
             cur.execute(query, (request.track_id,))
             row = cur.fetchone()
             if not (row is None):
-                response = DeleteTrackResponse(
-                    Track(
-                        row[0],
-                        row[1],
-                        row[2],
-                        row[3],
-                        row[4],
-                        row[5],
-                        row[6],
-                        row[7],
-                        row[8],
-                        row[9],
-                        row[10],
+                response = DeleteTrackResponse(track=Track(
+                        track_id=row[0],
+                        title=row[1],
+                        mix=row[2],
+                        is_remixed=row[3],
+                        release_id=row[4],
+                        release_date=str(row[5]),
+                        genre_id=row[6],
+                        subgenre_id=row[7],
+                        track_url=row[8],
+                        bpm=row[9],
+                        duration=row[10],
                     )
                 )
                 query = sql.SQL("DELETE FROM Tracks WHERE track_id = %s;") 
@@ -99,27 +98,28 @@ class TrackService(track_pb2_grpc.TrackServiceServicer):
             conn = connect()
             cur = conn.cursor()
             query = sql.SQL(
-                "INSERT INTO Tracks (title, mix, is_remixed, release_id, release_date, genre_id, subgenre_id, track_url, bpm, duration) VALUES (%s,%s,%s,TO_DATE(%s, 'YYYY/MM/DD'),%s,%s,%s,%s,%s) RETURNING track_id;") 
-            cur.execute(query, (request.track,))
+                "INSERT INTO Tracks (title, mix, is_remixed, release_id, release_date, genre_id, subgenre_id, track_url, bpm, duration) VALUES (%s,%s,%s,%s,TO_DATE(%s, 'YYYY/MM/DD'),%s,%s,%s,%s,%s) RETURNING track_id;") 
+            cur.execute(query, (request.track.title, request.track.mix, request.track.is_remixed, request.track.release_id, request.track.release_date, request.track.genre_id, request.track.subgenre_id, request.track.track_url, request.track.bpm, request.track.duration))
             track_id = cur.fetchone()[0]
+            print(track_id)
             query = sql.SQL("SELECT * FROM Tracks WHERE track_id = %s;") 
             cur.execute(query, (track_id,))
             row = cur.fetchone()
+            print(row)
             conn.commit()
             if not (row is None):
-                return AddTrackResponse(
-                    Track(
-                        row[0],
-                        row[1],
-                        row[2],
-                        row[3],
-                        row[4],
-                        row[5],
-                        row[6],
-                        row[7],
-                        row[8],
-                        row[9],
-                        row[10],
+                return AddTrackResponse(track=Track(
+                        track_id=row[0],
+                        title=row[1],
+                        mix=row[2],
+                        is_remixed=row[3],
+                        release_id=row[4],
+                        release_date=str(row[5]),
+                        genre_id=row[6],
+                        subgenre_id=row[7],
+                        track_url=row[8],
+                        bpm=row[9],
+                        duration=row[10],
                     )
                 )
             raise InvalidArgument()

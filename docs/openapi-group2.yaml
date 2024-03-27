@@ -119,6 +119,8 @@ components:
             type: "string"
           is_remixed:
             type: "boolean"
+          release_id:
+            type: "number"
           release_date:
             type: "string"
             format: "date"

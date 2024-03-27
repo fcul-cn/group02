@@ -47,7 +47,7 @@ services:
     networks:
           idc-net:
              ipv4_address: 172.100.10.4
-
+             
 networks:
   idc-net:
       driver: bridge
