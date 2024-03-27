@@ -4,11 +4,13 @@ message Playlist {
     int32 playlist_id = 1;
     string playlist_name = 2;
     int32 user_id = 3;
+    string date_created = 4;
 }
 
 message NewPlaylist {
     string playlist_name = 1;
     int32 user_id = 2;
+    string date_created = 3;
 }
 
 message Track {
