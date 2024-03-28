@@ -44,7 +44,7 @@ class PlaylistService(playlist_pb2_grpc.PlaylistServiceServicer):
                         playlist_id=row[0],
                         user_id=row[1],
                         playlist_name=row[2],
-                        date_created=row[3],
+                        date_created=str(row[3]),
                     )
                 )
             raise NotFound()
@@ -66,7 +66,7 @@ class PlaylistService(playlist_pb2_grpc.PlaylistServiceServicer):
                         playlist_id=row[0],
                         user_id=row[1],
                         playlist_name=row[2],
-                        date_created=row[3],
+                        date_created=str(row[3]),
                     )
                 )
                 query = sql.SQL("DELETE FROM Playlist WHERE playlist_id = %s;") 
@@ -100,7 +100,7 @@ class PlaylistService(playlist_pb2_grpc.PlaylistServiceServicer):
                         playlist_id=row[0],
                         user_id=row[1],
                         playlist_name=row[2],
-                        date_created=row[3],
+                        date_created=str(row[3]),
                     )
                 )
             raise InvalidArgument()

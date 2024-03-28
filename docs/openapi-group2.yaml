@@ -143,8 +143,6 @@ components:
     NewPlaylist:
       type: "object"
       properties:
-        playlist_id:
-          type: "number"
         playlist_name:
           type: "string"
         user_id:
