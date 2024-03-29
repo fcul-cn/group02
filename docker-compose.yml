@@ -1,57 +1,106 @@
 version: "3.8"
 
 services:
+  # ARTIST
+  artist-logic-service:
+    build:
+      context: .
+      dockerfile: ./app/artist-logic-service/Dockerfile
+    container_name: artist-logic-service
+    environment:
+      ARTIST_HOST: artist-model-service
+    ports:
+      - "5001:5001"
+    networks:
+      idc-net:
+        ipv4_address: 172.100.10.5
+    depends_on:
+      - artist-model-service
+
+  artist-model-service:
+    build:
+      context: .
+      dockerfile: ./app/artist-model-service/Dockerfile
+    container_name: artist-model-service
+    environment:
+      POSTGRES_HOST: ${POSTGRES_ARTIST_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      idc-net:
+        ipv4_address: 172.100.10.6
+    depends_on:
+      - artist-db
+
+  artist-db:
+    container_name: artist-db
+    build:
+      context: .
+      dockerfile: ./model/artist/Dockerfile
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - 5434:5432
+    networks:
+      idc-net:
+        ipv4_address: 172.100.10.7
+
+  # TRACK
   track-logic-service:
-      build: 
-        context: .
-        dockerfile: ./app/track-logic-service/Dockerfile
-      container_name: track-logic-service
-      environment:
-        TRACK_HOST: track-model-service
-      ports:
-        - "5000:5000"
-      networks:
-          idc-net:
-            ipv4_address: 172.100.10.2
-      depends_on:
-        - track-model-service
+    build:
+      context: .
+      dockerfile: ./app/track-logic-service/Dockerfile
+    container_name: track-logic-service
+    environment:
+      TRACK_HOST: track-model-service
+    ports:
+      - "5000:5000"
+    networks:
+      idc-net:
+        ipv4_address: 172.100.10.2
+    depends_on:
+      - track-model-service
 
   track-model-service:
-      build: 
-        context: .
-        dockerfile: ./app/track-model-service/Dockerfile
-      container_name: track-model-service
-      environment:
-        POSTGRES_HOST: ${POSTGRES_TRACK_HOST}
-        POSTGRES_PORT: ${POSTGRES_TRACK_PORT}
-        POSTGRES_DB: ${POSTGRES_DB}
-        POSTGRES_USER: ${POSTGRES_USER}
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      networks:
-          idc-net:
-            ipv4_address: 172.100.10.3
-      depends_on:
-        - track-db
+    build:
+      context: .
+      dockerfile: ./app/track-model-service/Dockerfile
+    container_name: track-model-service
+    environment:
+      POSTGRES_HOST: ${POSTGRES_TRACK_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      idc-net:
+        ipv4_address: 172.100.10.3
+    depends_on:
+      - track-db
 
   track-db:
     container_name: track-db
     build:
-        context: .
-        dockerfile: ./model/track/Dockerfile
+      context: .
+      dockerfile: ./model/track/Dockerfile
     environment:
-        POSTGRES_DB: ${POSTGRES_DB}
-        POSTGRES_USER: ${POSTGRES_USER}
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports: 
-       - 5433:5432
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - 5433:5432
     networks:
-          idc-net:
-             ipv4_address: 172.100.10.4
-             
+      idc-net:
+        ipv4_address: 172.100.10.4
+
 networks:
   idc-net:
-      driver: bridge
-      ipam:
-        driver: default
-        config:
-          - subnet: 172.100.10.0/24
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.100.10.0/24
