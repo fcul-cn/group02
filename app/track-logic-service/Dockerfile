@@ -7,7 +7,7 @@ COPY app/track-logic-service/requirements.txt /service/track_logic/
 RUN pip install -r requirements.txt
 COPY app/track-logic-service/track_logic.py /service/track_logic/
 COPY protobufs/ /service/protobufs/
-RUN python -m grpc_tools.protoc -I ../protobufs --python_out=. --grpc_python_out=. ../protobufs/track.proto
+RUN python -m grpc_tools.protoc -I ../protobufs --python_out=. --grpc_python_out=. ../protobufs/app.proto
 
 EXPOSE 5000
 ENV FLASK_APP=track_logic.py

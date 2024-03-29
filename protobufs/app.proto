@@ -1,0 +1,266 @@
+syntax = "proto3";
+
+
+// ######################################## ARTIST ######################################################
+message Artist {
+    int32  artist_id= 1;
+    string artist_name= 2;
+    string artist_url= 3;
+    string artist_updated_at= 4;
+}
+
+message NewArtist {
+    string artist_name= 1;
+    string artist_url= 2;
+    string artist_updated_at= 3;
+} 
+
+message GetArtistRequest {
+    int32 artist_id = 1;
+}
+
+message AddArtistRequest {
+    NewArtist artist = 1;
+}
+
+message GetArtistReleasesRequest {
+    int32 artist_id = 1;
+}
+
+message GetArtistResponse {
+    Artist artist = 1;
+}
+
+message AddArtistResponse {
+    Artist artist = 1;
+}
+
+message GetArtistReleasesResponse {
+    repeated Release releases = 1;
+}
+
+// ######################################## GENRE ######################################################
+message Genre {
+   int32 genre_id = 1;
+   string genre_name = 2;
+   int32 song_count = 3;
+   string genre_url = 4;
+   string updated_on = 5;
+}
+
+message NewGenre {
+    string genre_name = 1;
+   int32 song_count = 2;
+   string genre_url = 3;
+   string updated_on = 4;
+}
+
+message GetGenresListResponse {
+    repeated Genre genres = 1;
+}
+
+message AddGenreRequest {
+    NewGenre genre = 1;
+}
+
+message AddGenreResponse {
+    Genre genre = 1;
+}
+
+message GetGenreRequest {
+    int32 genre_id = 1;
+}
+
+message GetGenreResponse {
+    Genre genre = 1;
+}
+
+message DeleteGenreRequest {
+    Genre genre = 1;
+}
+
+message DeleteGenreResponse {
+    Genre genre = 1;
+}
+
+message UpdateGenreRequest {
+    Genre genre = 1;
+}
+
+message UpdateGenreResponse {
+    Genre genre = 1;
+}
+
+message GetGenreTrackRequest {
+    Track track = 1;
+}
+
+message GetGenreTrackResponse {
+    Track track = 1;
+}
+
+// ######################################## PLAYLIST ######################################################
+message Playlist {
+    int32 playlist_id = 1;
+    string playlist_name = 2;
+    int32 user_id = 3;
+    string date_created = 4;
+}
+
+message NewPlaylist {
+    string playlist_name = 1;
+    int32 user_id = 2;
+}
+
+message GetPlaylistRequest {
+    int32 playlist_id = 1;
+}
+
+message DeletePlaylistRequest {
+    int32 playlist_id = 1;
+}
+
+message AddPlaylistRequest {
+    NewPlaylist playlist = 1;
+}
+
+message GetPlaylistTracksRequest {
+    int32 playlist_id = 1;
+}
+
+message AddTrackToPlaylistRequest {
+    string playlist_id = 1;
+    string track_id = 2;
+}
+
+message DeleteTrackFromPlaylistRequest {
+    string playlist_id = 1;
+    string track_id = 2;
+}
+
+message GetPlaylistResponse {
+    Playlist playlist = 1;
+}
+
+message DeletePlaylistResponse {
+    Playlist playlist = 1;
+}
+
+message AddPlaylistResponse {
+    Playlist playlist = 1;
+}
+
+message GetPlaylistTracksResponse {
+    repeated int32 track_ids = 1;
+}
+
+message AddTrackToPlaylistResponse {
+    Playlist playlist = 1;
+}
+
+message DeleteTrackFromPlaylistResponse {
+    Playlist playlist = 1;
+}
+
+// ######################################## TRACK ######################################################
+message Track {
+    int32 track_id = 1;
+    string title = 2;
+    string mix = 3;
+    bool is_remixed = 4;
+    int32 release_id = 5;
+    string release_date = 6;
+    int32 genre_id = 7;
+    int32 subgenre_id = 8;
+    string track_url = 9;
+    int32 bpm = 10;
+    int32 duration = 11;
+}
+
+message NewTrack {
+    string title = 1;
+    string mix = 2;
+    bool is_remixed = 3;
+    int32 release_id = 4;
+    string release_date = 5;
+    int32 genre_id = 6;
+    int32 subgenre_id = 7;
+    string track_url = 8;
+    int32 bpm = 9;
+    int32 duration = 10;
+}
+
+message GetTrackRequest {
+    int32 track_id = 1;
+}
+
+message DeleteTrackRequest {
+    int32 track_id = 1;
+}
+
+message AddTrackRequest {
+    NewTrack track = 1;
+}
+
+message GetTrackGenreRequest {
+    int32 track_id = 1;
+}
+
+message GetTrackResponse {
+    Track track = 1;
+}
+
+message DeleteTrackResponse {
+    Track track = 1;
+}
+
+message AddTrackResponse {
+    Track track = 1;
+}
+
+message GetTrackGenreResponse {
+    Genre genre = 1;
+}
+
+// ######################################## RELEASE ######################################################
+message Release {
+    int32 release_id = 1;
+    string release_title = 2;
+    string release_date = 3;
+    string release_url = 4;
+    int32 label_id = 5;
+    string updated_on = 6;
+}
+
+service ArtistService {
+    rpc getArtist (GetArtistRequest) returns (GetArtistResponse);
+    rpc addArtist (AddArtistRequest) returns (AddArtistResponse);
+    rpc addTrgetArtistReleaseack (GetArtistReleasesRequest) returns (GetArtistReleasesResponse);
+}
+
+service GenreService {
+    rpc GetGenresList(Empty) returns (GetGenresListResponse);
+    rpc AddGenre(AddGenreRequest) returns (AddGenreResponse);
+    rpc GetGenre(GetGenreRequest) returns (GetGenreResponse);
+    rpc DeleteGenre(DeleteGenreRequest) returns (DeleteGenreResponse);
+    rpc UpdateGenre(UpdateGenreRequest) returns (UpdateGenreResponse);
+    rpc GetGenreTrack (GetGenreTrackRequest) returns (GetGenreTrackResponse);
+}
+
+service PlaylistService {
+    rpc getPlaylist (GetPlaylistRequest) returns (GetPlaylistResponse);
+    rpc deletePlaylist (DeletePlaylistRequest) returns (DeletePlaylistResponse);
+    rpc addPlaylist (AddPlaylistRequest) returns (AddPlaylistResponse);
+    rpc getPlaylistTracks (GetPlaylistTracksRequest) returns (GetPlaylistTracksResponse);
+    rpc addTrackToPlaylist (AddTrackToPlaylistRequest) returns (AddTrackToPlaylistResponse);
+    rpc deleteTrackFromPlaylist (DeleteTrackFromPlaylistRequest) returns (DeleteTrackFromPlaylistResponse);
+}
+
+service TrackService {
+    rpc getTrack (GetTrackRequest) returns (GetTrackResponse);
+    rpc deleteTrack (DeleteTrackRequest) returns (DeleteTrackResponse);
+    rpc addTrack (AddTrackRequest) returns (AddTrackResponse);
+    rpc getTrackGenre (GetTrackGenreRequest) returns (GetTrackGenreResponse);
+}
+
+message Empty {}

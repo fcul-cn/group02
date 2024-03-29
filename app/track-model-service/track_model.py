@@ -4,15 +4,8 @@ from concurrent import futures
 import grpc
 import os
 from grpc_interceptor import ExceptionToStatusInterceptor
-from track_pb2 import (
-    Track,
-    GetTrackResponse,
-    DeleteTrackResponse,
-    AddTrackResponse,
-    GetTrackGenreResponse
-)
-import track_pb2_grpc
-from datetime import datetime
+from app_pb2 import Track, GetTrackResponse, DeleteTrackResponse, AddTrackResponse, GetTrackGenreResponse
+import app_pb2_grpc
 from grpc_interceptor.exceptions import NotFound, InvalidArgument
 
 def connect():
@@ -28,7 +21,7 @@ def connect():
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
 
-class TrackService(track_pb2_grpc.TrackServiceServicer):
+class TrackService(app_pb2_grpc.TrackServiceServicer):
     def getTrack(self, request, context):
         try:
             conn = connect()
@@ -152,7 +145,7 @@ def serve():
     server = grpc.server(
         futures.ThreadPoolExecutor(max_workers=10), interceptors=interceptors
     )
-    track_pb2_grpc.add_TrackServiceServicer_to_server(
+    app_pb2_grpc.add_TrackServiceServicer_to_server(
         TrackService(), server
     )
     server.add_insecure_port("[::]:50051")

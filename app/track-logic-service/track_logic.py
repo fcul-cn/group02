@@ -1,10 +1,8 @@
 from flask import Flask, request
 import grpc
 import os
-from track_pb2 import GetTrackRequest, DeleteTrackRequest, AddTrackRequest, GetTrackGenreRequest, NewTrack
-from track_pb2_grpc import TrackServiceStub
-from genre_pb2 import GetGenreRequest
-from genre_pb2_grpc import GenreServiceStub
+from app_pb2 import GetTrackRequest, DeleteTrackRequest, AddTrackRequest, GetTrackGenreRequest, NewTrack, GetGenreRequest
+from app_pb2_grpc import TrackServiceStub, GenreServiceStub
 
 app = Flask(__name__)
 

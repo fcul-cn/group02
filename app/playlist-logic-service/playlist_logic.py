@@ -1,15 +1,9 @@
 from flask import Flask, request, jsonify
 import grpc
 import os
-from playlist_pb2 import GetPlaylistRequest, DeletePlaylistRequest, AddPlaylistRequest, GetPlaylistTracksRequest, AddTrackToPlaylistRequest, DeleteTrackFromPlaylistRequest, NewPlaylist
-from playlist_pb2_grpc import PlaylistServiceStub
-import pathlib
-import connexion
+from app_pb2 import GetPlaylistRequest, DeletePlaylistRequest, AddPlaylistRequest, GetPlaylistTracksRequest, AddTrackToPlaylistRequest, DeleteTrackFromPlaylistRequest, NewPlaylist
+from app_pb2_grpc import PlaylistServiceStub
 import requests
-
-# basedir = pathlib.Path(__file__).parent.resolve()
-# app = connexion.App(__name__, specification_dir=basedir)
-# app.add_api(basedir / "openapi-group2.yaml")
 
 app = Flask(__name__)
 
