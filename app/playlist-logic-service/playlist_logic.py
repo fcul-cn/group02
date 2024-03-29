@@ -1,10 +1,11 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import grpc
 import os
 from playlist_pb2 import GetPlaylistRequest, DeletePlaylistRequest, AddPlaylistRequest, GetPlaylistTracksRequest, AddTrackToPlaylistRequest, DeleteTrackFromPlaylistRequest, NewPlaylist
 from playlist_pb2_grpc import PlaylistServiceStub
 import pathlib
 import connexion
+import requests
 
 # basedir = pathlib.Path(__file__).parent.resolve()
 # app = connexion.App(__name__, specification_dir=basedir)
@@ -69,8 +70,19 @@ def post_playlist():
 def get_playlist_tracks(playlist_id):
     try:
         request = GetPlaylistTracksRequest(playlist_id=int(playlist_id))
-        response = playlist_client.getPlaylistTracks(request) #utilizar os track_ids de resposta para fazer um get ao Track Service e usar os nomes e outros atributos na response
-        return response
+        response = playlist_client.getPlaylistTracks(request)
+        tracks_details = []
+        
+        for track_id in response.track_ids:
+            track_response = requests.get(f"http://track-service/api/tracks/{track_id}") #I kinda dont know the url
+            if track_response.status_code == 200:
+                track_data = track_response.json()
+                tracks_details.append(track_data)
+            else:
+                print(f"Failed to retrieve track with ID: {track_id}")
+
+        return jsonify(tracks_details)
+    
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
             return "Playlist's id not found", 404

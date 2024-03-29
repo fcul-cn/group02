@@ -65,7 +65,7 @@ message AddPlaylistResponse {
 }
 
 message GetPlaylistTracksResponse {
-    repeated Track track = 1;
+    repeated int32 track_ids = 1;
 }
 message AddTrackToPlaylistResponse {
     Playlist playlist = 1;

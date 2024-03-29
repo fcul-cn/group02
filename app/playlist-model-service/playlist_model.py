@@ -119,8 +119,8 @@ class PlaylistService(playlist_pb2_grpc.PlaylistServiceServicer):
             cur.execute(query, (request.playlist_id,))
             rows = cur.fetchall()
             conn.commit()
-            if not (rows is None):
-                tracks=[]#######provavelmente fazer isto no logic
+            """if not (rows is None):
+                tracks=[]
                 for row in rows:
                     track_id=row[0]
                     url = 'http://track-service/api/tracks/{}'.format(track_id)
@@ -128,8 +128,13 @@ class PlaylistService(playlist_pb2_grpc.PlaylistServiceServicer):
                     if response.status_code == 200:
                         track_details = response.json()
                         tracks.append(track_details)
-                return GetPlaylistTracksResponse(tracks=tracks)#############
-            raise NotFound()
+                return GetPlaylistTracksResponse(tracks=tracks)
+            raise NotFound()"""
+            if rows:
+                track_ids = [row[0] for row in rows]
+                return GetPlaylistTracksResponse(track_ids=track_ids)
+            else:
+                raise NotFound("Playlist not found")
         except (psycopg2.DatabaseError) as error:
             print(error)
         finally:
