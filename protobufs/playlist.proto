@@ -27,11 +27,11 @@ message Track {
 }
 
 message GetPlaylistRequest {
-    int32 track_id = 1;
+    int32 playlist_id = 1;
 }
 
 message DeletePlaylistRequest {
-    int32 track_id = 1;
+    int32 playlist_id = 1;
 }
 
 message AddPlaylistRequest {

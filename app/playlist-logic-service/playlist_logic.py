@@ -69,7 +69,7 @@ def post_playlist():
 def get_playlist_tracks(playlist_id):
     try:
         request = GetPlaylistTracksRequest(playlist_id=int(playlist_id))
-        response = playlist_client.getPlaylistTracks(request)
+        response = playlist_client.getPlaylistTracks(request) #utilizar os track_ids de resposta para fazer um get ao Track Service e usar os nomes e outros atributos na response
         return response
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
