@@ -402,7 +402,7 @@ paths:
             schema:
               $ref: '#/components/schemas/NewTrack'
       responses:
-        "200":
+        "201":
           description: "Successfully added track"
           content:
             application/json:

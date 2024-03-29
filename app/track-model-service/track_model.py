@@ -131,8 +131,21 @@ class TrackService(track_pb2_grpc.TrackServiceServicer):
                 conn.close()
 
     def getTrackGenre(self, request, context):
-        return GetTrackGenreResponse()
-
+        try:
+            conn = connect()
+            cur = conn.cursor()
+            query = sql.SQL("SELECT genre_id FROM Tracks WHERE track_id = %s;") 
+            cur.execute(query, (request.track_id,))
+            row = cur.fetchone()
+            conn.commit()
+            if not (row is None):
+                return GetTrackResponse(genre_id=row[0])
+            raise NotFound()
+        except (psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if conn is not None:
+                conn.close()
 
 def serve():
     interceptors = [ExceptionToStatusInterceptor()]
