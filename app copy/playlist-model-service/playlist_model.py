@@ -44,7 +44,7 @@ class PlaylistService(playlist_pb2_grpc.PlaylistServiceServicer):
                         playlist_id=row[0],
                         user_id=row[1],
                         playlist_name=row[2],
-                        date_created=row[3],
+                        date_created=str(row[3]),
                     )
                 )
             raise NotFound()
@@ -66,7 +66,7 @@ class PlaylistService(playlist_pb2_grpc.PlaylistServiceServicer):
                         playlist_id=row[0],
                         user_id=row[1],
                         playlist_name=row[2],
-                        date_created=row[3],
+                        date_created=str(row[3]),
                     )
                 )
                 query = sql.SQL("DELETE FROM Playlist WHERE playlist_id = %s;") 
@@ -100,7 +100,94 @@ class PlaylistService(playlist_pb2_grpc.PlaylistServiceServicer):
                         playlist_id=row[0],
                         user_id=row[1],
                         playlist_name=row[2],
-                        date_created=row[3],
+                        date_created=str(row[3]),
+                    )
+                )
+            raise InvalidArgument()
+        except (psycopg2.DatabaseError) as error:
+            print(error)
+            conn.rollback()
+        finally:
+            if conn is not None:
+                conn.close()
+
+    def getPLaylistTracks(self, request, context):
+        try:
+            conn = connect()
+            cur = conn.cursor()
+            query = sql.SQL("SELECT track_id FROM PlaylistTracks WHERE playlist_id = %s;") 
+            cur.execute(query, (request.playlist_id,))
+            rows = cur.fetchall()
+            conn.commit()
+            """if not (rows is None):
+                tracks=[]
+                for row in rows:
+                    track_id=row[0]
+                    url = 'http://track-service/api/tracks/{}'.format(track_id)
+                    response = requests.get(url)
+                    if response.status_code == 200:
+                        track_details = response.json()
+                        tracks.append(track_details)
+                return GetPlaylistTracksResponse(tracks=tracks)
+            raise NotFound()"""
+            if rows:
+                track_ids = [row[0] for row in rows]
+                return GetPlaylistTracksResponse(track_ids=track_ids)
+            else:
+                raise NotFound("Playlist not found")
+        except (psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if conn is not None:
+                conn.close()
+
+    def deleteTrackFromPlaylist(self, request, context):
+        try:
+            conn = connect()
+            cur = conn.cursor()
+            query = sql.SQL("SELECT * FROM Playlist WHERE playlist_id = %s;") 
+            cur.execute(query, (request.playlist_id,))
+            row = cur.fetchone()
+            if not (row is None):
+                response = DeleteTrackFromPlaylistResponse(playlist=Playlist(
+                        playlist_id=row[0],
+                        user_id=row[1],
+                        playlist_name=row[2],
+                        date_created=str(row[3]),
+                    )
+                )
+                query = sql.SQL("DELETE FROM PlaylistTrack WHERE playlist_id = %s AND track_id = %s;") 
+                cur.execute(query, (request.playlist_id, request.track_id,))
+                conn.commit()
+                return response
+            raise NotFound()
+        except (psycopg2.DatabaseError) as error:
+            print(error)
+            conn.rollback()
+        finally:
+            if conn is not None:
+                conn.close()
+
+    def addTrackToPlaylist(self, request, context):
+        try:
+            conn = connect()
+            cur = conn.cursor()
+            query = sql.SQL(
+                "INSERT INTO PlaylistTrack (playlist_id, track_id) VALUES (%s,%s) RETURNING playlist_id;") 
+            cur.execute(query, (request.playlist_id, request.track_id))
+            playlist_id = cur.fetchone()[0]
+            print(playlist_id)
+            query = sql.SQL("SELECT * FROM Playlist WHERE playlist_id = %s;") 
+            cur.execute(query, (playlist_id,))
+            row = cur.fetchone()
+            print(row)
+            conn.commit()
+            if not (row is None):
+                return AddTrackToPlaylistResponse(playlist=Playlist(
+                        playlist_id=row[0],
+                        user_id=row[1],
+                        playlist_name=row[2],
+                        date_created=str(row[3]),
                     )
                 )
             raise InvalidArgument()

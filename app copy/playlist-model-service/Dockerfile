@@ -9,5 +9,5 @@ COPY app/profile-model-service/profile_model.py /service/profile_model/
 COPY protobufs/ /service/protobufs/
 RUN python -m grpc_tools.protoc -I ../protobufs --python_out=. --grpc_python_out=. ../protobufs/profile.proto
 
-EXPOSE 50051
+EXPOSE 50057
 CMD  [ "python", "-u", "profile_model.py" ]

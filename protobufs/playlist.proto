@@ -10,7 +10,6 @@ message Playlist {
 message NewPlaylist {
     string playlist_name = 1;
     int32 user_id = 2;
-    string date_created = 3;
 }
 
 message Track {
@@ -28,11 +27,11 @@ message Track {
 }
 
 message GetPlaylistRequest {
-    int32 track_id = 1;
+    int32 playlist_id = 1;
 }
 
 message DeletePlaylistRequest {
-    int32 track_id = 1;
+    int32 playlist_id = 1;
 }
 
 message AddPlaylistRequest {
@@ -66,7 +65,7 @@ message AddPlaylistResponse {
 }
 
 message GetPlaylistTracksResponse {
-    repeated Track track = 1;
+    repeated int32 track_ids = 1;
 }
 message AddTrackToPlaylistResponse {
     Playlist playlist = 1;
