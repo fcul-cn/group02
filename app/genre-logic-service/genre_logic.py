@@ -1,20 +1,14 @@
 from flask import Flask
 import grpc
 import os
-from genre_pb2 import AddGenreRequest, GetGenreRequest, DeleteGenreRequest, UpdateGenreRequest, GetGenreTrackRequest, Empty
-from genre_pb2_grpc import GenreServiceStub
-import pathlib
-import connexion
-
-# basedir = pathlib.Path(__file__).parent.resolve()
-# app = connexion.App(__name__, specification_dir=basedir)
-# app.add_api(basedir / "openapi-group2.yaml")
+from app_pb2 import AddGenreRequest, GetGenreRequest, DeleteGenreRequest, UpdateGenreRequest, GetGenreTrackRequest, Empty
+from app_pb2_grpc import GenreServiceStub
 
 app = Flask(__name__)
 
 genre_host = os.getenv("GENRE_HOST", "localhost")
 genres_channel = grpc.insecure_channel(f"{genre_host}:50055")
-genre_client = GenreServiceStub(genress_channel)
+genre_client = GenreServiceStub(genres_channel)
 
 @app.get("/api/genres")
 def get_genres():

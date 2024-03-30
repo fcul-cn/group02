@@ -4,7 +4,7 @@ from concurrent import futures
 import grpc
 import os
 from grpc_interceptor import ExceptionToStatusInterceptor
-from playlist_pb2 import (
+from app_pb2 import (
     Playlist,
     GetPlaylistResponse,
     DeletePlaylistResponse,
@@ -13,7 +13,7 @@ from playlist_pb2 import (
     AddTrackToPlaylistResponse,
     DeleteTrackFromPlaylistResponse
 )
-import playlist_pb2_grpc
+import app_pb2_grpc
 from datetime import datetime
 from grpc_interceptor.exceptions import NotFound, InvalidArgument
 
@@ -30,7 +30,7 @@ def connect():
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
 
-class PlaylistService(playlist_pb2_grpc.PlaylistServiceServicer):
+class PlaylistService(app_pb2_grpc.PlaylistServiceServicer):
     def getPLaylist(self, request, context):
         try:
             conn = connect()
@@ -204,7 +204,7 @@ def serve():
     server = grpc.server(
         futures.ThreadPoolExecutor(max_workers=10), interceptors=interceptors
     )
-    playlist_pb2_grpc.add_PlaylistServiceServicer_to_server(
+    app_pb2_grpc.add_PlaylistServiceServicer_to_server(
         PlaylistService(), server
     )
     server.add_insecure_port("[::]:50057")

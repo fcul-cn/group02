@@ -4,15 +4,8 @@ from concurrent import futures
 import grpc
 import os
 from grpc_interceptor import ExceptionToStatusInterceptor
-from track_pb2 import (
-    Track,
-    GetTrackResponse,
-    DeleteTrackResponse,
-    AddTrackResponse,
-    GetTrackGenreResponse
-)
-import track_pb2_grpc
-from datetime import datetime
+from app_pb2 import Track, GetTrackResponse, DeleteTrackResponse, AddTrackResponse, GetTrackGenreResponse
+import app_pb2_grpc
 from grpc_interceptor.exceptions import NotFound, InvalidArgument
 
 def connect():
@@ -28,7 +21,7 @@ def connect():
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
 
-class TrackService(track_pb2_grpc.TrackServiceServicer):
+class TrackService(app_pb2_grpc.TrackServiceServicer):
     def getTrack(self, request, context):
         try:
             conn = connect()
@@ -131,15 +124,28 @@ class TrackService(track_pb2_grpc.TrackServiceServicer):
                 conn.close()
 
     def getTrackGenre(self, request, context):
-        return GetTrackGenreResponse()
-
+        try:
+            conn = connect()
+            cur = conn.cursor()
+            query = sql.SQL("SELECT genre_id FROM Tracks WHERE track_id = %s;") 
+            cur.execute(query, (request.track_id,))
+            row = cur.fetchone()
+            conn.commit()
+            if not (row is None):
+                return GetTrackResponse(genre_id=row[0])
+            raise NotFound()
+        except (psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if conn is not None:
+                conn.close()
 
 def serve():
     interceptors = [ExceptionToStatusInterceptor()]
     server = grpc.server(
         futures.ThreadPoolExecutor(max_workers=10), interceptors=interceptors
     )
-    track_pb2_grpc.add_TrackServiceServicer_to_server(
+    app_pb2_grpc.add_TrackServiceServicer_to_server(
         TrackService(), server
     )
     server.add_insecure_port("[::]:50051")

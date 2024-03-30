@@ -4,13 +4,13 @@ from concurrent import futures
 import grpc
 import os
 from grpc_interceptor import ExceptionToStatusInterceptor
-from artist_pb2 import (
+from app_pb2 import (
     Artist,
     GetArtistResponse,
     AddArtistResponse,
     GetArtistReleasesResponse,
 )
-import artist_pb2_grpc
+import app_pb2_grpc
 from grpc_interceptor.exceptions import NotFound, InvalidArgument, AlreadyExists
 
 def connect():
@@ -27,7 +27,7 @@ def connect():
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
 
-class ArtistService(artist_pb2_grpc.ArtistService):
+class ArtistService(app_pb2_grpc.ArtistService):
     def getArtist(self, request, context):
         try:
             artist_id = request.artist_id
@@ -105,7 +105,7 @@ def serve():
     server = grpc.server(
         futures.ThreadPoolExecutor(max_workers=10), interceptors=interceptors
     )
-    artist_pb2_grpc.add_ArtistServiceServicer_to_server(
+    app_pb2_grpc.add_ArtistServiceServicer_to_server(
         ArtistService(), server
     )
     server.add_insecure_port("[::]:50052")

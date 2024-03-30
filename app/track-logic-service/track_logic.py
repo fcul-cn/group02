@@ -1,20 +1,18 @@
 from flask import Flask, request
 import grpc
 import os
-from track_pb2 import GetTrackRequest, DeleteTrackRequest, AddTrackRequest, GetTrackGenreRequest, NewTrack
-from track_pb2_grpc import TrackServiceStub
-import pathlib
-import connexion
-
-# basedir = pathlib.Path(__file__).parent.resolve()
-# app = connexion.App(__name__, specification_dir=basedir)
-# app.add_api(basedir / "openapi-group2.yaml")
+from app_pb2 import GetTrackRequest, DeleteTrackRequest, AddTrackRequest, GetTrackGenreRequest, NewTrack, GetGenreRequest
+from app_pb2_grpc import TrackServiceStub, GenreServiceStub
 
 app = Flask(__name__)
 
 track_host = os.getenv("TRACK_HOST", "localhost")
 tracks_channel = grpc.insecure_channel(f"{track_host}:50051")
 track_client = TrackServiceStub(tracks_channel)
+
+genre_host = os.getenv("GENRE_HOST", "localhost")
+genres_channel = grpc.insecure_channel(f"{genre_host}:50055")
+genre_client = GenreServiceStub(genres_channel)
 
 @app.get("/api/tracks/<track_id>")
 def get_track(track_id):
@@ -99,7 +97,16 @@ def get_track_genre(track_id):
     try:
         request = GetTrackGenreRequest(track_id=int(track_id))
         response = track_client.getTrackGenre(request)
-        return response
+        genre_id = response.genre_id
+        request = GetGenreRequest(genre_id=int(genre_id))
+        response = genre_client.GetGenre(request)
+        return {
+            "genre_id": response.genre.genre_id,
+            "genre_name": response.genre.genre_name,
+            "song_count": response.genre.song_count,
+            "genre_url": response.genre.genre_url,
+            "updated_on": response.genre.updated_on
+        }, 200
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
             return "Track´s id not found", 404

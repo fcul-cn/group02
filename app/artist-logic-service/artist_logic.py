@@ -1,9 +1,9 @@
 from flask import Flask
 import grpc
 import os
-from artist_pb2 import GetArtistRequest, AddArtistRequest, GetArtistReleasesRequest, NewArtist
+from app_pb2 import GetArtistRequest, AddArtistRequest, GetArtistReleasesRequest, NewArtist
 from flask import request
-from artist_pb2_grpc import ArtistServiceStub
+from app_pb2_grpc import ArtistServiceStub
 
 app = Flask(__name__)
 

@@ -4,7 +4,7 @@ from concurrent import futures
 import grpc
 import os
 from grpc_interceptor import ExceptionToStatusInterceptor
-from genre_pb2 import (
+from app_pb2 import (
     Genre,
     GetGenresListResponse,
     GetGenreResponse,
@@ -13,7 +13,7 @@ from genre_pb2 import (
     GetGenreTrackResponse
 )
 
-import genre_pb2_grpc
+import app_pb2_grpc
 from grpc_interceptor.exceptions import NotFound, InvalidArgument
 
 def connect():
@@ -29,7 +29,7 @@ def connect():
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
 
-class GenreService(genre_pb2_grpc.GenreServiceServicer):
+class GenreService(app_pb2_grpc.GenreServiceServicer):
     def GetGenresList(self, request, context):
         try:
             conn = connect()
@@ -176,7 +176,7 @@ def serve():
     server = grpc.server(
         futures.ThreadPoolExecutor(max_workers=10), interceptors=interceptors
     )
-    genre_pb2_grpc.add_GenreServiceServicer_to_server(
+    app_pb2_grpc.add_GenreServiceServicer_to_server(
         GenreService(), server
     )
     server.add_insecure_port("[::]:50055")
