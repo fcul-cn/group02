@@ -109,9 +109,9 @@ services:
       dockerfile: ./app/track-logic-service/Dockerfile
     container_name: track-logic-service
     environment:
-      PYTHONUNBUFFERED: 1
       TRACK_HOST: track-model-service
       GENRE_HOST: genre-model-service
+#     RELEASE_HOST: release-model-service
     ports:
       - "5000:5000"
     networks:

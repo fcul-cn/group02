@@ -126,5 +126,6 @@ def get_genre_tracks(genre_id):
                 "duration": track.duration
             })
         return tracks, 200
-    except grpc.RpcError as e:
-        return e.details(), 500
+    except grpc.RpcError as rpc_error:
+        if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
+            return "Genres´s id not found", 404
