@@ -4,7 +4,7 @@ from concurrent import futures
 import grpc
 import os
 from grpc_interceptor import ExceptionToStatusInterceptor
-from app_pb2 import Track, GetTrackResponse, DeleteTrackResponse, AddTrackResponse, GetTrackGenreResponse
+from app_pb2 import Track, GetTrackResponse, DeleteTrackResponse, AddTrackResponse, GetTrackGenreResponse, GetGenreTracksResponse
 import app_pb2_grpc
 from grpc_interceptor.exceptions import NotFound, InvalidArgument
 
@@ -94,11 +94,9 @@ class TrackService(app_pb2_grpc.TrackServiceServicer):
                 "INSERT INTO Tracks (title, mix, is_remixed, release_id, release_date, genre_id, subgenre_id, track_url, bpm, duration) VALUES (%s,%s,%s,%s,TO_DATE(%s, 'YYYY/MM/DD'),%s,%s,%s,%s,%s) RETURNING track_id;") 
             cur.execute(query, (request.track.title, request.track.mix, request.track.is_remixed, request.track.release_id, request.track.release_date, request.track.genre_id, request.track.subgenre_id, request.track.track_url, request.track.bpm, request.track.duration))
             track_id = cur.fetchone()[0]
-            print(track_id)
             query = sql.SQL("SELECT * FROM Tracks WHERE track_id = %s;") 
             cur.execute(query, (track_id,))
             row = cur.fetchone()
-            print(row)
             conn.commit()
             if not (row is None):
                 return AddTrackResponse(track=Track(
@@ -132,8 +130,41 @@ class TrackService(app_pb2_grpc.TrackServiceServicer):
             row = cur.fetchone()
             conn.commit()
             if not (row is None):
-                return GetTrackResponse(genre_id=row[0])
+                return GetTrackGenreResponse(genre_id=row[0])
             raise NotFound()
+        except (psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if conn is not None:
+                conn.close()
+
+    def getGenreTracks(self, request, context):
+        try:
+            print("hello")
+            conn = connect()
+            cur = conn.cursor()
+            query = sql.SQL("SELECT * FROM Tracks WHERE genre_id = %s;") 
+            cur.execute(query, (request.genre_id,))
+            rows = cur.fetchall()
+            conn.commit()
+            tracks = []
+            print("adeus")
+            for row in rows:
+                tracks.append(Track(
+                    track_id=row[0],
+                    title=row[1],
+                    mix=row[2],
+                    is_remixed=row[3],
+                    release_id=row[4],
+                    release_date=str(row[5]),
+                    genre_id=row[6],
+                    subgenre_id=row[7],
+                    track_url=row[8],
+                    bpm=row[9],
+                    duration=row[10],
+                ))
+            print(tracks)
+            return GetGenreTracksResponse(track=tracks)
         except (psycopg2.DatabaseError) as error:
             print(error)
         finally:

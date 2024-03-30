@@ -11,4 +11,4 @@ RUN python -m grpc_tools.protoc -I ../protobufs --python_out=. --grpc_python_out
 
 EXPOSE 5005
 ENV FLASK_APP=genre_logic.py
-ENTRYPOINT [ "flask", "run", "--host=0.0.0.0"]
+ENTRYPOINT [ "flask", "run", "--host=0.0.0.0", "--port=5002" ]

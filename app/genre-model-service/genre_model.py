@@ -10,7 +10,7 @@ from app_pb2 import (
     GetGenreResponse,
     DeleteGenreResponse,
     AddGenreResponse,
-    GetGenreTrackResponse
+    UpdateGenreResponse
 )
 
 import app_pb2_grpc
@@ -36,23 +36,20 @@ class GenreService(app_pb2_grpc.GenreServiceServicer):
             cur = conn.cursor()
             query = sql.SQL("SELECT * FROM Genres") 
             cur.execute(query)
-            row = cur.fetchone()
+            rows = cur.fetchall()
             conn.commit()
-            if rows:
-                genres = []
-                for row in rows:
-                    genres.append(
-                        Genre(
-                            row[0],
-                            row[1],
-                            row[2],
-                            row[3],
-                            row[4],
-                        )
+            genres = []
+            for row in rows:
+                genres.append(
+                    Genre(
+                        genre_id=row[0],
+                        genre_name=row[1],
+                        song_count=row[2],
+                        genre_url=row[3],
+                        updated_on=str(row[4]),
                     )
-                return GetGenresListResponse(genres)
-            else:        
-                raise NotFound()
+                )
+            return GetGenresListResponse(genres=genres)
         except (psycopg2.DatabaseError) as error:
             print(error)
         finally:
@@ -68,13 +65,13 @@ class GenreService(app_pb2_grpc.GenreServiceServicer):
             row = cur.fetchone()
             conn.commit()
             if not (row is None):
-                return GetGenreResponse(
+                return GetGenreResponse(genre=
                     Genre(
-                        row[0],
-                        row[1],
-                        row[2],
-                        row[3],
-                        row[4],
+                        genre_id=row[0],
+                        genre_name=row[1],
+                        song_count=row[2],
+                        genre_url=row[3],
+                        updated_on=str(row[4]),
                     )
                 )
             raise NotFound()
@@ -92,13 +89,13 @@ class GenreService(app_pb2_grpc.GenreServiceServicer):
             cur.execute(query, (request.genre_id,))
             row = cur.fetchone()
             if not (row is None):
-                response = DeleteGenreResponse(
+                response = DeleteGenreResponse(genre=
                     Genre(
-                        row[0],
-                        row[1],
-                        row[2],
-                        row[3],
-                        row[4],
+                        genre_id=row[0],
+                        genre_name=row[1],
+                        song_count=row[2],
+                        genre_url=row[3],
+                        updated_on=str(row[4]),
                     )
                 )
                 query = sql.SQL("DELETE FROM Genres WHERE genre_id = %s;") 
@@ -117,22 +114,21 @@ class GenreService(app_pb2_grpc.GenreServiceServicer):
         try:
             conn = connect()
             cur = conn.cursor()
-            query = sql.SQL(
-                "INSERT INTO Genres (genre_name, song_count, genre_url, updated_on) VALUES (%s,%s,%s,%s) RETURNING genre_id;") 
-            cur.execute(query, (request.genre,))
+            query = sql.SQL("INSERT INTO Genres (genre_name, song_count, genre_url, updated_on) VALUES (%s,0,%s,CURRENT_DATE) RETURNING genre_id;") 
+            cur.execute(query, (request.genre.genre_name, request.genre.genre_url))
             genre_id = cur.fetchone()[0]
             query = sql.SQL("SELECT * FROM Genres WHERE genre_id = %s;") 
             cur.execute(query, (genre_id,))
             row = cur.fetchone()
             conn.commit()
             if not (row is None):
-                return AddGenreResponse(
+                return AddGenreResponse(genre=
                     Genre(
-                        row[0],
-                        row[1],
-                        row[2],
-                        row[3],
-                        row[4],
+                        genre_id=row[0],
+                        genre_name=row[1],
+                        song_count=row[2],
+                        genre_url=row[3],
+                        updated_on=str(row[4]),
                     )
                 )
             raise InvalidArgument()
@@ -143,23 +139,24 @@ class GenreService(app_pb2_grpc.GenreServiceServicer):
             if conn is not None:
                 conn.close()
 
-    def GetGenreTrack(self, request, context):
+    def UpdateGenre(self, request, context):
         try:
             conn = connect()
             cur = conn.cursor()
-            query = sql.SQL(
-                "SELECT * FROM Genres WHERE genre_id = %s;")
+            query = sql.SQL("UPDATE Genres SET genre_name=%s, genre_url=%s WHERE genre_id=%s;") 
+            cur.execute(query, (request.genre_name, request.genre_url, request.genre_id))
+            query = sql.SQL("SELECT * FROM Genres WHERE genre_id = %s;") 
             cur.execute(query, (request.genre_id,))
             row = cur.fetchone()
             conn.commit()
             if not (row is None):
-                return GetGenreTrackResponse(
+                return UpdateGenreResponse(genre=
                     Genre(
-                        row[0],
-                        row[1],
-                        row[2],
-                        row[3],
-                        row[4],
+                        genre_id=row[0],
+                        genre_name=row[1],
+                        song_count=row[2],
+                        genre_url=row[3],
+                        updated_on=str(row[4]),
                     )
                 )
             raise InvalidArgument()
@@ -169,7 +166,6 @@ class GenreService(app_pb2_grpc.GenreServiceServicer):
         finally:
             if conn is not None:
                 conn.close()
-
 
 def serve():
     interceptors = [ExceptionToStatusInterceptor()]

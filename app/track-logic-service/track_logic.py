@@ -5,6 +5,7 @@ from app_pb2 import GetTrackRequest, DeleteTrackRequest, AddTrackRequest, GetTra
 from app_pb2_grpc import TrackServiceStub, GenreServiceStub
 
 app = Flask(__name__)
+app.debug = True
 
 track_host = os.getenv("TRACK_HOST", "localhost")
 tracks_channel = grpc.insecure_channel(f"{track_host}:50051")

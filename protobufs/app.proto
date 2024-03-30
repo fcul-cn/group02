@@ -49,10 +49,12 @@ message Genre {
 }
 
 message NewGenre {
-    string genre_name = 1;
-   int32 song_count = 2;
-   string genre_url = 3;
-   string updated_on = 4;
+   string genre_name = 1;
+   string genre_url = 2;
+}
+
+message GetGenresListRequest {
+    
 }
 
 message GetGenresListResponse {
@@ -76,7 +78,7 @@ message GetGenreResponse {
 }
 
 message DeleteGenreRequest {
-    Genre genre = 1;
+    int32 genre_id = 1;
 }
 
 message DeleteGenreResponse {
@@ -84,19 +86,21 @@ message DeleteGenreResponse {
 }
 
 message UpdateGenreRequest {
-    Genre genre = 1;
+    int32 genre_id = 1;
+    string genre_name = 2;
+    string genre_url = 3;
 }
 
 message UpdateGenreResponse {
     Genre genre = 1;
 }
 
-message GetGenreTrackRequest {
-    Track track = 1;
+message GetGenreTracksRequest {
+    int32 genre_id = 1;
 }
 
-message GetGenreTrackResponse {
-    Track track = 1;
+message GetGenreTracksResponse {
+    repeated Track track = 1;
 }
 
 // ######################################## PLAYLIST ######################################################
@@ -219,7 +223,7 @@ message AddTrackResponse {
 }
 
 message GetTrackGenreResponse {
-    Genre genre = 1;
+    int32 genre_id = 1;
 }
 
 // ######################################## RELEASE ######################################################
@@ -239,12 +243,11 @@ service ArtistService {
 }
 
 service GenreService {
-    rpc GetGenresList(Empty) returns (GetGenresListResponse);
+    rpc GetGenresList(GetGenresListRequest) returns (GetGenresListResponse);
     rpc AddGenre(AddGenreRequest) returns (AddGenreResponse);
     rpc GetGenre(GetGenreRequest) returns (GetGenreResponse);
     rpc DeleteGenre(DeleteGenreRequest) returns (DeleteGenreResponse);
     rpc UpdateGenre(UpdateGenreRequest) returns (UpdateGenreResponse);
-    rpc GetGenreTrack (GetGenreTrackRequest) returns (GetGenreTrackResponse);
 }
 
 service PlaylistService {
@@ -261,6 +264,5 @@ service TrackService {
     rpc deleteTrack (DeleteTrackRequest) returns (DeleteTrackResponse);
     rpc addTrack (AddTrackRequest) returns (AddTrackResponse);
     rpc getTrackGenre (GetTrackGenreRequest) returns (GetTrackGenreResponse);
+    rpc getGenreTracks (GetGenreTracksRequest) returns (GetGenreTracksResponse);
 }
-
-message Empty {}

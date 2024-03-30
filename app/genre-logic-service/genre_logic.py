@@ -1,8 +1,8 @@
-from flask import Flask
+from flask import Flask, request
 import grpc
 import os
-from app_pb2 import AddGenreRequest, GetGenreRequest, DeleteGenreRequest, UpdateGenreRequest, GetGenreTrackRequest, Empty
-from app_pb2_grpc import GenreServiceStub
+from app_pb2 import AddGenreRequest, GetGenreRequest, DeleteGenreRequest, UpdateGenreRequest, GetGenreTracksRequest, GetGenresListRequest, NewGenre
+from app_pb2_grpc import GenreServiceStub, TrackServiceStub
 
 app = Flask(__name__)
 
@@ -10,22 +10,40 @@ genre_host = os.getenv("GENRE_HOST", "localhost")
 genres_channel = grpc.insecure_channel(f"{genre_host}:50055")
 genre_client = GenreServiceStub(genres_channel)
 
+track_host = os.getenv("TRACK_HOST", "localhost")
+tracks_channel = grpc.insecure_channel(f"{track_host}:50051")
+track_client = TrackServiceStub(tracks_channel)
+
 @app.get("/api/genres")
 def get_genres():
     try:
-        request = GetGenreRequest(Empty)
+        request = GetGenresListRequest()
         response = genre_client.GetGenresList(request)
-        return response
-    except grpc.RpcError as rpc_error:
-        if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
-            return "Genres´s id not found", 404
+        genres = []
+        for genre in response.genres:
+            genres.append({
+                "genre_id": genre.genre_id,
+                "genre_name": genre.genre_name,
+                "song_count": genre.song_count,
+                "genre_url": genre.genre_url,
+                "updated_on": genre.updated_on
+            })
+        return genres, 200
+    except grpc.RpcError:
+        return "Internal error", 500
 
 @app.get("/api/genres/<genre_id>")
 def get_genre(genre_id):
     try:
         request = GetGenreRequest(genre_id=int(genre_id))
         response = genre_client.GetGenre(request)
-        return response
+        return {
+            "genre_id": response.genre.genre_id,
+            "genre_name": response.genre.genre_name,
+            "song_count": response.genre.genre_id,
+            "genre_url": response.genre.song_count,
+            "updated_on": response.genre.updated_on
+        }, 200
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
             return "Genres´s id not found", 404
@@ -34,42 +52,79 @@ def get_genre(genre_id):
 def post_genres():
     try:
         request_body = request.json
-        request = AddGenreRequest(request_body)
-        response = genre_client.AddGenre(request)
-        return response
+        post_request = AddGenreRequest(genre=NewGenre(
+            genre_name=request_body['genre_name'],
+            genre_url=request_body['genre_url']
+        ))
+        response = genre_client.AddGenre(post_request)
+        return {
+            "genre_id": response.genre.genre_id,
+            "genre_name": response.genre.genre_name,
+            "song_count": response.genre.genre_id,
+            "genre_url": response.genre.song_count,
+            "updated_on": response.genre.updated_on
+        }, 201
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
             return "Bad request body", 400
 
-
-@app.delete("/api/genres/<genres_id>")
+@app.delete("/api/genres/<genre_id>")
 def delete_genre(genre_id):
     try:
         request = DeleteGenreRequest(genre_id=int(genre_id))
         response = genre_client.DeleteGenre(request)
-        return response
+        return {
+            "genre_id": response.genre.genre_id,
+            "genre_name": response.genre.genre_name,
+            "song_count": response.genre.genre_id,
+            "genre_url": response.genre.song_count,
+            "updated_on": response.genre.updated_on
+        }, 200
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
             return "Genres´s id not found", 404
 
-
-@app.put("/api/genres/<genres_id>")
+@app.put("/api/genres/<genre_id>")
 def update_genre(genre_id):
     try:
-        request = UpdateGenreRequest(genre_id=int(genre_id))
-        response = genre_client.UpdateGenre(request)
-        return response
+        request_body = request.json
+        delete_request = UpdateGenreRequest(
+            genre_id=int(genre_id),
+            genre_name=request_body['genre_name'],
+            genre_url=request_body['genre_url']
+        )
+        response = genre_client.UpdateGenre(delete_request)
+        return {
+            "genre_id": response.genre.genre_id,
+            "genre_name": response.genre.genre_name,
+            "song_count": response.genre.genre_id,
+            "genre_url": response.genre.song_count,
+            "updated_on": response.genre.updated_on
+        }, 200
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
             return "Genres´s id not found", 404
-
 
 @app.get("/api/genres/<genre_id>/tracks")
-def get_genre_track(genre_id):
+def get_genre_tracks(genre_id):
     try:
-        request = GetGenreTrackRequest(genre_id=int(genre_id))
-        response = genre_client.GetGenreTrack(request)
-        return response
-    except grpc.RpcError as rpc_error:
-        if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
-            return "Genres´s id not found", 404
+        request = GetGenreTracksRequest(genre_id=int(genre_id))
+        response = track_client.getGenreTracks(request)
+        tracks = []
+        for track in response.track:
+            tracks.append({
+                "track_id": track.track_id,
+                "title": track.title,
+                "mix": track.mix,
+                "is_remixed": track.is_remixed,
+                "release_id": track.release_id,
+                "release_date": track.release_date,
+                "genre_id": track.genre_id,
+                "subgenre_id": track.subgenre_id,
+                "track_url": track.track_url,
+                "bpm": track.bpm,
+                "duration": track.duration
+            })
+        return tracks, 200
+    except grpc.RpcError as e:
+        return e.details(), 500
