@@ -8,16 +8,13 @@ from app_pb2_grpc import ArtistServiceStub
 app = Flask(__name__)
 
 artist_host = os.getenv("ARTIST_HOST", "localhost")
-print(artist_host)
 artists_channel = grpc.insecure_channel(f"{artist_host}:50052")
 artist_client = ArtistServiceStub(artists_channel)
 
 @app.get("/api/artists/<artist_id>")
 def get_artist(artist_id):
     try:
-        print("hello")
         request = GetArtistRequest(artist_id=int(artist_id))
-        print(request)
         response = artist_client.getArtist(request)
         return {
             "artist_id": response.artist.artist_id,
@@ -29,7 +26,7 @@ def get_artist(artist_id):
             return "Artist´s id not found", 404
 
 @app.post("/api/artists")
-def add_artist(artist_id):
+def add_artist():
     try:
         request_body = request.json
         add_request = AddArtistRequest( artist=NewArtist(
@@ -44,8 +41,8 @@ def add_artist(artist_id):
             "artist_url": response.artist.artist_url
         }, 200
     except grpc.RpcError as rpc_error:
-        if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
-            return "Artist´s id not found", 404
+        if rpc_error.code() == grpc.StatusCode.IN:
+            return "Something was wrong with your request", 400
 
 @app.post("/api/artists/<artist_id>/releases")
 def getArtistReleases(artist_id):
