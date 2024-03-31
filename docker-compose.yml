@@ -154,6 +154,56 @@ services:
       idc-net:
         ipv4_address: 172.100.10.4
 
+  playlist-logic-service:
+    build:
+      context: .
+      dockerfile: ./app/playlist-logic-service/Dockerfile
+    container_name: playlist-logic-service
+    environment:
+      PLAYLIST_HOST: playlist-model-service
+      TRACK_HOST: track-model-service
+    ports:
+      - "5003:5003"
+    networks:
+      idc-net:
+        ipv4_address: 172.100.10.11
+    depends_on:
+      - playlist-model-service
+
+  playlist-model-service:
+    build:
+      context: .
+      dockerfile: ./app/playlist-model-service/Dockerfile
+    container_name: playlist-model-service
+    environment:
+      POSTGRES_HOST: ${POSTGRES_PLAYLIST_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      idc-net:
+        ipv4_address: 172.100.10.12
+    depends_on:
+      - playlist-db
+
+  playlist-db:
+    container_name: playlist-db
+    build:
+      context: .
+      dockerfile: ./model/playlist/Dockerfile
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - 5436:5432
+    volumes:
+      - playlist-data:/var/lib/postgresql/data
+    networks:
+      idc-net:
+        ipv4_address: 172.100.10.13
+
 volumes:
   artist-data:
   genre-data:
