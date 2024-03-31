@@ -206,8 +206,13 @@ services:
 
 volumes:
   artist-data:
+    driver: local
   genre-data:
+    driver: local
   track-data:
+    driver: local
+  playlist-data:
+    driver: local
 
 networks:
   idc-net:
