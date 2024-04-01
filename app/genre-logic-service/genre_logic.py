@@ -30,7 +30,12 @@ def get_genres():
             })
         return genres, 200
     except grpc.RpcError:
-        return "Internal error", 500
+        if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
+            return rpc_error.details(), 404
+        if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
+            return rpc_error.details(), 400
+    except Exception as e:
+        return "Internal error: " + str(e), 500
 
 @app.get("/api/genres/<genre_id>")
 def get_genre(genre_id):
@@ -46,7 +51,11 @@ def get_genre(genre_id):
         }, 200
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
-            return "Genres´s id not found", 404
+            return rpc_error.details(), 404
+        if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
+            return rpc_error.details(), 400
+    except Exception as e:
+        return "Internal error: " + str(e), 500
 
 @app.post("/api/genres")
 def post_genres():
@@ -65,8 +74,14 @@ def post_genres():
             "updated_on": response.genre.updated_on
         }, 201
     except grpc.RpcError as rpc_error:
+        if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
+            return rpc_error.details(), 404
         if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
-            return "Bad request body", 400
+            return rpc_error.details(), 400
+        if rpc_error.code() == grpc.StatusCode.ALREADY_EXISTS:
+            return rpc_error.details(), 403
+    except Exception as e:
+        return "Internal error: " + str(e), 500
 
 @app.delete("/api/genres/<genre_id>")
 def delete_genre(genre_id):
@@ -82,7 +97,11 @@ def delete_genre(genre_id):
         }, 200
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
-            return "Genres´s id not found", 404
+            return rpc_error.details(), 404
+        if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
+            return rpc_error.details(), 400
+    except Exception as e:
+        return "Internal error: " + str(e), 500
 
 @app.put("/api/genres/<genre_id>")
 def update_genre(genre_id):
@@ -103,7 +122,11 @@ def update_genre(genre_id):
         }, 200
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
-            return "Genres´s id not found", 404
+            return rpc_error.details(), 404
+        if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
+            return rpc_error.details(), 400
+    except Exception as e:
+        return "Internal error: " + str(e), 500
 
 @app.get("/api/genres/<genre_id>/tracks")
 def get_genre_tracks(genre_id):
@@ -128,4 +151,8 @@ def get_genre_tracks(genre_id):
         return tracks, 200
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
-            return "Genres´s id not found", 404
+            return rpc_error.details(), 404
+        if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
+            return rpc_error.details(), 400
+    except Exception as e:
+        return "Internal error: " + str(e), 500
