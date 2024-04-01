@@ -229,11 +229,41 @@ message GetTrackGenreResponse {
 // ######################################## RELEASE ######################################################
 message Release {
     int32 release_id = 1;
-    string release_title = 2;
-    string release_date = 3;
-    string release_url = 4;
-    int32 label_id = 5;
-    string updated_on = 6;
+    string title = 2;
+    string date = 3;
+    string url = 4;
+    string updated_on = 5;
+}
+
+message NewRelease {
+    string title = 1;
+    string date = 2;
+    string url = 3;
+    string updated_on = 4;
+}
+
+message GetReleaseRequest {
+    int32 release_id = 1;
+}
+
+message DeleteReleaseRequest {
+    int32 release_id;
+}
+
+message AddReleaseRequest {
+    Release release = 1;
+}
+
+message DeleteReleaseResponse {
+    Release release = 1;
+}
+
+message GetReleaseResponse {
+    Release release = 1;
+}
+
+message AddReleaseResponse {
+    Release release = 1;
 }
 
 service ArtistService {
@@ -265,4 +295,10 @@ service TrackService {
     rpc addTrack (AddTrackRequest) returns (AddTrackResponse);
     rpc getTrackGenre (GetTrackGenreRequest) returns (GetTrackGenreResponse);
     rpc getGenreTracks (GetGenreTracksRequest) returns (GetGenreTracksResponse);
+}
+
+service ReleaseService {
+    rpc GetRelease(GetReleaseRequest) returns (GetReleaseResponse);
+    rpc DeleteRelease(DeleteReleaseRequest) returns (DeleteReleaseResponse);
+    rpc AddRelease(AddReleaseRequest) returns (AddReleaseResponse);
 }
