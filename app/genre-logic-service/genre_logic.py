@@ -29,7 +29,7 @@ def get_genres():
                 "updated_on": genre.updated_on
             })
         return genres, 200
-    except grpc.RpcError:
+    except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
             return rpc_error.details(), 404
         if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
