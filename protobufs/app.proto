@@ -247,7 +247,7 @@ message GetReleaseRequest {
 }
 
 message DeleteReleaseRequest {
-    int32 release_id;
+    int32 release_id = 1;
 }
 
 message AddReleaseRequest {

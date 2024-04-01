@@ -17,9 +17,9 @@ def get_release(release_id):
         response = release_client.GetRelease(request)
         return {
             "release_id": response.release.release_id,
-            "release_title": response.release.title,
-            "release_date": response.release.date,
-            "release_url": response.release.url,
+            "title": response.release.title,
+            "date": response.release.date,
+            "url": response.release.url,
             "updated_on": response.release.updated_on,
         }, 200
     except grpc.RpcError as rpc_error:
@@ -37,9 +37,9 @@ def delete_release(release_id):
         response = release_client.DeleteRelease(request)
         return {
             "release_id": response.release.release_id,
-            "release_title": response.release.title,
-            "release_date": response.release.date,
-            "release_url": response.release.url,
+            "title": response.release.title,
+            "date": response.release.date,
+            "url": response.release.url,
             "updated_on": response.release.updated_on,
         }, 200
     except grpc.RpcError as rpc_error:
@@ -60,12 +60,12 @@ def post_releases():
             url=str(request_body['url']),
             updated_on=int(request_body['updated_on']),
         ))
-        response = track_client.addTrack(add_request)
+        response = release_client.AddRelease(add_request)
         return {
             "release_id": response.release.release_id,
-            "release_title": response.release.title,
-            "release_date": response.release.date,
-            "release_url": response.release.url,
+            "title": response.release.title,
+            "date": response.release.date,
+            "url": response.release.url,
             "updated_on": response.release.updated_on,
         }, 201   
     except grpc.RpcError as rpc_error:

@@ -59,7 +59,7 @@ class ReleaseService(app_pb2_grpc.ReleaseServiceServicer):
             conn = connect()
             cur = conn.cursor()
             query = sql.SQL("SELECT * FROM Release WHERE release_id = %s;") 
-            cur.execute(query, (request.track_id,))
+            cur.execute(query, (request.release_id,))
             row = cur.fetchone()
             if (row is None):
                 context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -88,7 +88,7 @@ class ReleaseService(app_pb2_grpc.ReleaseServiceServicer):
         try:
             conn = connect()
             cur = conn.cursor()
-            query = sql.SQL("INSERT INTO Release (title, date, url, updated_on) VALUES (%s,%s,%s,CURRENT_DATE) RETURNING genre_id;") 
+            query = sql.SQL("INSERT INTO Release (title, date, url, updated_on) VALUES (%s,%s,%s,CURRENT_DATE) RETURNING release_id;") 
             cur.execute(query, (request.release.title, request.release.date, request.release.url))
             release_id = cur.fetchone()[0]
             query = sql.SQL("SELECT * FROM Release WHERE release_id = %s;") 
