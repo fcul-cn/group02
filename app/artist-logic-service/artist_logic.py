@@ -1,15 +1,23 @@
 from flask import Flask
 import grpc
 import os
-from app_pb2 import GetArtistRequest, AddArtistRequest, GetArtistReleasesRequest, NewArtist
+from app_pb2 import GetArtistRequest, AddArtistRequest, NewArtist, GetArtistReleasesIdRequest, GetReleaseRequest
 from flask import request
-from app_pb2_grpc import ArtistServiceStub
+from app_pb2_grpc import ArtistServiceStub, ArtistsReleasesServiceStub, ReleaseServiceStub
 
 app = Flask(__name__)
 
 artist_host = os.getenv("ARTIST_HOST", "localhost")
 artists_channel = grpc.insecure_channel(f"{artist_host}:50052")
 artist_client = ArtistServiceStub(artists_channel)
+
+artists_releases_host = os.getenv("ARTISTS_RELEASES_HOST", "localhost")
+artists_releases_channel = grpc.insecure_channel(f"{artists_releases_host}:50053")
+artist_releases_client = ArtistsReleasesServiceStub(artists_releases_channel)
+
+release_host = os.getenv("RELEASE_HOST", "localhost")
+release_channel = grpc.insecure_channel(f"{release_host}:50058")
+release_client = ReleaseServiceStub(release_channel)
 
 @app.get("/api/artists/<artist_id>")
 def get_artist(artist_id):
@@ -44,9 +52,23 @@ def add_artist():
         if rpc_error.code() == grpc.StatusCode.IN:
             return "Something was wrong with your request", 400
 
-@app.post("/api/artists/<artist_id>/releases")
+@app.get("/api/artists/<artist_id>/releases")
 def getArtistReleases(artist_id):
-    request = GetArtistReleasesRequest(artist_id=artist_id)
-    response = artist_client.getArtistReleases(request)
-    return response
-
+    try:
+        request = GetArtistReleasesIdRequest(artist_id=int(artist_id))
+        response = artist_releases_client.getArtistReleasesIds(request)
+        releases_ids = response.release_ids
+        res = []
+        for release_id in releases_ids:
+            request = GetReleaseRequest(release_id=release_id)
+            res = release_client.getRelease(request)
+            res.append({
+                "release_id": res.release.release_id,
+                "release_name": res.release.release_name,
+                "release_date": res.release.release_date,
+                "release_url": res.release.release_url
+            })
+        return res, 200
+    except grpc.RpcError as rpc_error:
+        if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
+            return "Artist´s id not found", 404

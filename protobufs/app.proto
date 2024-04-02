@@ -23,10 +23,6 @@ message AddArtistRequest {
     NewArtist artist = 1;
 }
 
-message GetArtistReleasesRequest {
-    int32 artist_id = 1;
-}
-
 message GetArtistResponse {
     Artist artist = 1;
 }
@@ -35,9 +31,23 @@ message AddArtistResponse {
     Artist artist = 1;
 }
 
-message GetArtistReleasesResponse {
+message GetReleasesByIdRequest {
+    repeated int32 releases_ids = 1;
+}
+
+message GetReleasesByIdResponse {
     repeated Release releases = 1;
 }
+
+// ######################################## Artist releases ######################################################
+message GetArtistReleasesIdRequest {
+    int32 artist_id = 1;
+}
+
+message GetArtistReleasesIdsResponse {
+    repeated int32 releases_ids = 1;
+}
+
 
 // ######################################## GENRE ######################################################
 message Genre {
@@ -269,7 +279,7 @@ message AddReleaseResponse {
 service ArtistService {
     rpc getArtist (GetArtistRequest) returns (GetArtistResponse);
     rpc addArtist (AddArtistRequest) returns (AddArtistResponse);
-    rpc addTrgetArtistReleaseack (GetArtistReleasesRequest) returns (GetArtistReleasesResponse);
+    rpc getReleasesById (GetReleasesByIdRequest) returns (GetReleasesByIdResponse);
 }
 
 service GenreService {
@@ -301,4 +311,8 @@ service ReleaseService {
     rpc GetRelease(GetReleaseRequest) returns (GetReleaseResponse);
     rpc DeleteRelease(DeleteReleaseRequest) returns (DeleteReleaseResponse);
     rpc AddRelease(AddReleaseRequest) returns (AddReleaseResponse);
+}
+
+service ArtistsReleasesService {
+    rpc getArtistReleasesIds (GetArtistReleasesIdRequest) returns (GetArtistReleasesIdsResponse);
 }

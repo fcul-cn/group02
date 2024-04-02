@@ -8,7 +8,6 @@ from app_pb2 import (
     Artist,
     GetArtistResponse,
     AddArtistResponse,
-    GetArtistReleasesResponse,
 )
 import app_pb2_grpc
 from grpc_interceptor.exceptions import NotFound, InvalidArgument, AlreadyExists
@@ -33,13 +32,19 @@ class ArtistService(app_pb2_grpc.ArtistService):
             artist_id = request.artist_id
             print("artist_id: ", artist_id)
             if artist_id <= 0:
-                raise InvalidArgument()
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                context.set_details("Artist's id must be higher than 0.")
+                context.abort()
             conn = connect()
             cur = conn.cursor()
             query = sql.SQL("SELECT * FROM Artist WHERE artist_id = %s")
             cur.execute(query, (artist_id,))
             row = cur.fetchone()
             conn.commit()
+            if row is None:
+                context.set_code(grpc.StatusCode.NOT_FOUND)
+                context.set_details("Artist not found.")
+                context.abort()
             if not (row is None):
                 return GetArtistResponse(artist=Artist(
                         artist_id=row[0],
@@ -48,7 +53,6 @@ class ArtistService(app_pb2_grpc.ArtistService):
                         artist_updated_at=str(row[3]),
                     )
                 )
-            raise NotFound()
         except (psycopg2.DatabaseError) as error:
             print(error)
         finally:
@@ -64,31 +68,35 @@ class ArtistService(app_pb2_grpc.ArtistService):
             artist_name = request.artist.artist_name 
             artist_url = request.artist.artist_url
             if not artist_name or not artist_url:
-                raise InvalidArgument()
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                context.set_details("Artist name and url are required.")
+                context.abort()
             conn = connect()
             cur = conn.cursor()
             # Check if artist name or url already exists
             cur.execute(check_if_name_exists, (artist_name,))
             if cur.fetchone():
-                raise AlreadyExists()
+                context.set_code(grpc.StatusCode.ALREADY_EXISTS)
+                context.set_details("Artist name already exists.")
+                context.abort()
             cur.execute(check_if_url_exists, (artist_url,))
             if cur.fetchone():
-                raise AlreadyExists()
+                context.set_code(grpc.StatusCode.ALREADY_EXISTS)
+                context.set_details("Artist URL already exists.")
+                context.abort()
             # Add artist
             cur.execute(query, (artist_name, artist_url, request.artist.artist_updated_at))
             artist_id = cur.fetchone()[0]
             cur.execute(get_new_artist, (artist_id,))
             row = cur.fetchone()
             conn.commit()
-            if not (row is None):
-                return AddArtistResponse(artist=Artist(
-                        artist_id=row[0],
-                        artist_name=row[1],
-                        artist_url=row[2],
-                        artist_updated_at=str(row[3]),
-                    )
+            return AddArtistResponse(artist=Artist(
+                    artist_id=row[0],
+                    artist_name=row[1],
+                    artist_url=row[2],
+                    artist_updated_at=str(row[3]),
                 )
-            raise InvalidArgument()
+            )
         except (psycopg2.DatabaseError) as error:
             print(error)
         finally:
@@ -96,7 +104,7 @@ class ArtistService(app_pb2_grpc.ArtistService):
                 conn.close()
     
     def getArtistReleases(self, request, context):
-        return GetArtistReleasesResponse() 
+        pass
 
 
 
