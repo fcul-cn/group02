@@ -10,11 +10,10 @@ from app_pb2 import (
     DeletePlaylistResponse,
     AddPlaylistResponse,
     GetPlaylistTracksResponse,
-    AddTrackToPlaylistResponse,
-    DeleteTrackFromPlaylistResponse
+    UpdatePlaylistResponse,
+    DeleteTrackFromPlaylistsResponse
 )
 import app_pb2_grpc
-from datetime import datetime
 from grpc_interceptor.exceptions import NotFound, InvalidArgument
 
 def connect():
@@ -31,7 +30,7 @@ def connect():
         print(error)
 
 class PlaylistService(app_pb2_grpc.PlaylistServiceServicer):
-    def getPLaylist(self, request, context):
+    def getPlaylist(self, request, context):
         try:
             if request.playlist_id <= 0:
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
@@ -112,15 +111,13 @@ class PlaylistService(app_pb2_grpc.PlaylistServiceServicer):
             cur.execute(query, (playlist_id,))
             row = cur.fetchone()
             conn.commit()
-            if not (row is None):
-                return AddPlaylistResponse(playlist=Playlist(
-                        playlist_id=row[0],
-                        user_id=row[1],
-                        playlist_name=row[2],
-                        date_created=str(row[3]),
-                    )
+            return AddPlaylistResponse(playlist=Playlist(
+                    playlist_id=row[0],
+                    user_id=row[1],
+                    playlist_name=row[2],
+                    date_created=str(row[3]),
                 )
-            raise InvalidArgument()
+            )
         except (psycopg2.DatabaseError) as error:
             print(error)
             conn.rollback()
@@ -128,32 +125,9 @@ class PlaylistService(app_pb2_grpc.PlaylistServiceServicer):
             if conn is not None:
                 conn.close()
 
-    def getPLaylistTracks(self, request, context):
+    def getPlaylistTracks(self, request, context):
         try:
             if request.playlist_id <= 0:
-                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                context.set_details("Playlist's and track's id must be higher than 0.")
-                context.abort()
-            conn = connect()
-            cur = conn.cursor()
-            query = sql.SQL("SELECT track_id FROM PlaylistTracks WHERE playlist_id = %s;") 
-            cur.execute(query, (request.playlist_id,))
-            rows = cur.fetchall()
-            conn.commit()
-            if rows:
-                track_ids = [row[0] for row in rows]
-                return GetPlaylistTracksResponse(track_ids=track_ids)
-            else:
-                raise NotFound("Playlist not found")
-        except (psycopg2.DatabaseError) as error:
-            print(error)
-        finally:
-            if conn is not None:
-                conn.close()
-
-    def deleteTrackFromPlaylist(self, request, context):
-        try:
-            if request.playlist_id <= 0 or request.track.id <= 0:
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                 context.set_details("Playlist's and track's id must be higher than 0.")
                 context.abort()
@@ -166,18 +140,55 @@ class PlaylistService(app_pb2_grpc.PlaylistServiceServicer):
                 context.set_code(grpc.StatusCode.NOT_FOUND)
                 context.set_details("Playlist not found.")
                 context.abort()
-            
-            response = DeleteTrackFromPlaylistResponse(playlist=Playlist(
+            query = sql.SQL("SELECT track_id FROM PlaylistTracks WHERE playlist_id = %s;") 
+            cur.execute(query, (request.playlist_id,))
+            rows = cur.fetchall()
+            conn.commit()
+            tracks = []
+            for row in rows:
+                tracks.append(row[0])  
+            return GetPlaylistTracksResponse(track_ids=tracks)
+        except (psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if conn is not None:
+                conn.close()
+
+    def updatePlaylistTracks(self, request, context):
+        try:
+            if request.playlist_id <= 0:
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                context.set_details("Playlist's must be higher than 0.")
+                context.abort()
+            conn = connect()
+            cur = conn.cursor()
+            query = sql.SQL("SELECT * FROM Playlist WHERE playlist_id = %s;") 
+            cur.execute(query, (request.playlist_id,))
+            row = cur.fetchone()
+            if (row is None):
+                context.set_code(grpc.StatusCode.NOT_FOUND)
+                context.set_details("Playlist not found.")
+                context.abort()
+            query = sql.SQL("SELECT 1 FROM PlaylistTrack WHERE playlist_id = %s AND track_id = %s;")
+            update_query = sql.SQL("INSERT INTO PlaylistTrack (playlist_id, track_id) VALUES (%s,%s);") 
+            for track_id in request.add_tracks_ids:
+                cur.execute(query, (request.playlist_id, track_id))
+                if not cur.fetchone():
+                    cur.execute(update_query, (request.playlist_id, track_id))
+            query = sql.SQL("DELETE FROM PlaylistTrack WHERE playlist_id = %s AND track_id = %s;")  
+            for track_id in request.delete_tracks_ids:
+                cur.execute(query, (request.playlist_id, track_id))
+            query = sql.SQL("SELECT * FROM Playlist WHERE playlist_id = %s;") 
+            cur.execute(query, (request.playlist_id,))
+            row = cur.fetchone()
+            conn.commit()
+            return UpdatePlaylistResponse(playlist=Playlist(
                     playlist_id=row[0],
                     user_id=row[1],
                     playlist_name=row[2],
                     date_created=str(row[3]),
                 )
             )
-            query = sql.SQL("DELETE FROM PlaylistTrack WHERE playlist_id = %s AND track_id = %s;") 
-            cur.execute(query, (request.playlist_id, request.track_id,))
-            conn.commit()
-            return response
         except (psycopg2.DatabaseError) as error:
             print(error)
             conn.rollback()
@@ -185,38 +196,20 @@ class PlaylistService(app_pb2_grpc.PlaylistServiceServicer):
             if conn is not None:
                 conn.close()
 
-    def addTrackToPlaylist(self, request, context):
+    def deleteTrackFromPlaylists(self, request, context):
         try:
-            if request.playlist_id <= 0 or request.track.id <= 0:
-                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                context.set_details("Playlist's and track's id must be higher than 0.")
-                context.abort()
             conn = connect()
             cur = conn.cursor()
-            query = sql.SQL(
-                "INSERT INTO PlaylistTrack (playlist_id, track_id) VALUES (%s,%s) RETURNING playlist_id;") 
-            cur.execute(query, (request.playlist_id, request.track_id))
-            playlist_id = cur.fetchone()[0]
-            query = sql.SQL("SELECT * FROM Playlist WHERE playlist_id = %s;") 
-            cur.execute(query, (playlist_id,))
-            row = cur.fetchone()
+            query = sql.SQL("DELETE FROM PlaylistTrack WHERE track_id = %s;") 
+            cur.execute(query, (request.track_id,))
             conn.commit()
-            if not (row is None):
-                return AddTrackToPlaylistResponse(playlist=Playlist(
-                        playlist_id=row[0],
-                        user_id=row[1],
-                        playlist_name=row[2],
-                        date_created=str(row[3]),
-                    )
-                )
-            raise InvalidArgument()
+            return DeleteTrackFromPlaylistsResponse()
         except (psycopg2.DatabaseError) as error:
             print(error)
             conn.rollback()
         finally:
             if conn is not None:
                 conn.close()
-
 
 def serve():
     interceptors = [ExceptionToStatusInterceptor()]

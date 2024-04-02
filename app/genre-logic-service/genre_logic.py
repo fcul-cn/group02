@@ -1,7 +1,7 @@
 from flask import Flask, request
 import grpc
 import os
-from app_pb2 import AddGenreRequest, GetGenreRequest, DeleteGenreRequest, UpdateGenreRequest, GetGenreTracksRequest, GetGenresListRequest, NewGenre
+from app_pb2 import AddGenreRequest, GetGenreRequest, UpdateGenreRequest, GetGenreTracksRequest, GetGenresListRequest, NewGenre
 from app_pb2_grpc import GenreServiceStub, TrackServiceStub
 
 app = Flask(__name__)
@@ -29,24 +29,19 @@ def get_genres():
                 "updated_on": genre.updated_on
             })
         return genres, 200
-    except grpc.RpcError as rpc_error:
-        if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
-            return rpc_error.details(), 404
-        if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
-            return rpc_error.details(), 400
     except Exception as e:
         return "Internal error: " + str(e), 500
 
-@app.get("/api/genres/<genre_id>")
+@app.get("/api/genres/<int:genre_id>")
 def get_genre(genre_id):
     try:
-        request = GetGenreRequest(genre_id=int(genre_id))
+        request = GetGenreRequest(genre_id=genre_id)
         response = genre_client.GetGenre(request)
         return {
             "genre_id": response.genre.genre_id,
             "genre_name": response.genre.genre_name,
-            "song_count": response.genre.genre_id,
-            "genre_url": response.genre.song_count,
+            "song_count": response.genre.song_count,
+            "genre_url": response.genre.genre_url,
             "updated_on": response.genre.updated_on
         }, 200
     except grpc.RpcError as rpc_error:
@@ -62,17 +57,42 @@ def post_genres():
     try:
         request_body = request.json
         post_request = AddGenreRequest(genre=NewGenre(
-            genre_name=request_body['genre_name'],
-            genre_url=request_body['genre_url']
+            genre_name=str(request_body['genre_name']),
+            genre_url=str(request_body['genre_url'])
         ))
         response = genre_client.AddGenre(post_request)
         return {
             "genre_id": response.genre.genre_id,
             "genre_name": response.genre.genre_name,
-            "song_count": response.genre.genre_id,
-            "genre_url": response.genre.song_count,
+            "song_count": response.genre.song_count,
+            "genre_url": response.genre.genre_url,
             "updated_on": response.genre.updated_on
         }, 201
+    except grpc.RpcError as rpc_error:
+        if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
+            return rpc_error.details(), 400
+        if rpc_error.code() == grpc.StatusCode.ALREADY_EXISTS:
+            return rpc_error.details(), 403
+    except Exception as e:
+        return "Internal error: " + str(e), 500
+
+@app.put("/api/genres/<int:genre_id>")
+def update_genre(genre_id):
+    try:
+        request_body = request.json
+        update_request = UpdateGenreRequest(
+            genre_id=genre_id,
+            genre_name=str(request_body['genre_name']),
+            genre_url=str(request_body['genre_url'])
+        )
+        response = genre_client.UpdateGenre(update_request)
+        return {
+            "genre_id": response.genre.genre_id,
+            "genre_name": response.genre.genre_name,
+            "song_count": response.genre.song_count,
+            "genre_url": response.genre.genre_url,
+            "updated_on": response.genre.updated_on
+        }, 200
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
             return rpc_error.details(), 404
@@ -83,55 +103,12 @@ def post_genres():
     except Exception as e:
         return "Internal error: " + str(e), 500
 
-@app.delete("/api/genres/<genre_id>")
-def delete_genre(genre_id):
-    try:
-        request = DeleteGenreRequest(genre_id=int(genre_id))
-        response = genre_client.DeleteGenre(request)
-        return {
-            "genre_id": response.genre.genre_id,
-            "genre_name": response.genre.genre_name,
-            "song_count": response.genre.genre_id,
-            "genre_url": response.genre.song_count,
-            "updated_on": response.genre.updated_on
-        }, 200
-    except grpc.RpcError as rpc_error:
-        if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
-            return rpc_error.details(), 404
-        if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
-            return rpc_error.details(), 400
-    except Exception as e:
-        return "Internal error: " + str(e), 500
-
-@app.put("/api/genres/<genre_id>")
-def update_genre(genre_id):
-    try:
-        request_body = request.json
-        delete_request = UpdateGenreRequest(
-            genre_id=int(genre_id),
-            genre_name=request_body['genre_name'],
-            genre_url=request_body['genre_url']
-        )
-        response = genre_client.UpdateGenre(delete_request)
-        return {
-            "genre_id": response.genre.genre_id,
-            "genre_name": response.genre.genre_name,
-            "song_count": response.genre.genre_id,
-            "genre_url": response.genre.song_count,
-            "updated_on": response.genre.updated_on
-        }, 200
-    except grpc.RpcError as rpc_error:
-        if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
-            return rpc_error.details(), 404
-        if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
-            return rpc_error.details(), 400
-    except Exception as e:
-        return "Internal error: " + str(e), 500
-
-@app.get("/api/genres/<genre_id>/tracks")
+@app.get("/api/genres/<int:genre_id>/tracks")
 def get_genre_tracks(genre_id):
     try:
-        request = GetGenreTracksRequest(genre_id=int(genre_id))
+        request = GetGenreRequest(genre_id=genre_id)
+        genre_client.GetGenre(request)
+        request = GetGenreTracksRequest(genre_id=genre_id)
         response = track_client.getGenreTracks(request)
         tracks = []
         for track in response.track:
@@ -152,7 +129,5 @@ def get_genre_tracks(genre_id):
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
             return rpc_error.details(), 404
-        if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
-            return rpc_error.details(), 400
     except Exception as e:
         return "Internal error: " + str(e), 500

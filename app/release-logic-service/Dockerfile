@@ -9,6 +9,6 @@ COPY app/release-logic-service/release_logic.py /service/release_logic/
 COPY protobufs/ /service/protobufs/
 RUN python -m grpc_tools.protoc -I ../protobufs --python_out=. --grpc_python_out=. ../protobufs/app.proto
 
-EXPOSE 5008
+EXPOSE 5004
 ENV FLASK_APP=release_logic.py
-ENTRYPOINT [ "flask", "run", "--host=0.0.0.0"]
+ENTRYPOINT [ "flask", "run", "--host=0.0.0.0", "--port=5004"]

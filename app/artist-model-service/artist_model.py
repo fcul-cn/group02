@@ -14,7 +14,6 @@ from grpc_interceptor.exceptions import NotFound, InvalidArgument, AlreadyExists
 
 def connect():
     try:
-        print("Connecting to the PostgreSQL database...")
         conn = psycopg2.connect(
             host=os.environ.get('POSTGRES_HOST'),
             user=os.environ.get('POSTGRES_USER'),
@@ -30,7 +29,6 @@ class ArtistService(app_pb2_grpc.ArtistService):
     def getArtist(self, request, context):
         try:
             artist_id = request.artist_id
-            print("artist_id: ", artist_id)
             if artist_id <= 0:
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                 context.set_details("Artist's id must be higher than 0.")
@@ -102,9 +100,6 @@ class ArtistService(app_pb2_grpc.ArtistService):
         finally:
             if conn is not None:
                 conn.close()
-    
-    def getArtistReleases(self, request, context):
-        pass
 
 
 

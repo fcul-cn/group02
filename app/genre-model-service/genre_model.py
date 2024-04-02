@@ -8,7 +8,6 @@ from app_pb2 import (
     Genre,
     GetGenresListResponse,
     GetGenreResponse,
-    DeleteGenreResponse,
     AddGenreResponse,
     UpdateGenreResponse
 )
@@ -58,80 +57,71 @@ class GenreService(app_pb2_grpc.GenreServiceServicer):
 
     def GetGenre(self, request, context):
         try:
+            if request.genre_id <= 0:
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                context.set_details("Genre's id must be higher than 0.")
+                context.abort()
             conn = connect()
             cur = conn.cursor()
             query = sql.SQL("SELECT * FROM Genres WHERE genre_id = %s;") 
             cur.execute(query, (request.genre_id,))
             row = cur.fetchone()
             conn.commit()
-            if not (row is None):
-                return GetGenreResponse(genre=
-                    Genre(
-                        genre_id=row[0],
-                        genre_name=row[1],
-                        song_count=row[2],
-                        genre_url=row[3],
-                        updated_on=str(row[4]),
-                    )
+            if (row is None):
+                context.set_code(grpc.StatusCode.NOT_FOUND)
+                context.set_details("Genre not found.")
+                context.abort()
+            return GetGenreResponse(genre=
+                Genre(
+                    genre_id=row[0],
+                    genre_name=row[1],
+                    song_count=row[2],
+                    genre_url=row[3],
+                    updated_on=str(row[4]),
                 )
-            raise NotFound()
+            )
         except (psycopg2.DatabaseError) as error:
             print(error)
         finally:
             if conn is not None:
                 conn.close()
          
-    def DeleteGenre(self, request, context):
-        try:
-            conn = connect()
-            cur = conn.cursor()
-            query = sql.SQL("SELECT * FROM Genres WHERE genre_id = %s;") 
-            cur.execute(query, (request.genre_id,))
-            row = cur.fetchone()
-            if not (row is None):
-                response = DeleteGenreResponse(genre=
-                    Genre(
-                        genre_id=row[0],
-                        genre_name=row[1],
-                        song_count=row[2],
-                        genre_url=row[3],
-                        updated_on=str(row[4]),
-                    )
-                )
-                query = sql.SQL("DELETE FROM Genres WHERE genre_id = %s;") 
-                cur.execute(query, (request.genre_id,))
-                conn.commit()
-                return response
-            raise NotFound()
-        except (psycopg2.DatabaseError) as error:
-            print(error)
-            conn.rollback()
-        finally:
-            if conn is not None:
-                conn.close()
-
     def AddGenre(self, request, context):
+        check_if_name_exists = sql.SQL("SELECT 1 FROM Genres WHERE genre_name = %s")
+        check_if_url_exists = sql.SQL("SELECT 1 FROM Genres WHERE genre_url = %s")
+        query = sql.SQL("INSERT INTO Genres (genre_name, song_count, genre_url, updated_on) VALUES (%s,0,%s,CURRENT_DATE) RETURNING genre_id;") 
         try:
+            if not request.genre.genre_name or not request.genre.genre_url:
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                context.set_details("Bad request body.")
+                context.abort()
             conn = connect()
             cur = conn.cursor()
-            query = sql.SQL("INSERT INTO Genres (genre_name, song_count, genre_url, updated_on) VALUES (%s,0,%s,CURRENT_DATE) RETURNING genre_id;") 
+            cur.execute(check_if_name_exists, (request.genre.genre_name,))
+            if cur.fetchone():
+                context.set_code(grpc.StatusCode.ALREADY_EXISTS)
+                context.set_details("Genre's name already exists.")
+                context.abort()
+            cur.execute(check_if_url_exists, (request.genre.genre_url,))
+            if cur.fetchone():
+                context.set_code(grpc.StatusCode.ALREADY_EXISTS)
+                context.set_details("Genre's url already exists.")
+                context.abort()
             cur.execute(query, (request.genre.genre_name, request.genre.genre_url))
             genre_id = cur.fetchone()[0]
             query = sql.SQL("SELECT * FROM Genres WHERE genre_id = %s;") 
             cur.execute(query, (genre_id,))
             row = cur.fetchone()
             conn.commit()
-            if not (row is None):
-                return AddGenreResponse(genre=
-                    Genre(
-                        genre_id=row[0],
-                        genre_name=row[1],
-                        song_count=row[2],
-                        genre_url=row[3],
-                        updated_on=str(row[4]),
-                    )
+            return AddGenreResponse(genre=
+                Genre(
+                    genre_id=row[0],
+                    genre_name=row[1],
+                    song_count=row[2],
+                    genre_url=row[3],
+                    updated_on=str(row[4]),
                 )
-            raise InvalidArgument()
+            )
         except (psycopg2.DatabaseError) as error:
             print(error)
             conn.rollback()
@@ -140,26 +130,44 @@ class GenreService(app_pb2_grpc.GenreServiceServicer):
                 conn.close()
 
     def UpdateGenre(self, request, context):
+        check_if_name_exists = sql.SQL("SELECT 1 FROM Genres WHERE genre_name = %s")
+        check_if_url_exists = sql.SQL("SELECT 1 FROM Genres WHERE genre_url = %s")
         try:
+            if not request.genre_name or not request.genre_url:
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                context.set_details("Bad request body.")
+                context.abort()
             conn = connect()
             cur = conn.cursor()
+            cur.execute(check_if_name_exists, (request.genre_name,))
+            if cur.fetchone():
+                context.set_code(grpc.StatusCode.ALREADY_EXISTS)
+                context.set_details("Genre's name already exists.")
+                context.abort()
+            cur.execute(check_if_url_exists, (request.genre_url,))
+            if cur.fetchone():
+                context.set_code(grpc.StatusCode.ALREADY_EXISTS)
+                context.set_details("Genre's url already exists.")
+                context.abort()
             query = sql.SQL("UPDATE Genres SET genre_name=%s, genre_url=%s WHERE genre_id=%s;") 
             cur.execute(query, (request.genre_name, request.genre_url, request.genre_id))
             query = sql.SQL("SELECT * FROM Genres WHERE genre_id = %s;") 
             cur.execute(query, (request.genre_id,))
             row = cur.fetchone()
+            if (row is None):
+                context.set_code(grpc.StatusCode.NOT_FOUND)
+                context.set_details("Genre not found.")
+                context.abort()
             conn.commit()
-            if not (row is None):
-                return UpdateGenreResponse(genre=
-                    Genre(
-                        genre_id=row[0],
-                        genre_name=row[1],
-                        song_count=row[2],
-                        genre_url=row[3],
-                        updated_on=str(row[4]),
-                    )
+            return UpdateGenreResponse(genre=
+                Genre(
+                    genre_id=row[0],
+                    genre_name=row[1],
+                    song_count=row[2],
+                    genre_url=row[3],
+                    updated_on=str(row[4]),
                 )
-            raise InvalidArgument()
+            )
         except (psycopg2.DatabaseError) as error:
             print(error)
             conn.rollback()

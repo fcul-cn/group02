@@ -1,8 +1,8 @@
 from flask import Flask, request
 import grpc
 import os
-from app_pb2 import GetTrackRequest, DeleteTrackRequest, AddTrackRequest, GetTrackGenreRequest, NewTrack, GetGenreRequest
-from app_pb2_grpc import TrackServiceStub, GenreServiceStub
+from app_pb2 import GetTrackRequest, DeleteTrackRequest, AddTrackRequest, GetTrackGenreRequest, NewTrack, GetGenreRequest, DeleteTrackFromPlaylistsRequest, GetReleaseRequest
+from app_pb2_grpc import TrackServiceStub, GenreServiceStub, PlaylistServiceStub, ReleaseServiceStub
 
 app = Flask(__name__)
 
@@ -14,9 +14,13 @@ genre_host = os.getenv("GENRE_HOST", "localhost")
 genres_channel = grpc.insecure_channel(f"{genre_host}:50055")
 genre_client = GenreServiceStub(genres_channel)
 
-# release_host = os.getenv("RELEASE_HOST", "localhost")
-# release_channel = grpc.insecure_channel(f"{release_host}:50055") TODO("PORT")
-# release_client = ReleaseServiceStub(release_channel)
+playlist_host = os.getenv("PLAYLIST_HOST", "localhost")
+playlists_channel = grpc.insecure_channel(f"{playlist_host}:50057")
+playlist_client = PlaylistServiceStub(playlists_channel)
+
+release_host = os.getenv("RELEASE_HOST", "localhost")
+release_channel = grpc.insecure_channel(f"{release_host}:50058")
+release_client = ReleaseServiceStub(release_channel)
 
 @app.get("/api/tracks/<int:track_id>")
 def get_track(track_id):
@@ -47,6 +51,8 @@ def get_track(track_id):
 @app.delete("/api/tracks/<int:track_id>")
 def delete_track(track_id):
     try:
+        request = DeleteTrackFromPlaylistsRequest(track_id=track_id)
+        playlist_client.deleteTrackFromPlaylists(request)
         request = DeleteTrackRequest(track_id=track_id)
         response = track_client.deleteTrack(request)
         return {
@@ -78,8 +84,8 @@ def post_track():
         genre_client.GetGenre(get_genre_request)
         get_sub_genre_request = GetGenreRequest(genre_id=int(request_body['subgenre_id']))
         genre_client.GetGenre(get_sub_genre_request)
-        # get_release_request = GetReleaseRequest(release_id=int(request_body['release_id']))
-        # release_client.GetRelease(get_release_request)
+        get_release_request = GetReleaseRequest(release_id=int(request_body['release_id']))
+        release_client.GetRelease(get_release_request)
         add_request = AddTrackRequest(track=NewTrack(
             title=str(request_body['title']),
             mix=str(request_body['mix']),

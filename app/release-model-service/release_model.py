@@ -4,7 +4,7 @@ from concurrent import futures
 import grpc
 import os
 from grpc_interceptor import ExceptionToStatusInterceptor
-from app_pb2 import Track, GetReleaseResponse, DeleteReleaseResponse, AddReleaseResponse
+from app_pb2 import GetReleaseResponse, AddReleaseResponse, Release
 import app_pb2_grpc
 
 def connect():
@@ -29,7 +29,7 @@ class ReleaseService(app_pb2_grpc.ReleaseServiceServicer):
                 context.abort()
             conn = connect()
             cur = conn.cursor()
-            query = sql.SQL("SELECT * FROM Release WHERE release_id = %s;") 
+            query = sql.SQL("SELECT * FROM Releases WHERE release_id = %s;") 
             cur.execute(query, (request.release_id,))
             row = cur.fetchone()
             conn.commit()
@@ -39,73 +39,51 @@ class ReleaseService(app_pb2_grpc.ReleaseServiceServicer):
                 context.abort()
             return GetReleaseResponse(release=Release(
                     release_id=row[0],
-                    title=row[1],
-                    date=row[2],
-                    url=row[3],
-                    updated_on=row[4],
+                    release_title=row[1],
+                    release_date=str(row[2]),
+                    release_url=row[3],
+                    updated_on=str(row[4]),
                 ))
         except (psycopg2.DatabaseError) as error:
             print(error)
         finally:
             if conn is not None:
                 conn.close()
-         
-    def DeleteRelease(self, request, context):
-        try:
-            if request.release_id <= 0:
-                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                context.set_details("Release's id must be higher than 0.")
-                context.abort()
-            conn = connect()
-            cur = conn.cursor()
-            query = sql.SQL("SELECT * FROM Release WHERE release_id = %s;") 
-            cur.execute(query, (request.release_id,))
-            row = cur.fetchone()
-            if (row is None):
-                context.set_code(grpc.StatusCode.NOT_FOUND)
-                context.set_details("Release not found.")
-                context.abort()
-            response = DeleteReleaseResponse(release=Release(
-                    release_id=row[0],
-                    title=row[1],
-                    date=row[2],
-                    url=row[3],
-                    updated_on=row[4],
-                )
-            )
-            query = sql.SQL("DELETE FROM Release WHERE release_id = %s;") 
-            cur.execute(query, (request.release_id,))
-            conn.commit()
-            return response
-        except (psycopg2.DatabaseError) as error:
-            print(error)
-            conn.rollback()
-        finally:
-            if conn is not None:
-                conn.close()
 
     def AddRelease(self, request, context):
+        check_if_title_exists = sql.SQL("SELECT 1 FROM Releases WHERE release_title = %s")
+        check_if_url_exists = sql.SQL("SELECT 1 FROM Releases WHERE release_url = %s")
         try:
+            if not request.release.release_title or not request.release.release_date or not request.release.release_url:
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                context.set_details("Release title, release date and url are required.")
+                context.abort()
             conn = connect()
             cur = conn.cursor()
-            query = sql.SQL("INSERT INTO Release (title, date, url, updated_on) VALUES (%s,%s,%s,CURRENT_DATE) RETURNING release_id;") 
-            cur.execute(query, (request.release.title, request.release.date, request.release.url))
+            cur.execute(check_if_title_exists, (request.release.release_title,))
+            if cur.fetchone():
+                context.set_code(grpc.StatusCode.ALREADY_EXISTS)
+                context.set_details("Release's title already exists.")
+                context.abort()
+            cur.execute(check_if_url_exists, (request.release.release_url,))
+            if cur.fetchone():
+                context.set_code(grpc.StatusCode.ALREADY_EXISTS)
+                context.set_details("Release's url already exists.")
+                context.abort()
+            query = sql.SQL("INSERT INTO Releases (release_title, release_date, release_url, updated_on) VALUES (%s,TO_DATE(%s, 'YYYY/MM/DD'),%s,CURRENT_DATE) RETURNING release_id;") 
+            cur.execute(query, (request.release.release_title, request.release.release_date, request.release.release_url))
             release_id = cur.fetchone()[0]
-            query = sql.SQL("SELECT * FROM Release WHERE release_id = %s;") 
+            query = sql.SQL("SELECT * FROM Releases WHERE release_id = %s;") 
             cur.execute(query, (release_id,))
             row = cur.fetchone()
             conn.commit()
-            if not (row is None):
-                return AddReleaseResponse(release=
-                    Release(
-                        release_id=row[0],
-                        title=row[1],
-                        date=row[2],
-                        url=row[3],
-                        updated_on=row[4],
-                    )
-                )
-            raise InvalidArgument()
+            return AddReleaseResponse(release=Release(
+                    release_id=row[0],
+                    release_title=row[1],
+                    release_date=str(row[2]),
+                    release_url=row[3],
+                    updated_on=str(row[4]),
+            ))
         except (psycopg2.DatabaseError) as error:
             print(error)
             conn.rollback()

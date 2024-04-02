@@ -2,9 +2,9 @@ SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 BEGIN TRANSACTION;
 
 CREATE TABLE ArtistsReleases(
-    id SERIAL PRIMARY KEY,
-    artist_id INT NOT NULL,
-    release_id INT NOT NULL
+    artist_id BIGINT NOT NULL,
+    release_id BIGINT NOT NULL,
+    PRIMARY KEY (artist_id, release_id)
 );
 
 COMMIT;

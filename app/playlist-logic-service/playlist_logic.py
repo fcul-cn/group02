@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import grpc
 import os
-from app_pb2 import GetPlaylistRequest, DeletePlaylistRequest, AddPlaylistRequest, GetPlaylistTracksRequest, AddTrackToPlaylistRequest, DeleteTrackFromPlaylistRequest, NewPlaylist, GetTrackRequest
+from app_pb2 import GetPlaylistRequest, DeletePlaylistRequest, AddPlaylistRequest, GetPlaylistTracksRequest, UpdatePlaylistRequest, NewPlaylist, GetTrackRequest
 from app_pb2_grpc import PlaylistServiceStub, TrackServiceStub
 
 app = Flask(__name__)
@@ -14,10 +14,10 @@ track_host = os.getenv("TRACK_HOST", "localhost")
 tracks_channel = grpc.insecure_channel(f"{track_host}:50051")
 track_client = TrackServiceStub(tracks_channel)
 
-@app.get("/api/playlists/<playlist_id>")
+@app.get("/api/playlists/<int:playlist_id>")
 def get_playlist(playlist_id):
     try:
-        request = GetPlaylistRequest(playlist_id=int(playlist_id))
+        request = GetPlaylistRequest(playlist_id=playlist_id)
         response = playlist_client.getPlaylist(request)
         return {
             "playlist_id": response.playlist.playlist_id,
@@ -27,16 +27,16 @@ def get_playlist(playlist_id):
         }, 200
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
-            return "Playlist's id not found", 404
+            return rpc_error.details(), 404
         if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
             return rpc_error.details(), 400
     except Exception as e:
         return "Internal error: " + str(e), 500
     
-@app.delete("/api/playlists/<playlist_id>")
+@app.delete("/api/playlists/<int:playlist_id>")
 def delete_playlist(playlist_id):
     try:
-        request = DeletePlaylistRequest(playlist_id=int(playlist_id))
+        request = DeletePlaylistRequest(playlist_id=playlist_id)
         response = playlist_client.deletePlaylist(request)
         return {
             "playlist_id": response.playlist.playlist_id,
@@ -58,7 +58,7 @@ def post_playlist():
         request_body = request.json
         add_request = AddPlaylistRequest(playlist=NewPlaylist(
             user_id=int(request_body['user_id']),
-            playlist_name=request_body['playlist_name']
+            playlist_name=str(request_body['playlist_name'])
         ))
         response = playlist_client.addPlaylist(add_request)
         return {
@@ -69,14 +69,14 @@ def post_playlist():
         }, 201   
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
-            return "Bad request body", 400
+            return rpc_error.details(), 400
     except Exception as e:
         return "Internal error: " + str(e), 500
 
-@app.get("/api/playlists/<playlist_id>/tracks")
+@app.get("/api/playlists/<int:playlist_id>/tracks")
 def get_playlist_tracks(playlist_id):
     try:
-        request = GetPlaylistTracksRequest(playlist_id=int(playlist_id))
+        request = GetPlaylistTracksRequest(playlist_id=playlist_id)
         response = playlist_client.getPlaylistTracks(request)
         tracks_details = []
         
@@ -97,9 +97,7 @@ def get_playlist_tracks(playlist_id):
                 "duration": response.track.duration
             }
             tracks_details.append(track_detail)
-            
         return tracks_details, 200
-    
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
             return rpc_error.details(), 404
@@ -108,36 +106,26 @@ def get_playlist_tracks(playlist_id):
     except Exception as e:
         return "Internal error: " + str(e), 500
         
-@app.post("/api/playlists/<playlist_id>/tracks/<track_id>")
-def post_track_to_playlist(playlist_id, track_id):
+@app.put("/api/playlists/<int:playlist_id>/tracks")
+def update_playlist_tracks(playlist_id):
     try:
-        request = AddTrackToPlaylistRequest(playlist_id=int(playlist_id), track_id=int(track_id))
-        response = playlist_client.addTrackToPlaylist(request)
+        request_body = request.json
+        tracks_to_add=request_body.add
+        tracks_to_delete=request_body.delete
+        for track_id in tracks_to_add:
+            get_request = GetTrackRequest(track_id=track_id)
+            track_client.GetTrack(get_request)
+        for track_id in tracks_to_delete:
+            get_request = GetTrackRequest(track_id=track_id)
+            track_client.GetTrack(get_request)
+        update_request = UpdatePlaylistRequest(playlist_id=playlist_id, add_tracks_ids=tracks_to_add, delete_tracks_ids=tracks_to_delete)
+        response = playlist_client.updatePlaylistTracks(update_request)
         return {
             "playlist_id": response.playlist.playlist_id,
             "user_id": response.playlist.user_id,
             "playlist_name": response.playlist.playlist_name,
             "date_created": response.playlist.date_created
         }, 201
-    except grpc.RpcError as rpc_error:
-        if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
-            return rpc_error.details(), 404
-        if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
-            return rpc_error.details(), 400
-    except Exception as e:
-        return "Internal error: " + str(e), 500
-        
-@app.get("/api/playlists/<playlist_id>/tracks/<track_id>")
-def delete_track_from_playlist(playlist_id, track_id):
-    try:
-        request = DeleteTrackFromPlaylistRequest(playlist_id=int(playlist_id), track_id=int(track_id))
-        response = playlist_client.deleteTrackFromPlaylist(request)
-        return {
-            "playlist_id": response.playlist.playlist_id,
-            "user_id": response.playlist.user_id,
-            "playlist_name": response.playlist.playlist_name,
-            "date_created": response.playlist.date_created
-        }, 200
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
             return rpc_error.details(), 404

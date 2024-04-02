@@ -31,16 +31,8 @@ message AddArtistResponse {
     Artist artist = 1;
 }
 
-message GetReleasesByIdRequest {
-    repeated int32 releases_ids = 1;
-}
-
-message GetReleasesByIdResponse {
-    repeated Release releases = 1;
-}
-
 // ######################################## Artist releases ######################################################
-message GetArtistReleasesIdRequest {
+message GetArtistReleasesIdsRequest {
     int32 artist_id = 1;
 }
 
@@ -84,14 +76,6 @@ message GetGenreRequest {
 }
 
 message GetGenreResponse {
-    Genre genre = 1;
-}
-
-message DeleteGenreRequest {
-    int32 genre_id = 1;
-}
-
-message DeleteGenreResponse {
     Genre genre = 1;
 }
 
@@ -142,14 +126,22 @@ message GetPlaylistTracksRequest {
     int32 playlist_id = 1;
 }
 
-message AddTrackToPlaylistRequest {
-    string playlist_id = 1;
-    string track_id = 2;
+message UpdatePlaylistRequest {
+    int32 playlist_id = 1;
+    repeated int32 add_tracks_ids = 2;
+    repeated int32 delete_tracks_ids = 3;
 }
 
-message DeleteTrackFromPlaylistRequest {
-    string playlist_id = 1;
-    string track_id = 2;
+message DeleteTrackFromPlaylistsRequest {
+    int32 track_id = 1;
+}
+
+message DeleteTrackFromPlaylistsResponse {
+    
+}
+
+message UpdatePlaylistResponse {
+    Playlist playlist = 1;
 }
 
 message GetPlaylistResponse {
@@ -166,14 +158,6 @@ message AddPlaylistResponse {
 
 message GetPlaylistTracksResponse {
     repeated int32 track_ids = 1;
-}
-
-message AddTrackToPlaylistResponse {
-    Playlist playlist = 1;
-}
-
-message DeleteTrackFromPlaylistResponse {
-    Playlist playlist = 1;
 }
 
 // ######################################## TRACK ######################################################
@@ -239,36 +223,27 @@ message GetTrackGenreResponse {
 // ######################################## RELEASE ######################################################
 message Release {
     int32 release_id = 1;
-    string title = 2;
-    string date = 3;
-    string url = 4;
+    string release_title = 2;
+    string release_date = 3;
+    string release_url = 4;
     string updated_on = 5;
 }
 
 message NewRelease {
-    string title = 1;
-    string date = 2;
-    string url = 3;
-    string updated_on = 4;
+    string release_title = 1;
+    string release_url = 2;
+    string release_date = 3;
 }
 
 message GetReleaseRequest {
     int32 release_id = 1;
 }
 
-message DeleteReleaseRequest {
-    int32 release_id = 1;
-}
-
 message AddReleaseRequest {
-    Release release = 1;
+    NewRelease release = 1;
 }
 
 message DeleteReleaseResponse {
-    Release release = 1;
-}
-
-message GetReleaseResponse {
     Release release = 1;
 }
 
@@ -276,17 +251,28 @@ message AddReleaseResponse {
     Release release = 1;
 }
 
+message AddReleaseArtistsRequest {
+    int32 release_id = 1;
+    repeated int32 artists_ids = 2;
+}
+
+message AddReleaseArtistsResponse {
+    
+}
+
+message GetReleaseResponse {
+    Release release = 1;
+}
+
 service ArtistService {
     rpc getArtist (GetArtistRequest) returns (GetArtistResponse);
     rpc addArtist (AddArtistRequest) returns (AddArtistResponse);
-    rpc getReleasesById (GetReleasesByIdRequest) returns (GetReleasesByIdResponse);
 }
 
 service GenreService {
     rpc GetGenresList(GetGenresListRequest) returns (GetGenresListResponse);
     rpc AddGenre(AddGenreRequest) returns (AddGenreResponse);
     rpc GetGenre(GetGenreRequest) returns (GetGenreResponse);
-    rpc DeleteGenre(DeleteGenreRequest) returns (DeleteGenreResponse);
     rpc UpdateGenre(UpdateGenreRequest) returns (UpdateGenreResponse);
 }
 
@@ -295,8 +281,8 @@ service PlaylistService {
     rpc deletePlaylist (DeletePlaylistRequest) returns (DeletePlaylistResponse);
     rpc addPlaylist (AddPlaylistRequest) returns (AddPlaylistResponse);
     rpc getPlaylistTracks (GetPlaylistTracksRequest) returns (GetPlaylistTracksResponse);
-    rpc addTrackToPlaylist (AddTrackToPlaylistRequest) returns (AddTrackToPlaylistResponse);
-    rpc deleteTrackFromPlaylist (DeleteTrackFromPlaylistRequest) returns (DeleteTrackFromPlaylistResponse);
+    rpc deleteTrackFromPlaylists (DeleteTrackFromPlaylistsRequest) returns (DeleteTrackFromPlaylistsResponse);
+    rpc updatePlaylistTracks (UpdatePlaylistRequest) returns (UpdatePlaylistResponse);
 }
 
 service TrackService {
@@ -309,10 +295,10 @@ service TrackService {
 
 service ReleaseService {
     rpc GetRelease(GetReleaseRequest) returns (GetReleaseResponse);
-    rpc DeleteRelease(DeleteReleaseRequest) returns (DeleteReleaseResponse);
     rpc AddRelease(AddReleaseRequest) returns (AddReleaseResponse);
 }
 
 service ArtistsReleasesService {
-    rpc getArtistReleasesIds (GetArtistReleasesIdRequest) returns (GetArtistReleasesIdsResponse);
+    rpc getArtistReleasesIds (GetArtistReleasesIdsRequest) returns (GetArtistReleasesIdsResponse);
+    rpc addReleaseArtists (AddReleaseArtistsRequest) returns (AddReleaseArtistsResponse);
 }

@@ -1,7 +1,7 @@
 from flask import Flask
 import grpc
 import os
-from app_pb2 import GetArtistRequest, AddArtistRequest, NewArtist, GetArtistReleasesIdRequest, GetReleaseRequest
+from app_pb2 import GetArtistRequest, AddArtistRequest, NewArtist, GetArtistReleasesIdsRequest, GetReleaseRequest
 from flask import request
 from app_pb2_grpc import ArtistServiceStub, ArtistsReleasesServiceStub, ReleaseServiceStub
 
@@ -19,10 +19,10 @@ release_host = os.getenv("RELEASE_HOST", "localhost")
 release_channel = grpc.insecure_channel(f"{release_host}:50058")
 release_client = ReleaseServiceStub(release_channel)
 
-@app.get("/api/artists/<artist_id>")
+@app.get("/api/artists/<int:artist_id>")
 def get_artist(artist_id):
     try:
-        request = GetArtistRequest(artist_id=int(artist_id))
+        request = GetArtistRequest(artist_id=artist_id)
         response = artist_client.getArtist(request)
         return {
             "artist_id": response.artist.artist_id,
@@ -32,15 +32,19 @@ def get_artist(artist_id):
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
             return "Artist´s id not found", 404
+        if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
+            return rpc_error.details(), 400
+    except Exception as e:
+        return "Internal error: " + str(e), 500
 
 @app.post("/api/artists")
 def add_artist():
     try:
         request_body = request.json
-        add_request = AddArtistRequest( artist=NewArtist(
-            artist_name=request_body['artist_name'],
-            artist_url=request_body['artist_url'],
-            artist_updated_at = request_body['artist_updated_at']
+        add_request = AddArtistRequest(artist=NewArtist(
+            artist_name=str(request_body['artist_name']),
+            artist_url=str(request_body['artist_url']),
+            artist_updated_at = str(request_body['artist_updated_at'])
         ))
         response = artist_client.addArtist(add_request)
         return {
@@ -49,26 +53,35 @@ def add_artist():
             "artist_url": response.artist.artist_url
         }, 200
     except grpc.RpcError as rpc_error:
-        if rpc_error.code() == grpc.StatusCode.IN:
-            return "Something was wrong with your request", 400
+        if rpc_error.code() == grpc.StatusCode.ALREADY_EXISTS:
+            return rpc_error.details(), 403
+        if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
+            return rpc_error.details(), 400
+    except Exception as e:
+        return "Internal error: " + str(e), 500
 
-@app.get("/api/artists/<artist_id>/releases")
+@app.get("/api/artists/<int:artist_id>/releases")
 def getArtistReleases(artist_id):
     try:
-        request = GetArtistReleasesIdRequest(artist_id=int(artist_id))
+        request = GetArtistReleasesIdsRequest(artist_id=artist_id)
         response = artist_releases_client.getArtistReleasesIds(request)
-        releases_ids = response.release_ids
+        releases_ids = response.releases_ids
         res = []
         for release_id in releases_ids:
             request = GetReleaseRequest(release_id=release_id)
-            res = release_client.getRelease(request)
+            res = release_client.GetRelease(request)
             res.append({
                 "release_id": res.release.release_id,
-                "release_name": res.release.release_name,
+                "release_title": res.release.release_title,
                 "release_date": res.release.release_date,
-                "release_url": res.release.release_url
+                "release_url": res.release.release_url,
+                "updated_on": res.release.updated_on
             })
         return res, 200
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
-            return "Artist´s id not found", 404
+            return rpc_error.details(), 404
+        if rpc_error.code() == grpc.StatusCode.INVALID_ARGUMENT:
+            return rpc_error.details(), 400
+    except Exception as e:
+        return "Internal error: " + str(e), 500

@@ -7,16 +7,11 @@ CREATE TABLE Playlist(
     date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE Track(
-    track_id BIGINT PRIMARY KEY NOT NULL
-);
-
 CREATE TABLE PlaylistTrack(
     playlist_id BIGINT NOT NULL,
     track_id BIGINT NOT NULL,
     date_added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (playlist_id) REFERENCES Playlist(playlist_id),
-    FOREIGN KEY (track_id) REFERENCES Track(track_id),
     PRIMARY KEY (playlist_id, track_id)
 );
 
