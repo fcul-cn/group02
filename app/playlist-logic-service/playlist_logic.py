@@ -82,7 +82,7 @@ def get_playlist_tracks(playlist_id):
         
         for track_id in response.track_ids:
             request = GetTrackRequest(track_id=track_id)
-            response = track_client.GetTrack(request)
+            response = track_client.getTrack(request)
             track_detail = {
                 "track_id": response.track.track_id,
                 "title": response.track.title,
@@ -110,14 +110,14 @@ def get_playlist_tracks(playlist_id):
 def update_playlist_tracks(playlist_id):
     try:
         request_body = request.json
-        tracks_to_add=request_body.add
-        tracks_to_delete=request_body.delete
+        tracks_to_add=request_body["add"]
+        tracks_to_delete=request_body["delete"]
         for track_id in tracks_to_add:
             get_request = GetTrackRequest(track_id=track_id)
-            track_client.GetTrack(get_request)
+            track_client.getTrack(get_request)
         for track_id in tracks_to_delete:
             get_request = GetTrackRequest(track_id=track_id)
-            track_client.GetTrack(get_request)
+            track_client.getTrack(get_request)
         update_request = UpdatePlaylistRequest(playlist_id=playlist_id, add_tracks_ids=tracks_to_add, delete_tracks_ids=tracks_to_delete)
         response = playlist_client.updatePlaylistTracks(update_request)
         return {

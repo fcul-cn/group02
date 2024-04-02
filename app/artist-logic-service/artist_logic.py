@@ -65,19 +65,19 @@ def getArtistReleases(artist_id):
     try:
         request = GetArtistReleasesIdsRequest(artist_id=artist_id)
         response = artist_releases_client.getArtistReleasesIds(request)
-        releases_ids = response.releases_ids
-        res = []
-        for release_id in releases_ids:
+        releases = []
+        for release_id in response.releases_ids:
             request = GetReleaseRequest(release_id=release_id)
             res = release_client.GetRelease(request)
-            res.append({
+            release = {
                 "release_id": res.release.release_id,
                 "release_title": res.release.release_title,
                 "release_date": res.release.release_date,
                 "release_url": res.release.release_url,
                 "updated_on": res.release.updated_on
-            })
-        return res, 200
+            }
+            releases.append(release)
+        return releases, 200
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
             return rpc_error.details(), 404
