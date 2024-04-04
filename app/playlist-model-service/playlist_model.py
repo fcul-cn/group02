@@ -140,7 +140,7 @@ class PlaylistService(app_pb2_grpc.PlaylistServiceServicer):
                 context.set_code(grpc.StatusCode.NOT_FOUND)
                 context.set_details("Playlist not found.")
                 context.abort()
-            query = sql.SQL("SELECT track_id FROM PlaylistTracks WHERE playlist_id = %s;") 
+            query = sql.SQL("SELECT track_id FROM PlaylistTrack WHERE playlist_id = %s;") 
             cur.execute(query, (request.playlist_id,))
             rows = cur.fetchall()
             conn.commit()
