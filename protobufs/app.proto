@@ -40,6 +40,23 @@ message GetArtistReleasesIdsResponse {
     repeated int32 releases_ids = 1;
 }
 
+// ######################################## Artist tracks ######################################################
+message GetArtistTracksIdsRequest {
+    int32 artist_id = 1;
+}
+
+message GetArtistTracksIdsResponse {
+    repeated int32 tracks_ids = 1;
+}
+
+message AddTrackArtistsRequest {
+    int32 track_id = 1;
+    repeated int32 artists_ids = 2;
+}
+
+message AddTrackArtistsResponse {
+    
+}
 
 // ######################################## GENRE ######################################################
 message Genre {
@@ -301,4 +318,9 @@ service ReleaseService {
 service ArtistsReleasesService {
     rpc getArtistReleasesIds (GetArtistReleasesIdsRequest) returns (GetArtistReleasesIdsResponse);
     rpc addReleaseArtists (AddReleaseArtistsRequest) returns (AddReleaseArtistsResponse);
+}
+
+service ArtistsTracksService {
+    rpc getArtistTracks (GetArtistTracksIdsRequest) returns (GetArtistTracksIdsResponse);
+    rpc addTrackArtists (AddTrackArtistsRequest) returns (AddTrackArtistsResponse);
 }

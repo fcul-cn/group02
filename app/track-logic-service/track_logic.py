@@ -1,8 +1,8 @@
 from flask import Flask, request
 import grpc
 import os
-from app_pb2 import GetTrackRequest, DeleteTrackRequest, AddTrackRequest, GetTrackGenreRequest, NewTrack, GetGenreRequest, DeleteTrackFromPlaylistsRequest, GetReleaseRequest
-from app_pb2_grpc import TrackServiceStub, GenreServiceStub, PlaylistServiceStub, ReleaseServiceStub
+from app_pb2 import GetTrackRequest, DeleteTrackRequest, AddTrackRequest, GetTrackGenreRequest, NewTrack, GetGenreRequest, DeleteTrackFromPlaylistsRequest, GetReleaseRequest, AddTrackArtistsRequest
+from app_pb2_grpc import TrackServiceStub, GenreServiceStub, PlaylistServiceStub, ReleaseServiceStub, ArtistsTracksServiceStub
 
 app = Flask(__name__)
 
@@ -21,6 +21,10 @@ playlist_client = PlaylistServiceStub(playlists_channel)
 release_host = os.getenv("RELEASE_HOST", "localhost")
 release_channel = grpc.insecure_channel(f"{release_host}:50058")
 release_client = ReleaseServiceStub(release_channel)
+
+artists_tracks_host = os.getenv("ARTISTS_TRACKS_HOST", "localhost")
+artists_tracks_channel = grpc.insecure_channel(f"{artists_tracks_host}:50054")
+artists_tracks_client = ArtistsTracksServiceStub(artists_tracks_channel)
 
 @app.get("/api/tracks/<int:track_id>")
 def get_track(track_id):
@@ -86,6 +90,7 @@ def post_track():
         genre_client.GetGenre(get_sub_genre_request)
         get_release_request = GetReleaseRequest(release_id=int(request_body['release_id']))
         release_client.GetRelease(get_release_request)
+        artists_tracks_channel.addTrackArtists(AddTrackArtistsRequest(track_id=response.track.track_id, artists_ids=request_body['artists_ids']))
         add_request = AddTrackRequest(track=NewTrack(
             title=str(request_body['title']),
             mix=str(request_body['mix']),
