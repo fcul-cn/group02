@@ -1,9 +1,9 @@
-from flask import Flask
+from flask import Flask, jsonify
 import grpc
 import os
-from app_pb2 import GetArtistRequest, AddArtistRequest, NewArtist, GetArtistReleasesIdsRequest, GetReleaseRequest, GetArtistTracksIdsRequest, GetTrackRequest
+from app_pb2 import GetArtistRequest, AddArtistRequest, NewArtist, GetArtistReleasesIdsRequest, GetReleaseRequest, GetArtistTracksIdsRequest, GetTrackRequest 
 from flask import request
-from app_pb2_grpc import ArtistServiceStub, ArtistsReleasesServiceStub, ReleaseServiceStub, ArtistsTracksServiceStub, TrackServiceStub
+from app_pb2_grpc import ArtistServiceStub, ArtistsReleasesServiceStub, ReleaseServiceStub, ArtistsTracksServiceStub, TrackServiceStub 
 
 app = Flask(__name__)
 
@@ -126,3 +126,8 @@ def getArtistTracks(artist_id):
             return rpc_error.details(), 400
     except Exception as e:
         return "Internal error: " + str(e), 500
+    
+    
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({'status': 'healthy'}), 200

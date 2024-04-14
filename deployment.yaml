@@ -1,0 +1,372 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: artist-logic-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: artist-logic
+  template:
+    metadata:
+      labels:
+        app: artist-logic
+    spec:
+      containers:
+      - name: artist-logic
+        image: group02-artist-logic-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5001   
+        readinessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/health"
+            port: 5001
+        livenessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/health"
+            port: 5001
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: artist-model-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: artist-model
+  template:
+    metadata:
+      labels:
+        app: artist-model
+    spec:
+      containers:
+      - name: artist-model
+        image: group02-artist-model-service:latest
+        imagePullPolicy: Never
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50052
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50052
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: artists-releases-model-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: artists-releases-model
+  template:
+    metadata:
+      labels:
+        app: artists-releases-model
+    spec:
+      containers:
+      - name: artists-releases-model
+        image: group02-artists-releases-model-service:latest
+        imagePullPolicy: Never
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50053
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50053
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: artists-tracks-model-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: artists-tracks-model
+  template:
+    metadata:
+      labels:
+        app: artists-tracks-model
+    spec:
+      containers:
+      - name: artists-tracks-model
+        image: group02-artists-tracks-model-service:latest
+        imagePullPolicy: Never
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50054
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50054
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: genre-logic-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: genre-logic
+  template:
+    metadata:
+      labels:
+        app: genre-logic
+    spec:
+      containers:
+      - name: genre-logic
+        image: group02-genre-logic-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5002
+        readinessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/health"
+            port: 5002
+        livenessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/health"
+            port: 5002
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: genre-model-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: genre-model
+  template:
+    metadata:
+      labels:
+        app: genre-model
+    spec:
+      containers:
+      - name: genre-model
+        image: group02-genre-model-service:latest
+        imagePullPolicy: Never
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50055
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50055
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: playlist-logic-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: playlist-logic
+  template:
+    metadata:
+      labels:
+        app: playlist-logic
+    spec:
+      containers:
+      - name: playlist-logic
+        image: group02-playlist-logic-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5003
+        readinessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/health"
+            port: 5003
+        livenessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/health"
+            port: 5003
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: playlist-model-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: playlist-model
+  template:
+    metadata:
+      labels:
+        app: playlist-model
+    spec:
+      containers:
+      - name: playlist-model
+        image: group02-playlist-model-service:latest
+        imagePullPolicy: Never
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50057
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50057
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-logic-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: release-logic
+  template:
+    metadata:
+      labels:
+        app: release-logic
+    spec:
+      containers:
+      - name: release-logic
+        image: group02-release-logic-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5004
+        readinessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/health"
+            port: 5004
+        livenessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/health"
+            port: 5004
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-model-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: release-model
+  template:
+    metadata:
+      labels:
+        app: release-model
+    spec:
+      containers:
+      - name: release-model
+        image: group02-release-model-service:latest
+        imagePullPolicy: Never
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50058
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50058
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: track-logic-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: track-logic
+  template:
+    metadata:
+      labels:
+        app: track-logic
+    spec:
+      containers:
+      - name: track-logic
+        image: group02-track-logic-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5000
+        readinessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/health"
+            port: 5000
+        livenessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/health"
+            port: 5000
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: track-model-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: track-model
+  template:
+    metadata:
+      labels:
+        app: track-model
+    spec:
+      containers:
+      - name: track-model
+        image: group02-track-model-service:latest
+        imagePullPolicy: Never
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50051
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50051

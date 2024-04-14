@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import grpc
 import os
 from app_pb2 import GetTrackRequest, DeleteTrackRequest, AddTrackRequest, GetTrackGenreRequest, NewTrack, GetGenreRequest, DeleteTrackFromPlaylistsRequest, GetReleaseRequest, AddTrackArtistsRequest
@@ -149,3 +149,7 @@ def get_track_genre(track_id):
             return rpc_error.details(), 400
     except Exception as e:
         return "Internal error: " + str(e), 500
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({'status': 'healthy'}), 200
