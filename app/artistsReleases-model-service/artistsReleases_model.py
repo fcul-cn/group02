@@ -1,5 +1,3 @@
-import psycopg2
-from psycopg2 import sql
 from concurrent import futures
 import grpc
 import os
@@ -9,70 +7,50 @@ from app_pb2 import (
     AddReleaseArtistsResponse
 )
 import app_pb2_grpc
+from google.cloud import bigquery
+from google.oauth2 import service_account
+import json, os
 
-def connect():
-    try:
-        conn = psycopg2.connect(
-            host=os.environ.get('POSTGRES_HOST'),
-            user=os.environ.get('POSTGRES_USER'),
-            password=os.environ.get('POSTGRES_PASSWORD'),
-            port=os.environ.get('POSTGRES_PORT'),
-            database=os.environ.get('POSTGRES_DB')
-        )
-        return conn
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+json_string = os.environ.get('API_TOKEN')
+json_file = json.loads(json_string)
+credentials = service_account.Credentials.from_service_account_info(json_file)
+client = bigquery.Client(credentials=credentials, location="europe-west4")
+table_id = "confident-facet-329316.project.ArtistsReleases"
 
 class ArtistsReleasesService(app_pb2_grpc.ArtistsReleasesService):
     def getArtistReleasesIds(self, request, context):
-        try:
-            artist_id = request.artist_id
+        artist_id = request.artist_id
+        if artist_id <= 0:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details("Artist's id must be higher than 0.")
+            context.abort()
+        query = f"SELECT release_id FROM {table_id} WHERE artist_id = {artist_id}"
+        query_job = client.query(query)
+        result = query_job.result()
+        rows = list(result)
+        releases = []
+        for row in rows:
+            releases.append(row[0])
+        return GetArtistReleasesIdsResponse(releases_ids=releases)
+    
+    def addReleaseArtists(self, request, context):
+        if request.release_id <= 0:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details("Release's id must be higher than 0.")
+            context.abort()
+        for artist_id in request.artists_ids:
             if artist_id <= 0:
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                 context.set_details("Artist's id must be higher than 0.")
                 context.abort()
-            conn = connect()
-            cur = conn.cursor()
-            query = sql.SQL("SELECT release_id FROM ArtistsReleases WHERE artist_id = %s")
-            cur.execute(query, (artist_id,))
-            rows = cur.fetchall()
-            conn.commit()
-            releases = []
-            for row in rows:
-                releases.append(row[0])
-            return GetArtistReleasesIdsResponse(releases_ids=releases)
-        except (psycopg2.DatabaseError) as error:
-            print(error)
-        finally:
-            if conn is not None:
-                conn.close()
-    
-    def addReleaseArtists(self, request, context):
-        try:
-            if request.release_id <= 0:
-                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                context.set_details("Release's id must be higher than 0.")
-                context.abort()
-            for artist_id in request.artists_ids:
-                if artist_id <= 0:
-                    context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                    context.set_details("Artist's id must be higher than 0.")
-                    context.abort()
-            conn = connect()
-            cur = conn.cursor() 
-            insert_query = sql.SQL("INSERT INTO ArtistsReleases VALUES (%s, %s);")
-            query = sql.SQL("SELECT 1 FROM ArtistsReleases WHERE artist_id = %s AND release_id = %s;")
-            for artist_id in request.artists_ids:
-                cur.execute(query, (artist_id, request.release_id))
-                if not cur.fetchone():
-                    cur.execute(insert_query, (artist_id, request.release_id))
-            conn.commit()
-            return AddReleaseArtistsResponse()
-        except (psycopg2.DatabaseError) as error:
-            print(error)
-        finally:
-            if conn is not None:
-                conn.close()
+        query = f"SELECT 1 FROM {table_id} WHERE artist_id = {artist_id} AND release_id = {request.release_id};"
+        for artist_id in request.artists_ids:
+            query_job = client.query(query)
+            result = query_job.result()
+            if result.total_rows == 0:
+                row_to_insert = [{u"artist_id": artist_id, u"release_id": request.release_id}]
+                client.insert_rows_json(table_id, row_to_insert)
+        return AddReleaseArtistsResponse()
 
 def serve():
     interceptors = [ExceptionToStatusInterceptor()]

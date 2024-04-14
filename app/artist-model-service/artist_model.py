@@ -1,5 +1,3 @@
-import psycopg2
-from psycopg2 import sql
 from concurrent import futures
 import grpc
 import os
@@ -11,95 +9,84 @@ from app_pb2 import (
 )
 import app_pb2_grpc
 from grpc_interceptor.exceptions import NotFound, InvalidArgument, AlreadyExists
+from google.cloud import bigquery
+from google.oauth2 import service_account
+import json, os
 
-def connect():
-    try:
-        conn = psycopg2.connect(
-            host=os.environ.get('POSTGRES_HOST'),
-            user=os.environ.get('POSTGRES_USER'),
-            password=os.environ.get('POSTGRES_PASSWORD'),
-            port=os.environ.get('POSTGRES_PORT'),
-            database=os.environ.get('POSTGRES_DB')
-        )
-        return conn
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+json_string = os.environ.get('API_TOKEN')
+json_file = json.loads(json_string)
+credentials = service_account.Credentials.from_service_account_info(json_file)
+client = bigquery.Client(credentials=credentials, location="europe-west4")
+table_id = "confident-facet-329316.project.Artists"
 
 class ArtistService(app_pb2_grpc.ArtistService):
     def getArtist(self, request, context):
-        try:
-            artist_id = request.artist_id
-            if artist_id <= 0:
-                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                context.set_details("Artist's id must be higher than 0.")
-                context.abort()
-            conn = connect()
-            cur = conn.cursor()
-            query = sql.SQL("SELECT * FROM Artist WHERE artist_id = %s")
-            cur.execute(query, (artist_id,))
-            row = cur.fetchone()
-            conn.commit()
-            if row is None:
-                context.set_code(grpc.StatusCode.NOT_FOUND)
-                context.set_details("Artist not found.")
-                context.abort()
-            if not (row is None):
-                return GetArtistResponse(artist=Artist(
-                        artist_id=row[0],
-                        artist_name=row[1],
-                        artist_url=row[2],
-                        artist_updated_at=str(row[3]),
-                    )
-                )
-        except (psycopg2.DatabaseError) as error:
-            print(error)
-        finally:
-            if conn is not None:
-                conn.close()
+        artist_id = request.artist_id
+        if artist_id <= 0:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details("Artist's id must be higher than 0.")
+            context.abort()
+        query = f"SELECT * FROM {table_id} WHERE artist_id = {artist_id};"
+        query_job = client.query(query)
+        result = query_job.result()
+        if result.total_rows == 0:
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            context.set_details("Artist not found.")
+            context.abort()
+        row = list(result)[0]
+        return GetArtistResponse(artist=Artist(
+                artist_id=row[0],
+                artist_name=row[1],
+                artist_url=row[2],
+                artist_updated_at=str(row[3]),
+            )
+        )
 
     def addArtist(self, request, context):
-        check_if_name_exists = sql.SQL("SELECT 1 FROM Artist WHERE artist_name = %s")
-        check_if_url_exists = sql.SQL("SELECT 1 FROM Artist WHERE artist_url = %s")
-        query = sql.SQL("INSERT INTO Artist (artist_name, artist_url, artist_updated_at) VALUES (%s, %s, %s) RETURNING artist_id;")
-        get_new_artist = sql.SQL("SELECT * FROM Artist WHERE artist_id = %s;") 
-        try:
-            artist_name = request.artist.artist_name 
-            artist_url = request.artist.artist_url
-            if not artist_name or not artist_url:
-                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                context.set_details("Artist name and url are required.")
-                context.abort()
-            conn = connect()
-            cur = conn.cursor()
-            # Check if artist name or url already exists
-            cur.execute(check_if_name_exists, (artist_name,))
-            if cur.fetchone():
-                context.set_code(grpc.StatusCode.ALREADY_EXISTS)
-                context.set_details("Artist name already exists.")
-                context.abort()
-            cur.execute(check_if_url_exists, (artist_url,))
-            if cur.fetchone():
-                context.set_code(grpc.StatusCode.ALREADY_EXISTS)
-                context.set_details("Artist URL already exists.")
-                context.abort()
-            # Add artist
-            cur.execute(query, (artist_name, artist_url, request.artist.artist_updated_at))
-            artist_id = cur.fetchone()[0]
-            cur.execute(get_new_artist, (artist_id,))
-            row = cur.fetchone()
-            conn.commit()
-            return AddArtistResponse(artist=Artist(
-                    artist_id=row[0],
-                    artist_name=row[1],
-                    artist_url=row[2],
-                    artist_updated_at=str(row[3]),
-                )
+        artist_name = request.artist.artist_name 
+        artist_url = request.artist.artist_url
+        if not artist_name or not artist_url:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details("Artist name and url are required.")
+            context.abort()
+        # Check if artist name or url already exist
+        check_if_name_exists = f"SELECT 1 FROM {table_id} WHERE artist_name = \'{artist_name}\';"
+        query_job = client.query(check_if_name_exists)
+        result = query_job.result()
+        if result.total_rows != 0:
+            context.set_code(grpc.StatusCode.ALREADY_EXISTS)
+            context.set_details("Artist name already exists.")
+            context.abort()
+
+        check_if_url_exists = f"SELECT 1 FROM {table_id} WHERE artist_url = \'{artist_url}\';"
+        query_job = client.query(check_if_url_exists)
+        result = query_job.result()
+        if result.total_rows != 0:
+            context.set_code(grpc.StatusCode.ALREADY_EXISTS)
+            context.set_details("Artist URL already exists.")
+            context.abort()
+
+        getMaxId = f"SELECT MAX(artist_id) FROM {table_id};"
+        query_job = client.query(getMaxId)
+        result = query_job.result()
+        artist_id = list(result)[0][0] + 1
+        # Add artist
+        row_to_insert = [
+            {u"artist_id": artist_id, u"artist_name": artist_name, u"artist_url": artist_url, u"artist_updated_at": request.artist.artist_updated_at},
+        ]
+        client.insert_rows_json(table_id, row_to_insert)  # Make an API request.
+        get_new_artist = f"SELECT * FROM {table_id} WHERE artist_id = {artist_id};"
+
+        query_job = client.query(get_new_artist)
+        result = query_job.result()
+        row = list(result)[0]
+        return AddArtistResponse(artist=Artist(
+                artist_id=row[0],
+                artist_name=row[1],
+                artist_url=row[2],
+                artist_updated_at=str(row[3]),
             )
-        except (psycopg2.DatabaseError) as error:
-            print(error)
-        finally:
-            if conn is not None:
-                conn.close()
+        )
 
 
 

@@ -1,211 +1,175 @@
-import psycopg2
-from psycopg2 import sql
 from concurrent import futures
 import grpc
 import os
 from grpc_interceptor import ExceptionToStatusInterceptor
 from app_pb2 import Track, GetTrackResponse, DeleteTrackResponse, AddTrackResponse, GetTrackGenreResponse, GetGenreTracksResponse
 import app_pb2_grpc
+from google.cloud import bigquery
+from google.oauth2 import service_account
+import json, os
 
-def connect():
-    try:
-        conn = psycopg2.connect(
-            host=os.environ.get('POSTGRES_HOST'),
-            user=os.environ.get('POSTGRES_USER'),
-            password=os.environ.get('POSTGRES_PASSWORD'),
-            port=os.environ.get('POSTGRES_PORT'),
-            database=os.environ.get('POSTGRES_DB')
-        )
-        return conn
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+json_string = os.environ.get('API_TOKEN')
+json_file = json.loads(json_string)
+credentials = service_account.Credentials.from_service_account_info(json_file)
+client = bigquery.Client(credentials=credentials, location="europe-west4")
+table_id = "confident-facet-329316.project.Tracks"
 
 class TrackService(app_pb2_grpc.TrackServiceServicer):
     def getTrack(self, request, context):
-        try:
-            if request.track_id <= 0:
-                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                context.set_details("Track's id must be higher than 0.")
-                context.abort()
-            conn = connect()
-            cur = conn.cursor()
-            query = sql.SQL("SELECT * FROM Tracks WHERE track_id = %s;") 
-            cur.execute(query, (request.track_id,))
-            row = cur.fetchone()
-            conn.commit()
-            if (row is None):
-                context.set_code(grpc.StatusCode.NOT_FOUND)
-                context.set_details("Track not found.")
-                context.abort()
-            return GetTrackResponse(track=Track(
-                    track_id=row[0],
-                    title=row[1],
-                    mix=row[2],
-                    is_remixed=row[3],
-                    release_id=row[4],
-                    release_date=str(row[5]),
-                    genre_id=row[6],
-                    subgenre_id=row[7],
-                    track_url=row[8],
-                    bpm=row[9],
-                    duration=row[10],
-                ))
-        except (psycopg2.DatabaseError) as error:
-            print(error)
-        finally:
-            if conn is not None:
-                conn.close()
+        if request.track_id <= 0:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details("Track's id must be higher than 0.")
+            context.abort()
+        query = f"SELECT * FROM {table_id} WHERE track_id = {request.track_id};" 
+        query_job = client.query(query)
+        result = query_job.result()
+        print(result.total_rows)
+        if result.total_rows == 0:
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            context.set_details("Track not found.")
+            context.abort()
+        row = list(result)[0]
+        print(row)
+        return GetTrackResponse(track=Track(
+                track_id=row[0],
+                title=row[1],
+                mix=row[2],
+                is_remixed=row[3],
+                release_id=row[4],
+                release_date=str(row[5]),
+                genre_id=row[6],
+                subgenre_id=row[7],
+                track_url=row[8],
+                bpm=row[9],
+                duration=row[10],
+            ))
          
     def deleteTrack(self, request, context):
-        try:
-            if request.track_id <= 0:
-                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                context.set_details("Track's id must be higher than 0.")
-                context.abort()
-            conn = connect()
-            cur = conn.cursor()
-            query = sql.SQL("SELECT * FROM Tracks WHERE track_id = %s;") 
-            cur.execute(query, (request.track_id,))
-            row = cur.fetchone()
-            if (row is None):
-                context.set_code(grpc.StatusCode.NOT_FOUND)
-                context.set_details("Track not found.")
-                context.abort()
-            response = DeleteTrackResponse(track=Track(
-                    track_id=row[0],
-                    title=row[1],
-                    mix=row[2],
-                    is_remixed=row[3],
-                    release_id=row[4],
-                    release_date=str(row[5]),
-                    genre_id=row[6],
-                    subgenre_id=row[7],
-                    track_url=row[8],
-                    bpm=row[9],
-                    duration=row[10],
-                )
+        if request.track_id <= 0:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details("Track's id must be higher than 0.")
+            context.abort()
+        query = f"SELECT * FROM {table_id} WHERE track_id = {request.track_id};" 
+        query_job = client.query(query)
+        result = query_job.result()
+        if result.total_rows == 0:
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            context.set_details("Track not found.")
+            context.abort()
+        row = list(result)[0]
+        response = DeleteTrackResponse(track=Track(
+                track_id=row[0],
+                title=row[1],
+                mix=row[2],
+                is_remixed=row[3],
+                release_id=row[4],
+                release_date=str(row[5]),
+                genre_id=row[6],
+                subgenre_id=row[7],
+                track_url=row[8],
+                bpm=row[9],
+                duration=row[10],
             )
-            query = sql.SQL("DELETE FROM Tracks WHERE track_id = %s;") 
-            cur.execute(query, (request.track_id,))
-            conn.commit()
-            return response
-        except (psycopg2.DatabaseError) as error:
-            print(error)
-            conn.rollback()
-        finally:
-            if conn is not None:
-                conn.close()
+        )
+        query = f"DELETE FROM {table_id} WHERE track_id = {request.track_id};"
+        query_job = client.query(query)
+        query_job.result()
+        return response
 
     def addTrack(self, request, context):
+        print("addTrack")
         if request.track.genre_id <= 0 or request.track.subgenre_id <= 0 or request.track.release_id <= 0:
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                 context.set_details("Genres's and Release's ids must be higher than 0.")
                 context.abort()
-        check_if_title_exists = sql.SQL("SELECT 1 FROM Tracks WHERE title = %s")
-        check_if_mix_exists = sql.SQL("SELECT 1 FROM Tracks WHERE mix = %s")
-        check_if_track_url_exists = sql.SQL("SELECT 1 FROM Tracks WHERE track_url = %s")
-        query = sql.SQL("INSERT INTO Tracks (title, mix, is_remixed, release_id, release_date, genre_id, subgenre_id, track_url, bpm, duration) VALUES (%s,%s,%s,%s,TO_DATE(%s, 'YYYY/MM/DD'),%s,%s,%s,%s,%s) RETURNING track_id;") 
-        try:
-            if not request.track.title or not request.track.mix or not request.track.release_date or not request.track.track_url:
-                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                context.set_details("Bad request body.")
-                context.abort()
-            conn = connect()
-            cur = conn.cursor()
-            cur.execute(check_if_title_exists, (request.track.title,))
-            if cur.fetchone():
-                context.set_code(grpc.StatusCode.ALREADY_EXISTS)
-                context.set_details("Track´s title already exists.")
-                context.abort()
-            cur.execute(check_if_mix_exists, (request.track.mix,))
-            if cur.fetchone():
-                context.set_code(grpc.StatusCode.ALREADY_EXISTS)
-                context.set_details("Track´s mix already exists.")
-                context.abort()
-            cur.execute(check_if_track_url_exists, (request.track.track_url,))
-            if cur.fetchone():
-                context.set_code(grpc.StatusCode.ALREADY_EXISTS)
-                context.set_details("Track´s URL already exists.")
-                context.abort()
-            cur.execute(query, (request.track.title, request.track.mix, request.track.is_remixed, request.track.release_id, request.track.release_date, request.track.genre_id, request.track.subgenre_id, request.track.track_url, request.track.bpm, request.track.duration))
-            track_id = cur.fetchone()[0]
-            query = sql.SQL("SELECT * FROM Tracks WHERE track_id = %s;") 
-            cur.execute(query, (track_id,))
-            row = cur.fetchone()
-            conn.commit()
-            return AddTrackResponse(track=Track(
-                    track_id=row[0],
-                    title=row[1],
-                    mix=row[2],
-                    is_remixed=row[3],
-                    release_id=row[4],
-                    release_date=str(row[5]),
-                    genre_id=row[6],
-                    subgenre_id=row[7],
-                    track_url=row[8],
-                    bpm=row[9],
-                    duration=row[10],
-                )
+        if not request.track.title or not request.track.mix or not request.track.release_date or not request.track.track_url:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details("Bad request body.")
+            context.abort()
+        check_if_title_exists = f"SELECT 1 FROM {table_id} WHERE title = \'{request.track.title}\'"
+        query_job = client.query(check_if_title_exists)
+        result = query_job.result()
+        if result.total_rows != 0:
+            context.set_code(grpc.StatusCode.ALREADY_EXISTS)
+            context.set_details("Track´s title already exists.")
+            context.abort()
+        check_if_mix_exists = f"SELECT 1 FROM {table_id} WHERE mix = \'{request.track.mix}\'"
+        query_job = client.query(check_if_mix_exists)
+        result = query_job.result()
+        if result.total_rows != 0:
+            context.set_code(grpc.StatusCode.ALREADY_EXISTS)
+            context.set_details("Track´s mix already exists.")
+            context.abort()
+        check_if_track_url_exists = f"SELECT 1 FROM {table_id} WHERE track_url = \'{request.track.track_url}\'"
+        query_job = client.query(check_if_track_url_exists)
+        result = query_job.result()
+        if result.total_rows != 0:
+            context.set_code(grpc.StatusCode.ALREADY_EXISTS)
+            context.set_details("Track´s URL already exists.")
+            context.abort()
+        getMaxId = f"SELECT MAX(track_id) FROM {table_id};"
+        query_job = client.query(getMaxId)
+        result = query_job.result()
+        track_id = list(result)[0][0] + 1
+        row_to_insert = [
+            {u"track_id": track_id, u"title": request.track.title, u"mix": request.track.mix, u"is_remixed": request.track.is_remixed, u"release_id": request.track.release_id, u"release_date": request.track.release_date, u"genre_id": request.track.genre_id, u"subgenre_id": request.track.subgenre_id, u"track_url": request.track.track_url, u"bpm": request.track.bpm, u"duration": request.track.duration},
+        ]
+        client.insert_rows_json(table_id, row_to_insert)
+        get_new_track = f"SELECT * FROM {table_id} WHERE track_id = {track_id};"
+        query_job = client.query(get_new_track)
+        result = query_job.result()
+        row = list(result)[0]	
+        return AddTrackResponse(track=Track(
+                track_id=row[0],
+                title=row[1],
+                mix=row[2],
+                is_remixed=row[3],
+                release_id=row[4],
+                release_date=str(row[5]),
+                genre_id=row[6],
+                subgenre_id=row[7],
+                track_url=row[8],
+                bpm=row[9],
+                duration=row[10],
             )
-        except (psycopg2.DatabaseError) as error:
-            print(error)
-            conn.rollback()
-        finally:
-            if conn is not None:
-                conn.close()
+        )
 
     def getTrackGenre(self, request, context):
-        try:
-            if request.track_id <= 0:
-                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                context.set_details("Track's id must be higher than 0.")
-                context.abort()
-            conn = connect()
-            cur = conn.cursor()
-            query = sql.SQL("SELECT genre_id FROM Tracks WHERE track_id = %s;") 
-            cur.execute(query, (request.track_id,))
-            row = cur.fetchone()
-            conn.commit()
-            if (row is None):
-                context.set_code(grpc.StatusCode.NOT_FOUND)
-                context.set_details("Track not found.")
-                context.abort()
-            return GetTrackGenreResponse(genre_id=row[0])
-        except (psycopg2.DatabaseError) as error:
-            print(error)
-        finally:
-            if conn is not None:
-                conn.close()
+        if request.track_id <= 0:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details("Track's id must be higher than 0.")
+            context.abort()
+        query = f"SELECT genre_id FROM {table_id} WHERE track_id = {request.track_id};"
+        query_job = client.query(query)
+        result = query_job.result()
+        if result.total_rows == 0:
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            context.set_details("Track not found.")
+            context.abort()
+        row = list(result)[0]
+        return GetTrackGenreResponse(genre_id=row[0])
 
     def getGenreTracks(self, request, context):
-        try:
-            conn = connect()
-            cur = conn.cursor()
-            query = sql.SQL("SELECT * FROM Tracks WHERE genre_id = %s;") 
-            cur.execute(query, (request.genre_id,))
-            rows = cur.fetchall()
-            conn.commit()
-            tracks = []
-            for row in rows:
-                tracks.append(Track(
-                    track_id=row[0],
-                    title=row[1],
-                    mix=row[2],
-                    is_remixed=row[3],
-                    release_id=row[4],
-                    release_date=str(row[5]),
-                    genre_id=row[6],
-                    subgenre_id=row[7],
-                    track_url=row[8],
-                    bpm=row[9],
-                    duration=row[10],
-                ))
-            return GetGenreTracksResponse(track=tracks)
-        except (psycopg2.DatabaseError) as error:
-            print(error)
-        finally:
-            if conn is not None:
-                conn.close()
+        query = f"SELECT * FROM {table_id} WHERE genre_id = {request.genre_id};"
+        query_job = client.query(query)
+        result = query_job.result()
+        tracks = []
+        rows = list(result)
+        for row in rows:
+            tracks.append(Track(
+                track_id=row[0],
+                title=row[1],
+                mix=row[2],
+                is_remixed=row[3],
+                release_id=row[4],
+                release_date=str(row[5]),
+                genre_id=row[6],
+                subgenre_id=row[7],
+                track_url=row[8],
+                bpm=row[9],
+                duration=row[10],
+            ))
+        return GetGenreTracksResponse(track=tracks)
 
 def serve():
     interceptors = [ExceptionToStatusInterceptor()]

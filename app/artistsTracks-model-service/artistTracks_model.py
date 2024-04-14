@@ -1,5 +1,3 @@
-import psycopg2
-from psycopg2 import sql
 from concurrent import futures
 import grpc
 import os
@@ -10,69 +8,47 @@ from app_pb2 import (
 )
 import app_pb2_grpc
 
-def connect():
-    try:
-        conn = psycopg2.connect(
-            host=os.environ.get('POSTGRES_HOST'),
-            user=os.environ.get('POSTGRES_USER'),
-            password=os.environ.get('POSTGRES_PASSWORD'),
-            port=os.environ.get('POSTGRES_PORT'),
-            database=os.environ.get('POSTGRES_DB')
-        )
-        return conn
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+json_string = os.environ.get('API_TOKEN')
+json_file = json.loads(json_string)
+credentials = service_account.Credentials.from_service_account_info(json_file)
+client = bigquery.Client(credentials=credentials, location="europe-west4")
+table_id = "confident-facet-329316.project.ArtistsTracks"
 
 class ArtistsTracksService(app_pb2_grpc.ArtistsTracksService):
     def getArtistTracksIds(self, request, context):
-        try:
-            artist_id = request.artist_id
+        artist_id = request.artist_id
+        if artist_id <= 0:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details("Artist's id must be higher than 0.")
+            context.abort()
+        query = f"SELECT track_id FROM {table_id} WHERE artist_id = {artist_id}"
+        query_job = client.query(query)
+        result = query_job.result()
+        rows = list(result)
+        tracks = []
+        for row in rows:
+            tracks.append(row[0])
+        return GetArtistTracksIdsResponse(tracks=tracks)
+    
+    def addTrackArtists(self, request, context):
+        if request.track_id <= 0:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details("Track's id must be higher than 0.")
+            context.abort()
+        for artist_id in request.artists_ids:
             if artist_id <= 0:
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                 context.set_details("Artist's id must be higher than 0.")
                 context.abort()
-            conn = connect()
-            cur = conn.cursor()
-            query = sql.SQL("SELECT track_id FROM ArtistsTracks WHERE artist_id = %s")
-            cur.execute(query, (artist_id,))
-            rows = cur.fetchall()
-            conn.commit()
-            tracks = []
-            for row in rows:
-                tracks.append(row[0])
-            return GetArtistTracksIdsResponse(tracks=tracks)
-        except (psycopg2.DatabaseError) as error:
-            print(error)
-        finally:
-            if conn is not None:
-                conn.close()
-    
-    def addTrackArtists(self, request, context):
-        try:
-            if request.track_id <= 0:
-                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                context.set_details("Track's id must be higher than 0.")
-                context.abort()
-            for artist_id in request.artists_ids:
-                if artist_id <= 0:
-                    context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                    context.set_details("Artist's id must be higher than 0.")
-                    context.abort()
-            conn = connect()
-            cur = conn.cursor() 
-            insert_query = sql.SQL("INSERT INTO ArtistsTracks VALUES (%s, %s);")
-            query = sql.SQL("SELECT 1 FROM ArtistsTracks WHERE artist_id = %s AND track_id = %s;")
-            for artist_id in request.artists_ids:
-                cur.execute(query, (artist_id, request.track_id))
-                if not cur.fetchone():
-                    cur.execute(insert_query, (artist_id, request.track_id))
-            conn.commit()
-            return AddTrackArtistsResponse()
-        except (psycopg2.DatabaseError) as error:
-            print(error)
-        finally:
-            if conn is not None:
-                conn.close()
+        query = f"SELECT 1 FROM {table_id} WHERE artist_id = {artist_id} AND track_id = {request.track_id};"
+        for artist_id in request.artists_ids:
+            query_job = client.query(query)
+            result = query_job.result()
+            if result.total_rows == 0:
+                row_to_insert = [{u"artist_id": artist_id, u"track_id": request.track_id}]
+                client.insert_rows_json(table_id, row_to_insert)
+        conn.commit()
+        return AddTrackArtistsResponse()
 
 def serve():
     interceptors = [ExceptionToStatusInterceptor()]
