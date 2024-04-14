@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: playlist-model-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: playlist-model
+  template:
+    metadata:
+      labels:
+        app: playlist-model
+    spec:
+      containers:
+      - name: playlist-model
+        image: group02-playlist-model-service:latest
+        imagePullPolicy: Never
+            
+        

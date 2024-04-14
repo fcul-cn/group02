@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: artist-logic-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: artist-logic
+  template:
+    metadata:
+      labels:
+        app: artist-logic
+    spec:
+      containers:
+      - name: artist-logic
+        image: group02-artist-logic-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5001   

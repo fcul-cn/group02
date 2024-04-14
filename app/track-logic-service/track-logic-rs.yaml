@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: track-logic-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: track-logic
+  template:
+    metadata:
+      labels:
+        app: track-logic
+    spec:
+      containers:
+      - name: track-logic
+        image: group02-track-logic-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5000

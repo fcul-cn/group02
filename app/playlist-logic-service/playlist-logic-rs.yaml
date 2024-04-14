@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: playlist-logic-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: playlist-logic
+  template:
+    metadata:
+      labels:
+        app: playlist-logic
+    spec:
+      containers:
+      - name: playlist-logic
+        image: group02-playlist-logic-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5003
