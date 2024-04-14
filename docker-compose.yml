@@ -26,6 +26,7 @@ services:
       dockerfile: ./app/track-model-service/Dockerfile
     container_name: track-model-service
     environment:
+      API_TOKEN: ${API_TOKEN}
       POSTGRES_HOST: ${POSTGRES_TRACK_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -77,6 +78,7 @@ services:
       dockerfile: ./app/artist-model-service/Dockerfile
     container_name: artist-model-service
     environment:
+      API_TOKEN: ${API_TOKEN}
       POSTGRES_HOST: ${POSTGRES_ARTIST_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -128,6 +130,7 @@ services:
       dockerfile: ./app/genre-model-service/Dockerfile
     container_name: genre-model-service
     environment:
+      API_TOKEN: ${API_TOKEN}
       POSTGRES_HOST: ${POSTGRES_GENRE_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -230,6 +233,7 @@ services:
       dockerfile: ./app/release-model-service/Dockerfile
     container_name: release-model-service
     environment:
+      API_TOKEN: ${API_TOKEN}
       POSTGRES_HOST: ${POSTGRES_RELEASE_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -265,6 +269,7 @@ services:
       dockerfile: ./app/artistsReleases-model-service/Dockerfile
     container_name: artists-releases-model-service
     environment:
+      API_TOKEN: ${API_TOKEN}
       POSTGRES_HOST: ${POSTGRES_ARTISTS_RELEASES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -300,6 +305,7 @@ services:
       dockerfile: ./app/artistsTracks-model-service/Dockerfile
     container_name: artists-tracks-model-service
     environment:
+      API_TOKEN: ${API_TOKEN}
       POSTGRES_HOST: ${POSTGRES_ARTISTS_TRACKS_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_DB: ${POSTGRES_DB}

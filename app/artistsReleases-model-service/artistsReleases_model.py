@@ -10,6 +10,9 @@ import app_pb2_grpc
 from google.cloud import bigquery
 from google.oauth2 import service_account
 import json, os
+import grpc
+from grpc_health.v1 import health
+from grpc_health.v1 import health_pb2, health_pb2_grpc
 
 json_string = os.environ.get('API_TOKEN')
 json_file = json.loads(json_string)
@@ -52,6 +55,11 @@ class ArtistsReleasesService(app_pb2_grpc.ArtistsReleasesService):
                 client.insert_rows_json(table_id, row_to_insert)
         return AddReleaseArtistsResponse()
 
+class HealthServicer(health_pb2_grpc.HealthServicer):
+    def Check(self, request, context):
+        return health_pb2.HealthCheckResponse(
+            status=health_pb2.HealthCheckResponse.SERVING)
+
 def serve():
     interceptors = [ExceptionToStatusInterceptor()]
     server = grpc.server(
@@ -60,6 +68,12 @@ def serve():
     app_pb2_grpc.add_ArtistsReleasesServiceServicer_to_server(
         ArtistsReleasesService(), server
     )
+    
+    # Add HealthServicer to the server.
+    health_pb2_grpc.add_HealthServicer_to_server(
+        HealthServicer(), server
+    )
+    
     server.add_insecure_port("[::]:50053")
     server.start()
     server.wait_for_termination()

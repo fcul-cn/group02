@@ -133,3 +133,7 @@ def update_playlist_tracks(playlist_id):
             return rpc_error.details(), 400
     except Exception as e:
         return "Internal error: " + str(e), 500
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({'status': 'healthy'}), 200

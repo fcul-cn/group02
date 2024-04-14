@@ -14,7 +14,9 @@ from app_pb2 import (
     DeleteTrackFromPlaylistsResponse
 )
 import app_pb2_grpc
-from grpc_interceptor.exceptions import NotFound, InvalidArgument
+from grpc_interceptor.exceptions import NotFound, InvalidArgument, AlreadyExists
+from grpc_health.v1.health import HealthServicer
+from grpc_health.v1 import health_pb2, health_pb2_grpc
 
 def connect():
     try:
@@ -211,6 +213,11 @@ class PlaylistService(app_pb2_grpc.PlaylistServiceServicer):
             if conn is not None:
                 conn.close()
 
+class HealthServicer(health_pb2_grpc.HealthServicer):
+    def Check(self, request, context):
+        return health_pb2.HealthCheckResponse(
+            status=health_pb2.HealthCheckResponse.SERVING)
+        
 def serve():
     interceptors = [ExceptionToStatusInterceptor()]
     server = grpc.server(
@@ -219,6 +226,12 @@ def serve():
     app_pb2_grpc.add_PlaylistServiceServicer_to_server(
         PlaylistService(), server
     )
+    
+    # Add HealthServicer to the server.
+    health_pb2_grpc.add_HealthServicer_to_server(
+        HealthServicer(), server
+    )
+    
     server.add_insecure_port("[::]:50057")
     server.start()
     server.wait_for_termination()

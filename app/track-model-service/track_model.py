@@ -4,6 +4,9 @@ import os
 from grpc_interceptor import ExceptionToStatusInterceptor
 from app_pb2 import Track, GetTrackResponse, DeleteTrackResponse, AddTrackResponse, GetTrackGenreResponse, GetGenreTracksResponse
 import app_pb2_grpc
+from grpc_interceptor.exceptions import NotFound, InvalidArgument, AlreadyExists
+from grpc_health.v1.health import HealthServicer
+from grpc_health.v1 import health_pb2, health_pb2_grpc
 from google.cloud import bigquery
 from google.oauth2 import service_account
 import json, os
@@ -170,7 +173,11 @@ class TrackService(app_pb2_grpc.TrackServiceServicer):
                 duration=row[10],
             ))
         return GetGenreTracksResponse(track=tracks)
-
+        
+class HealthServicer(health_pb2_grpc.HealthServicer):
+    def Check(self, request, context):
+        return health_pb2.HealthCheckResponse(
+            status=health_pb2.HealthCheckResponse.SERVING)
 def serve():
     interceptors = [ExceptionToStatusInterceptor()]
     server = grpc.server(
@@ -179,6 +186,12 @@ def serve():
     app_pb2_grpc.add_TrackServiceServicer_to_server(
         TrackService(), server
     )
+    
+     # Add HealthServicer to the server.
+    health_pb2_grpc.add_HealthServicer_to_server(
+        HealthServicer(), server
+    )
+    
     server.add_insecure_port("[::]:50051")
     server.start()
     server.wait_for_termination()
