@@ -41,39 +41,44 @@ class ReleaseService(app_pb2_grpc.ReleaseServiceServicer):
             ))
 
     def AddRelease(self, request, context):
+        print("enter")
+        print(f"request: {request.release.release_title}")
         if not request.release.release_title or not request.release.release_date or not request.release.release_url:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details("Release title, release date and url are required.")
             context.abort()
-        check_if_title_exists = f"SELECT 1 FROM {table_id} WHERE release_title = {request.release.release_title}"
+        print("enter1")
+        check_if_title_exists = f"SELECT 1 FROM {table_id} WHERE release_title = \'{request.release.release_title}\'"
         query_job = client.query(check_if_title_exists)
         result = query_job.result()
         if result.total_rows != 0:
             context.set_code(grpc.StatusCode.ALREADY_EXISTS)
             context.set_details("Release's title already exists.")
             context.abort()
-        check_if_url_exists = f"SELECT 1 FROM {table_id} WHERE release_url = {request.release.release_url}"
-        query_job = client.query(check_if_name_exists)
+        print("enter2")
+        check_if_url_exists = f"SELECT 1 FROM {table_id} WHERE release_url = \'{request.release.release_url}\'"
+        query_job = client.query(check_if_url_exists)
         result = query_job.result()
         if result.total_rows != 0:
             context.set_code(grpc.StatusCode.ALREADY_EXISTS)
             context.set_details("Release's url already exists.")
             context.abort()
-
+        print("enter3")
         getMaxId = f"SELECT MAX(release_id) FROM {table_id};"
         query_job = client.query(getMaxId)
         result = query_job.result()
         release_id = list(result)[0][0] + 1
-
+        print(f"release_id: {release_id}")
         row_to_insert = [
-            {u"release_title":request.release.release_title, u"release_date":request.release.release_date, u"release_url":request.release.release_url, u"updated_on":datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+            {u"release_id": release_id, u"release_title":request.release.release_title, u"release_date":request.release.release_date, u"release_url":request.release.release_url, u"updated_on":datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         ]
         client.insert_rows_json(table_id, row_to_insert)
-
+        print("enter4")
         query = f"SELECT * FROM {table_id} WHERE release_id = {release_id};" 
-        query_job = client.query(get_new_artist)
+        query_job = client.query(query)
         result = query_job.result()
         row = list(result)[0]
+        print(f"Release added: {row[0]}")
         return AddReleaseResponse(release=Release(
                 release_id=row[0],
                 release_title=row[1],

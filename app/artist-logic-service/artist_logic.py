@@ -75,6 +75,7 @@ def getArtistReleases(artist_id):
         request = GetArtistReleasesIdsRequest(artist_id=artist_id)
         response = artist_releases_client.getArtistReleasesIds(request)
         releases = []
+        print(f"response: {response.releases_ids}")
         for release_id in response.releases_ids:
             request = GetReleaseRequest(release_id=release_id)
             res = release_client.GetRelease(request)
@@ -98,24 +99,26 @@ def getArtistReleases(artist_id):
 @app.get("/api/artists/<int:artist_id>/tracks")
 def getArtistTracks(artist_id):
     try:
-        request = GetArtistTracksIdsRequest(artist_id=artist_id)
-        response = artists_tracks_client.getArtistTracks(request)
+        print(f"artist_id: {artist_id}")
+        req = GetArtistTracksIdsRequest(artist_id=artist_id)
+        response = artists_tracks_client.getArtistTracksIds(req)
         tracks = []
         for track_id in response.tracks_ids:
-            request = GetTrackRequest(track_id=track_id)
-            res = track_client.getTrack(request)
+            req = GetTrackRequest(track_id=track_id)
+            res = track_client.getTrack(req)
+            t = res.track
             track = {
-                "track_id": res.track.track.track.track_id,
-                "title": res.track.track.title,
-                "mix": res.track.track.mix,
-                "is_remixed": res.track.track.is_remixed,
-                "release_id": res.track.track.release_id,
-                "release_date": res.track.track.release_date,
-                "genre_id": res.track.track.genre_id,
-                "subgenre_id": res.track.track.subgenre_id,
-                "track_url": res.track.track.track_url,
-                "bpm": res.track.track.bpm,
-                "duration": res.track.track.duration
+                "track_id": t.track_id,
+                "title": t.title,
+                "mix": t.mix,
+                "is_remixed": t.is_remixed,
+                "release_id": t.release_id,
+                "release_date": t.release_date,
+                "genre_id": t.genre_id,
+                "subgenre_id": t.subgenre_id,
+                "track_url": t.track_url,
+                "bpm": t.bpm,
+                "duration": t.duration
             }
             tracks.append(track)
         return tracks, 200

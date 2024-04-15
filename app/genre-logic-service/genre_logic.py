@@ -106,11 +106,15 @@ def update_genre(genre_id):
 @app.get("/api/genres/<int:genre_id>/tracks")
 def get_genre_tracks(genre_id):
     try:
-        request = GetGenreRequest(genre_id=genre_id)
-        genre_client.GetGenre(request)
-        request = GetGenreTracksRequest(genre_id=genre_id)
-        response = track_client.getGenreTracks(request)
+        print(f"genre_id: {genre_id}")
+        offset = request.args.get('offset')
+        limit = request.args.get('limit')
+        req = GetGenreRequest(genre_id=genre_id)
+        genre_client.GetGenre(req)
+        req = GetGenreTracksRequest(genre_id=genre_id, limit=int(limit), offset=int(offset))
+        response = track_client.getGenreTracks(req)
         tracks = []
+        print(f"response: {response}")
         for track in response.track:
             tracks.append({
                 "track_id": track.track_id,

@@ -108,6 +108,8 @@ message UpdateGenreResponse {
 
 message GetGenreTracksRequest {
     int32 genre_id = 1;
+    int32 limit = 2;
+    int32 offset = 3;
 }
 
 message GetGenreTracksResponse {
@@ -321,6 +323,6 @@ service ArtistsReleasesService {
 }
 
 service ArtistsTracksService {
-    rpc getArtistTracks (GetArtistTracksIdsRequest) returns (GetArtistTracksIdsResponse);
+    rpc getArtistTracksIds (GetArtistTracksIdsRequest) returns (GetArtistTracksIdsResponse);
     rpc addTrackArtists (AddTrackArtistsRequest) returns (AddTrackArtistsResponse);
 }

@@ -22,21 +22,27 @@ table_id = "confident-facet-329316.project.ArtistsReleases"
 
 class ArtistsReleasesService(app_pb2_grpc.ArtistsReleasesService):
     def getArtistReleasesIds(self, request, context):
-        artist_id = request.artist_id
-        if artist_id <= 0:
-            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-            context.set_details("Artist's id must be higher than 0.")
-            context.abort()
-        query = f"SELECT release_id FROM {table_id} WHERE artist_id = {artist_id}"
-        query_job = client.query(query)
-        result = query_job.result()
-        rows = list(result)
-        releases = []
-        for row in rows:
-            releases.append(row[0])
-        return GetArtistReleasesIdsResponse(releases_ids=releases)
+        try:
+            artist_id = request.artist_id
+            if artist_id <= 0:
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                context.set_details("Artist's id must be higher than 0.")
+                context.abort()
+            query = f"SELECT release_id FROM {table_id} WHERE artist_id = {artist_id}"
+            query_job = client.query(query)
+            result = query_job.result()
+            rows = list(result)
+            releases = []
+            for row in rows:
+                releases.append(int(row[0]))
+            print(f"releases: {releases}")
+            return GetArtistReleasesIdsResponse(releases_ids=releases)
+        except Exception as e:
+            print(f"Error: {e}")
     
     def addReleaseArtists(self, request, context):
+        print(f"request: {request.artists_ids}")
+        print(f"request: {request.release_id}")
         if request.release_id <= 0:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details("Release's id must be higher than 0.")
@@ -46,8 +52,8 @@ class ArtistsReleasesService(app_pb2_grpc.ArtistsReleasesService):
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                 context.set_details("Artist's id must be higher than 0.")
                 context.abort()
-        query = f"SELECT 1 FROM {table_id} WHERE artist_id = {artist_id} AND release_id = {request.release_id};"
         for artist_id in request.artists_ids:
+            query = f"SELECT 1 FROM {table_id} WHERE artist_id = {artist_id} AND release_id = {request.release_id};"
             query_job = client.query(query)
             result = query_job.result()
             if result.total_rows == 0:
