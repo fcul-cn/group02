@@ -28,6 +28,12 @@ spec:
           httpGet:
             path: "/health"
             port: 5001
+        startupProbe:
+          httpGet:
+            path: "/health"
+            port: 5001
+          failureThreshold: 5
+          periodSeconds: 10    
 ---
 
 apiVersion: apps/v1
@@ -58,6 +64,13 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50052
+        startupProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50052
+          failureThreshold: 5
+          periodSeconds: 10    
 ---
 
 apiVersion: apps/v1
@@ -88,6 +101,13 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50053
+        startupProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50053
+          failureThreshold: 5
+          periodSeconds: 10
 ---
 
 apiVersion: apps/v1
@@ -118,6 +138,13 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50054
+        startupProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50054
+          failureThreshold: 5
+          periodSeconds: 10    
 ---
 
 apiVersion: apps/v1
@@ -150,7 +177,12 @@ spec:
           httpGet:
             path: "/health"
             port: 5002
-
+        startupProbe:
+          httpGet:
+            path: "/health"
+            port: 5002
+          failureThreshold: 5
+          periodSeconds: 10
 ---
 
 apiVersion: apps/v1
@@ -181,6 +213,13 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50055
+        startupProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50055
+          failureThreshold: 5
+          periodSeconds: 10
 ---
 
 apiVersion: apps/v1
@@ -213,7 +252,12 @@ spec:
           httpGet:
             path: "/health"
             port: 5003
-
+        startupProbe:
+          httpGet:
+            path: "/health"
+            port: 5003
+          failureThreshold: 5
+          periodSeconds: 10
 ---
 
 apiVersion: apps/v1
@@ -244,6 +288,13 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50057
+        startupProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50057
+          failureThreshold: 5
+          periodSeconds: 10    
 ---
 
 apiVersion: apps/v1
@@ -276,7 +327,12 @@ spec:
           httpGet:
             path: "/health"
             port: 5004
-
+        startupProbe:
+          httpGet:
+            path: "/health"
+            port: 5004
+          failureThreshold: 5
+          periodSeconds: 10
 ---
 
 apiVersion: apps/v1
@@ -307,6 +363,13 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50058
+        startupProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50058
+          failureThreshold: 5
+          periodSeconds: 10    
 ---
 
 apiVersion: apps/v1
@@ -339,7 +402,12 @@ spec:
           httpGet:
             path: "/health"
             port: 5000
-
+        startupProbe:
+          httpGet:
+            path: "/health"
+            port: 5000
+          failureThreshold: 5
+          periodSeconds: 10
 ---
 
 apiVersion: apps/v1
@@ -370,3 +438,10 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50051
+        startupProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50051
+          failureThreshold: 5
+          periodSeconds: 10    
