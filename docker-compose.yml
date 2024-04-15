@@ -338,6 +338,24 @@ services:
   #     idc-net:
   #       ipv4_address: 172.100.10.20
 
+  auth-service:
+    build:
+      context: .
+      dockerfile: ./app/auth-service/Dockerfile
+    container_name: auth-service
+    environment:
+      TRACK_HOST: track-logic-service
+      GENRE_HOST: genre-logic-service
+      PLAYLIST_HOST: playlist-logic-service
+      RELEASE_HOST: release-logic-service
+      #ARTISTS_TRACKS_HOST: artists-logic-service
+    ports:
+      - "5055:5055"
+    networks:
+      idc-net:
+        ipv4_address: 172.100.10.55
+
+
 # volumes:
 #   artist-data:
 #     driver: local
