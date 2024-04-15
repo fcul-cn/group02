@@ -30,3 +30,5 @@ swagger-ui-bundle==0.0.9
 urllib3==1.26.12
 Werkzeug==2.2.2
 jwt==1.3.1
+python-dotenv>=0.19.2
+authlib>=1.0
