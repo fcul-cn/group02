@@ -60,7 +60,7 @@ components:
         bpm:
           type: "number"
         duration:
-          type: "number"
+          type: "string"
     Release:
       type: "object"
       properties:
@@ -125,7 +125,7 @@ components:
           bpm:
             type: "number"
           duration:
-            type: "number"
+            type: "string"
     NewRelease:
       type: "object"
       properties:

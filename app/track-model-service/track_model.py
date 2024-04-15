@@ -26,13 +26,11 @@ class TrackService(app_pb2_grpc.TrackServiceServicer):
         query = f"SELECT * FROM {table_id} WHERE track_id = {request.track_id};" 
         query_job = client.query(query)
         result = query_job.result()
-        print(result.total_rows)
         if result.total_rows == 0:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details("Track not found.")
             context.abort()
         row = list(result)[0]
-        print(row)
         return GetTrackResponse(track=Track(
                 track_id=row[0],
                 title=row[1],
@@ -80,7 +78,6 @@ class TrackService(app_pb2_grpc.TrackServiceServicer):
         return response
 
     def addTrack(self, request, context):
-        print("addTrack")
         if request.track.genre_id <= 0 or request.track.subgenre_id <= 0 or request.track.release_id <= 0:
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                 context.set_details("Genres's and Release's ids must be higher than 0.")

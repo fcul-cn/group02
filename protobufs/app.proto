@@ -189,7 +189,7 @@ message Track {
     int32 subgenre_id = 8;
     string track_url = 9;
     int32 bpm = 10;
-    int32 duration = 11;
+    string duration = 11;
 }
 
 message NewTrack {
@@ -202,7 +202,7 @@ message NewTrack {
     int32 subgenre_id = 7;
     string track_url = 8;
     int32 bpm = 9;
-    int32 duration = 10;
+    string duration = 10;
 }
 
 message GetTrackRequest {

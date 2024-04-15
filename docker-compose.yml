@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.3"
 
 services:
   # TRACK
@@ -12,6 +12,7 @@ services:
       GENRE_HOST: genre-model-service
       PLAYLIST_HOST: playlist-model-service
       RELEASE_HOST: release-model-service
+      ARTISTS_TRACKS_HOST: artists-tracks-model-service
     ports:
       - "5000:5000"
     networks:
@@ -27,50 +28,50 @@ services:
     container_name: track-model-service
     environment:
       API_TOKEN: ${API_TOKEN}
-      POSTGRES_HOST: ${POSTGRES_TRACK_HOST}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # POSTGRES_HOST: ${POSTGRES_TRACK_HOST}
+      # POSTGRES_PORT: ${POSTGRES_PORT}
+      # POSTGRES_DB: ${POSTGRES_DB}
+      # POSTGRES_USER: ${POSTGRES_USER}
+      # POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       idc-net:
         ipv4_address: 172.100.10.3
-    depends_on:
-      - track-db
+    # depends_on:
+    #   - track-db
 
-  track-db:
-    container_name: track-db
-    build:
-      context: .
-      dockerfile: ./model/track/Dockerfile
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - 5433:5432
-    volumes:
-      - track-data:/var/lib/postgresql/data
-    networks:
-      idc-net:
-        ipv4_address: 172.100.10.4
+  # track-db:
+  #   container_name: track-db
+  #   build:
+  #     context: .
+  #     dockerfile: ./model/track/Dockerfile
+  #   environment:
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #   ports:
+  #     - 5433:5432
+  #   volumes:
+  #     - track-data:/var/lib/postgresql/data
+  #   networks:
+  #     idc-net:
+  #       ipv4_address: 172.100.10.4
 
   # ARTIST
-  artist-logic-service:
-    build:
-      context: .
-      dockerfile: ./app/artist-logic-service/Dockerfile
-    container_name: artist-logic-service
-    environment:
-      ARTIST_HOST: artist-model-service
-      ARTISTS_RELEASES_HOST: artists-releases-model-service
-    ports:
-      - "5001:5001"
-    networks:
-      idc-net:
-        ipv4_address: 172.100.10.5
-    depends_on:
-      - artist-model-service
+  # artist-logic-service:
+  #   build:
+  #     context: .
+  #     dockerfile: ./app/artist-logic-service/Dockerfile
+  #   container_name: artist-logic-service
+  #   environment:
+  #     ARTIST_HOST: artist-model-service
+  #     ARTISTS_RELEASES_HOST: artists-releases-model-service
+  #   ports:
+  #     - "5001:5001"
+  #   networks:
+  #     idc-net:
+  #       ipv4_address: 172.100.10.5
+  #   depends_on:
+  #     - artist-model-service
 
   artist-model-service:
     build:
@@ -79,50 +80,50 @@ services:
     container_name: artist-model-service
     environment:
       API_TOKEN: ${API_TOKEN}
-      POSTGRES_HOST: ${POSTGRES_ARTIST_HOST}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # POSTGRES_HOST: ${POSTGRES_ARTIST_HOST}
+      # POSTGRES_PORT: ${POSTGRES_PORT}
+      # POSTGRES_DB: ${POSTGRES_DB}
+      # POSTGRES_USER: ${POSTGRES_USER}
+      # POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       idc-net:
         ipv4_address: 172.100.10.6
-    depends_on:
-      - artist-db
+    # depends_on:
+    #   - artist-db
 
-  artist-db:
-    container_name: artist-db
-    build:
-      context: .
-      dockerfile: ./model/artist/Dockerfile
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - 5434:5432
-    volumes:
-      - artist-data:/var/lib/postgresql/data
-    networks:
-      idc-net:
-        ipv4_address: 172.100.10.7
+  # artist-db:
+  #   container_name: artist-db
+  #   build:
+  #     context: .
+  #     dockerfile: ./model/artist/Dockerfile
+  #   environment:
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #   ports:
+  #     - 5434:5432
+  #   volumes:
+  #     - artist-data:/var/lib/postgresql/data
+  #   networks:
+  #     idc-net:
+  #       ipv4_address: 172.100.10.7
 
   # GENRE
-  genre-logic-service:
-    build:
-      context: .
-      dockerfile: ./app/genre-logic-service/Dockerfile
-    container_name: genre-logic-service
-    environment:
-      TRACK_HOST: track-model-service
-      GENRE_HOST: genre-model-service
-    ports:
-      - "5002:5002"
-    networks:
-      idc-net:
-        ipv4_address: 172.100.10.8
-    depends_on:
-      - genre-model-service
+  # genre-logic-service:
+  #   build:
+  #     context: .
+  #     dockerfile: ./app/genre-logic-service/Dockerfile
+  #   container_name: genre-logic-service
+  #   environment:
+  #     TRACK_HOST: track-model-service
+  #     GENRE_HOST: genre-model-service
+  #   ports:
+  #     - "5002:5002"
+  #   networks:
+  #     idc-net:
+  #       ipv4_address: 172.100.10.8
+  #   depends_on:
+  #     - genre-model-service
 
   genre-model-service:
     build:
@@ -131,101 +132,101 @@ services:
     container_name: genre-model-service
     environment:
       API_TOKEN: ${API_TOKEN}
-      POSTGRES_HOST: ${POSTGRES_GENRE_HOST}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # POSTGRES_HOST: ${POSTGRES_GENRE_HOST}
+      # POSTGRES_PORT: ${POSTGRES_PORT}
+      # POSTGRES_DB: ${POSTGRES_DB}
+      # POSTGRES_USER: ${POSTGRES_USER}
+      # POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       idc-net:
         ipv4_address: 172.100.10.9
-    depends_on:
-      - genre-db
+    # depends_on:
+    #   - genre-db
 
-  genre-db:
-    container_name: genre-db
-    build:
-      context: .
-      dockerfile: ./model/genre/Dockerfile
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - 5435:5432
-    volumes:
-      - genre-data:/var/lib/postgresql/data
-    networks:
-      idc-net:
-        ipv4_address: 172.100.10.10
+  # genre-db:
+  #   container_name: genre-db
+  #   build:
+  #     context: .
+  #     dockerfile: ./model/genre/Dockerfile
+  #   environment:
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #   ports:
+  #     - 5435:5432
+  #   volumes:
+  #     - genre-data:/var/lib/postgresql/data
+  #   networks:
+  #     idc-net:
+  #       ipv4_address: 172.100.10.10
 
-  playlist-logic-service:
-    build:
-      context: .
-      dockerfile: ./app/playlist-logic-service/Dockerfile
-    container_name: playlist-logic-service
-    environment:
-      PLAYLIST_HOST: playlist-model-service
-      TRACK_HOST: track-model-service
-    ports:
-      - "5003:5003"
-    networks:
-      idc-net:
-        ipv4_address: 172.100.10.11
-    depends_on:
-      - playlist-model-service
+  # playlist-logic-service:
+  #   build:
+  #     context: .
+  #     dockerfile: ./app/playlist-logic-service/Dockerfile
+  #   container_name: playlist-logic-service
+  #   environment:
+  #     PLAYLIST_HOST: playlist-model-service
+  #     TRACK_HOST: track-model-service
+  #   ports:
+  #     - "5003:5003"
+  #   networks:
+  #     idc-net:
+  #       ipv4_address: 172.100.10.11
+  #   depends_on:
+  #     - playlist-model-service
 
-  playlist-model-service:
-    build:
-      context: .
-      dockerfile: ./app/playlist-model-service/Dockerfile
-    container_name: playlist-model-service
-    environment:
-      POSTGRES_HOST: ${POSTGRES_PLAYLIST_HOST}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    networks:
-      idc-net:
-        ipv4_address: 172.100.10.12
-    depends_on:
-      - playlist-db
+  # playlist-model-service:
+  #   build:
+  #     context: .
+  #     dockerfile: ./app/playlist-model-service/Dockerfile
+  #   container_name: playlist-model-service
+  #   environment:
+  #     POSTGRES_HOST: ${POSTGRES_PLAYLIST_HOST}
+  #     POSTGRES_PORT: ${POSTGRES_PORT}
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #   networks:
+  #     idc-net:
+  #       ipv4_address: 172.100.10.12
+  #   depends_on:
+  #     - playlist-db
 
-  playlist-db:
-    container_name: playlist-db
-    build:
-      context: .
-      dockerfile: ./model/playlist/Dockerfile
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - 5436:5432
-    volumes:
-      - playlist-data:/var/lib/postgresql/data
-    networks:
-      idc-net:
-        ipv4_address: 172.100.10.13
+  # playlist-db:
+  #   container_name: playlist-db
+  #   build:
+  #     context: .
+  #     dockerfile: ./model/playlist/Dockerfile
+  #   environment:
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #   ports:
+  #     - 5436:5432
+  #   volumes:
+  #     - playlist-data:/var/lib/postgresql/data
+  #   networks:
+  #     idc-net:
+  #       ipv4_address: 172.100.10.13
 
   # RELEASE
-  release-logic-service:
-    build:
-      context: .
-      dockerfile: ./app/release-logic-service/Dockerfile
-    container_name: release-logic-service
-    environment:
-      RELEASE_HOST: release-model-service
-      ARTIST_HOST: artist-model-service
-      ARTIST_RELEASE_HOST: artists-releases-model-service
-    ports:
-      - "5004:5004"
-    networks:
-      idc-net:
-        ipv4_address: 172.100.10.14
-    depends_on:
-      - release-model-service
+  # release-logic-service:
+  #   build:
+  #     context: .
+  #     dockerfile: ./app/release-logic-service/Dockerfile
+  #   container_name: release-logic-service
+  #   environment:
+  #     RELEASE_HOST: release-model-service
+  #     ARTIST_HOST: artist-model-service
+  #     ARTIST_RELEASE_HOST: artists-releases-model-service
+  #   ports:
+  #     - "5004:5004"
+  #   networks:
+  #     idc-net:
+  #       ipv4_address: 172.100.10.14
+  #   depends_on:
+  #     - release-model-service
 
   release-model-service:
     build:
@@ -234,33 +235,33 @@ services:
     container_name: release-model-service
     environment:
       API_TOKEN: ${API_TOKEN}
-      POSTGRES_HOST: ${POSTGRES_RELEASE_HOST}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # POSTGRES_HOST: ${POSTGRES_RELEASE_HOST}
+      # POSTGRES_PORT: ${POSTGRES_PORT}
+      # POSTGRES_DB: ${POSTGRES_DB}
+      # POSTGRES_USER: ${POSTGRES_USER}
+      # POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       idc-net:
         ipv4_address: 172.100.10.15
-    depends_on:
-      - release-db
+    # depends_on:
+    #   - release-db
 
-  release-db:
-    container_name: release-db
-    build:
-      context: .
-      dockerfile: ./model/release/Dockerfile
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - 5437:5432
-    volumes:
-      - release-data:/var/lib/postgresql/data
-    networks:
-      idc-net:
-        ipv4_address: 172.100.10.16
+  # release-db:
+  #   container_name: release-db
+  #   build:
+  #     context: .
+  #     dockerfile: ./model/release/Dockerfile
+  #   environment:
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #   ports:
+  #     - 5437:5432
+  #   volumes:
+  #     - release-data:/var/lib/postgresql/data
+  #   networks:
+  #     idc-net:
+  #       ipv4_address: 172.100.10.16
 
   # ARTISTS RELEASES
   artists-releases-model-service:
@@ -270,33 +271,33 @@ services:
     container_name: artists-releases-model-service
     environment:
       API_TOKEN: ${API_TOKEN}
-      POSTGRES_HOST: ${POSTGRES_ARTISTS_RELEASES_HOST}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # POSTGRES_HOST: ${POSTGRES_ARTISTS_RELEASES_HOST}
+      # POSTGRES_PORT: ${POSTGRES_PORT}
+      # POSTGRES_DB: ${POSTGRES_DB}
+      # POSTGRES_USER: ${POSTGRES_USER}
+      # POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       idc-net:
         ipv4_address: 172.100.10.17
-    depends_on:
-      - artists-releases-db
+  #   depends_on:
+  #     - artists-releases-db
 
-  artists-releases-db:
-    container_name: artists-releases-db
-    build:
-      context: .
-      dockerfile: ./model/artistsReleases/Dockerfile
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - 5438:5432
-    volumes:
-      - artist-releases-data:/var/lib/postgresql/data
-    networks:
-      idc-net:
-        ipv4_address: 172.100.10.18
+  # artists-releases-db:
+  #   container_name: artists-releases-db
+  #   build:
+  #     context: .
+  #     dockerfile: ./model/artistsReleases/Dockerfile
+  #   environment:
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #   ports:
+  #     - 5438:5432
+  #   volumes:
+  #     - artist-releases-data:/var/lib/postgresql/data
+  #   networks:
+  #     idc-net:
+  #       ipv4_address: 172.100.10.18
 
   # ARTISTS TRACKS
   artists-tracks-model-service:
@@ -306,49 +307,49 @@ services:
     container_name: artists-tracks-model-service
     environment:
       API_TOKEN: ${API_TOKEN}
-      POSTGRES_HOST: ${POSTGRES_ARTISTS_TRACKS_HOST}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # POSTGRES_HOST: ${POSTGRES_ARTISTS_TRACKS_HOST}
+      # POSTGRES_PORT: ${POSTGRES_PORT}
+      # POSTGRES_DB: ${POSTGRES_DB}
+      # POSTGRES_USER: ${POSTGRES_USER}
+      # POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       idc-net:
         ipv4_address: 172.100.10.19
-    depends_on:
-      - artists-tracks-db
+  #   depends_on:
+  #     - artists-tracks-db
 
-  artists-tracks-db:
-    container_name: artists-tracks-db
-    build:
-      context: .
-      dockerfile: ./model/artistsTracks/Dockerfile
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - 5439:5432
-    volumes:
-      - artists-tracks-data:/var/lib/postgresql/data
-    networks:
-      idc-net:
-        ipv4_address: 172.100.10.20
+  # artists-tracks-db:
+  #   container_name: artists-tracks-db
+  #   build:
+  #     context: .
+  #     dockerfile: ./model/artistsTracks/Dockerfile
+  #   environment:
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #   ports:
+  #     - 5439:5432
+  #   volumes:
+  #     - artists-tracks-data:/var/lib/postgresql/data
+  #   networks:
+  #     idc-net:
+  #       ipv4_address: 172.100.10.20
 
-volumes:
-  artist-data:
-    driver: local
-  genre-data:
-    driver: local
-  track-data:
-    driver: local
-  playlist-data:
-    driver: local
-  artist-releases-data:
-    driver: local
-  release-data:
-    driver: local
-  artists-tracks-data:
-    driver: local
+# volumes:
+#   artist-data:
+#     driver: local
+#   genre-data:
+#     driver: local
+#   track-data:
+#     driver: local
+#   playlist-data:
+#     driver: local
+#   artist-releases-data:
+#     driver: local
+#   release-data:
+#     driver: local
+#   artists-tracks-data:
+#     driver: local
 
 networks:
   idc-net:

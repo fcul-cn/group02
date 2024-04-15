@@ -10,6 +10,9 @@ import app_pb2_grpc
 from grpc_interceptor.exceptions import NotFound, InvalidArgument, AlreadyExists
 from grpc_health.v1.health import HealthServicer
 from grpc_health.v1 import health_pb2, health_pb2_grpc
+from google.cloud import bigquery
+from google.oauth2 import service_account
+import json, os
 
 json_string = os.environ.get('API_TOKEN')
 json_file = json.loads(json_string)
@@ -50,7 +53,6 @@ class ArtistsTracksService(app_pb2_grpc.ArtistsTracksService):
             if result.total_rows == 0:
                 row_to_insert = [{u"artist_id": artist_id, u"track_id": request.track_id}]
                 client.insert_rows_json(table_id, row_to_insert)
-        conn.commit()
         return AddTrackArtistsResponse()
 
 class HealthServicer(health_pb2_grpc.HealthServicer):

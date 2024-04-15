@@ -14,9 +14,9 @@ genre_host = os.getenv("GENRE_HOST", "localhost")
 genres_channel = grpc.insecure_channel(f"{genre_host}:50055")
 genre_client = GenreServiceStub(genres_channel)
 
-playlist_host = os.getenv("PLAYLIST_HOST", "localhost")
-playlists_channel = grpc.insecure_channel(f"{playlist_host}:50057")
-playlist_client = PlaylistServiceStub(playlists_channel)
+# playlist_host = os.getenv("PLAYLIST_HOST", "localhost")
+# playlists_channel = grpc.insecure_channel(f"{playlist_host}:50057")
+# playlist_client = PlaylistServiceStub(playlists_channel)
 
 release_host = os.getenv("RELEASE_HOST", "localhost")
 release_channel = grpc.insecure_channel(f"{release_host}:50058")
@@ -84,26 +84,28 @@ def delete_track(track_id):
 def post_track():
     try:
         request_body = request.json
-        get_genre_request = GetGenreRequest(genre_id=int(request_body['genre_id']))
+        track = request_body['track']
+        artists_ids = request_body['artists_ids']
+        get_genre_request = GetGenreRequest(genre_id=int(track['genre_id']))
         genre_client.GetGenre(get_genre_request)
-        get_sub_genre_request = GetGenreRequest(genre_id=int(request_body['subgenre_id']))
+        get_sub_genre_request = GetGenreRequest(genre_id=int(track['subgenre_id']))
         genre_client.GetGenre(get_sub_genre_request)
-        get_release_request = GetReleaseRequest(release_id=int(request_body['release_id']))
+        get_release_request = GetReleaseRequest(release_id=int(track['release_id']))
         release_client.GetRelease(get_release_request)
-        artists_tracks_channel.addTrackArtists(AddTrackArtistsRequest(track_id=response.track.track_id, artists_ids=request_body['artists_ids']))
         add_request = AddTrackRequest(track=NewTrack(
-            title=str(request_body['title']),
-            mix=str(request_body['mix']),
-            is_remixed=bool(request_body['is_remixed']),
-            release_id=int(request_body['release_id']),
-            release_date=str(request_body['release_date']),
-            genre_id=int(request_body['genre_id']),
-            subgenre_id=int(request_body['subgenre_id']),
-            track_url=str(request_body['track_url']),
-            bpm=int(request_body['bpm']),
-            duration=int(request_body['duration'])
+            title=str(track['title']),
+            mix=str(track['mix']),
+            is_remixed=bool(track['is_remixed']),
+            release_id=int(track['release_id']),
+            release_date=str(track['release_date']),
+            genre_id=int(track['genre_id']),
+            subgenre_id=int(track['subgenre_id']),
+            track_url=str(track['track_url']),
+            bpm=int(track['bpm']),
+            duration=str(track['duration'])
         ))
         response = track_client.addTrack(add_request)
+        artists_tracks_client.addTrackArtists(AddTrackArtistsRequest(track_id=response.track.track_id, artists_ids=artists_ids))
         return {
             "track_id": response.track.track_id,
             "title": response.track.title,
