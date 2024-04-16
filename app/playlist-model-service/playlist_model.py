@@ -1,6 +1,5 @@
-import psycopg2
-from psycopg2 import sql
 from concurrent import futures
+from datetime import datetime
 import grpc
 import os
 from grpc_interceptor import ExceptionToStatusInterceptor
@@ -64,7 +63,8 @@ class PlaylistService(app_pb2_grpc.PlaylistServiceServicer):
             context.set_details("Playlist not found.")
             context.abort()
         row = list(result)[0]
-        query = f"DELETE FROM {table_id_playlists} WHERE playlist_id = {request.playlist_id};" 
+        print(row)
+        query = f"DELETE {table_id_playlists} WHERE playlist_id = {request.playlist_id};" 
         query_job = client.query(query)
         query_job.result()
         return DeletePlaylistResponse(playlist=Playlist(
@@ -88,14 +88,16 @@ class PlaylistService(app_pb2_grpc.PlaylistServiceServicer):
         query_job = client.query(getMaxId)
         result = query_job.result()
         playlist_id = list(result)[0][0] + 1
+        print(f"playlist_id: {playlist_id}")
         row_to_insert = [
-            {u"playlist_id": playlist_id, u"user_id": request.playlist.user_id, u"playlist_name": request.playlist.playlist_name}
+            {u"playlist_id": playlist_id, u"user_id": request.playlist.user_id, u"playlist_name": request.playlist.playlist_name, u"date_created": datetime.now().strftime('%Y-%m-%d')}
         ]
         client.insert_rows_json(table_id_playlists, row_to_insert)
         get_new_playlist = f"SELECT * FROM {table_id_playlists} WHERE playlist_id = {playlist_id};"
         query_job = client.query(get_new_playlist)
         result = query_job.result()
         row = list(result)[0]
+        print(row)
         return AddPlaylistResponse(playlist=Playlist(
                 playlist_id=row[0],
                 user_id=row[1],
@@ -112,7 +114,7 @@ class PlaylistService(app_pb2_grpc.PlaylistServiceServicer):
         query = f"SELECT * FROM {table_id_playlists} WHERE playlist_id = {request.playlist_id};"
         query_job = client.query(query)
         result = query_job.result()
-        if result.total_rows != 0:
+        if result.total_rows == 0:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details("Playlist not found.")
             context.abort()
@@ -120,49 +122,49 @@ class PlaylistService(app_pb2_grpc.PlaylistServiceServicer):
         query_job = client.query(query)
         result = query_job.result()
         rows = list(result)
+        print(rows)
         tracks = []
         for row in rows:
             tracks.append(row[0])  
         return GetPlaylistTracksResponse(track_ids=tracks)
 
     def updatePlaylistTracks(self, request, context):
-        TODO()
-        # if request.playlist_id <= 0:
-        #     context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-        #     context.set_details("Playlist's must be higher than 0.")
-        #     context.abort()
-        # conn = connect()
-        # cur = conn.cursor()
-        # query = sql.SQL("SELECT * FROM Playlist WHERE playlist_id = %s;") 
-        # cur.execute(query, (request.playlist_id,))
-        # row = cur.fetchone()
-        # if (row is None):
-        #     context.set_code(grpc.StatusCode.NOT_FOUND)
-        #     context.set_details("Playlist not found.")
-        #     context.abort()
-        # query = sql.SQL("SELECT 1 FROM PlaylistTrack WHERE playlist_id = %s AND track_id = %s;")
-        # update_query = sql.SQL("INSERT INTO PlaylistTrack (playlist_id, track_id) VALUES (%s,%s);") 
-        # for track_id in request.add_tracks_ids:
-        #     cur.execute(query, (request.playlist_id, track_id))
-        #     if not cur.fetchone():
-        #         cur.execute(update_query, (request.playlist_id, track_id))
-        # query = sql.SQL("DELETE FROM PlaylistTrack WHERE playlist_id = %s AND track_id = %s;")  
-        # for track_id in request.delete_tracks_ids:
-        #     cur.execute(query, (request.playlist_id, track_id))
-        # query = sql.SQL("SELECT * FROM Playlist WHERE playlist_id = %s;") 
-        # cur.execute(query, (request.playlist_id,))
-        # row = cur.fetchone()
-        # conn.commit()
-        # return UpdatePlaylistResponse(playlist=Playlist(
-        #         playlist_id=row[0],
-        #         user_id=row[1],
-        #         playlist_name=row[2],
-        #         date_created=str(row[3]),
-        #     )
-        # )
+        if request.playlist_id <= 0:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details("Playlist's must be higher than 0.")
+            context.abort()
+        query = f"SELECT * FROM {table_id_playlists} WHERE playlist_id = {request.playlist_id};" 
+        query_job = client.query(query)
+        result = query_job.result()
+        if result.total_rows == 0:
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            context.set_details("Playlist not found.")
+            context.abort()
+        for track_id in request.add_tracks_ids:
+            query = f"SELECT 1 FROM {table_id_playlists_tracks} WHERE playlist_id = {request.playlist_id} AND track_id = {track_id};"
+            query_job = client.query(query)
+            result = query_job.result()
+            if result.total_rows == 0:
+                row_to_insert = [{u"playlist_id": request.playlist_id, u"track_id": track_id, u"date_added": datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]
+                client.insert_rows_json(table_id_playlists_tracks, row_to_insert)
+        for track_id in request.delete_tracks_ids:
+            query = f"DELETE {table_id_playlists_tracks} WHERE playlist_id = {request.playlist_id} AND track_id = {track_id};" 
+            query_job = client.query(query)
+            query_job.result() 
+        query = f"SELECT * FROM {table_id_playlists} WHERE playlist_id = {request.playlist_id};"
+        query_job = client.query(query)
+        result = query_job.result()
+        row = list(result)[0]
+        return UpdatePlaylistResponse(playlist=Playlist(
+                playlist_id=row[0],
+                user_id=row[1],
+                playlist_name=row[2],
+                date_created=str(row[3]),
+            )
+        )
 
     def deleteTrackFromPlaylists(self, request, context):
-        query = f"DELETE FROM {table_id_playlists_tracks} WHERE track_id = {request.track_id};" 
+        query = f"DELETE {table_id_playlists_tracks} WHERE track_id = {request.track_id};" 
         query_job = client.query(query)
         result = query_job.result()
         return DeleteTrackFromPlaylistsResponse()

@@ -138,12 +138,12 @@ class GenreService(app_pb2_grpc.GenreServiceServicer):
         print("Updated")
         query = f"SELECT * FROM {table_id} WHERE genre_id = {request.genre_id};"
         query_job = client.query(query)
-        query_job.result()
-        if query_job.total_rows == 0:
+        result = query_job.result()
+        if result.total_rows == 0:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details("Genre not found.")
             context.abort()
-        row = list(query_job)[0]
+        row = list(result)[0]
         return UpdateGenreResponse(genre=
             Genre(
                 genre_id=row[0],

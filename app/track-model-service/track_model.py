@@ -72,7 +72,7 @@ class TrackService(app_pb2_grpc.TrackServiceServicer):
                 duration=row[10],
             )
         )
-        query = f"DELETE FROM {table_id} WHERE track_id = {request.track_id};"
+        query = f"DELETE {table_id} WHERE track_id = {request.track_id};"
         query_job = client.query(query)
         query_job.result()
         return response
