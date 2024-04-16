@@ -17,6 +17,13 @@ spec:
       containers:
       - name: artist-logic
         image: guilhermedsantos/cn_group02:artistlogic
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5001
@@ -63,6 +70,13 @@ spec:
       containers:
       - name: artist-model
         image: guilhermedsantos/cn_group02:artistmodel
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -108,6 +122,13 @@ spec:
       containers:
       - name: artists-releases-model
         image: guilhermedsantos/cn_group02:artistsreleasesmodel
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -153,6 +174,13 @@ spec:
       containers:
       - name: artists-tracks-model
         image: guilhermedsantos/cn_group02:artiststracksmodel
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -198,6 +226,13 @@ spec:
       containers:
       - name: genre-logic
         image: guilhermedsantos/cn_group02:genrelogic
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5002
@@ -244,6 +279,13 @@ spec:
       containers:
       - name: genre-model
         image: guilhermedsantos/cn_group02:genremodel
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -289,6 +331,13 @@ spec:
       containers:
       - name: playlist-logic
         image: guilhermedsantos/cn_group02:playlistlogic
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5003
@@ -335,6 +384,13 @@ spec:
       containers:
       - name: playlist-model
         image: guilhermedsantos/cn_group02:playlistmodel
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -380,6 +436,13 @@ spec:
       containers:
       - name: release-logic
         image: guilhermedsantos/cn_group02:releaselogic
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5004
@@ -426,6 +489,13 @@ spec:
       containers:
       - name: release-model
         image: guilhermedsantos/cn_group02:releasemodel
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -471,6 +541,13 @@ spec:
       containers:
       - name: track-logic
         image: guilhermedsantos/cn_group02:tracklogic
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
@@ -517,6 +594,13 @@ spec:
       containers:
       - name: track-model
         image: guilhermedsantos/cn_group02:trackmodel
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -563,6 +647,14 @@ spec:
       containers:
       - name: auth-logic
         image: guilhermedsantos/cn_group02:auth
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+
         imagePullPolicy: Always
         ports:
         - containerPort: 5055
