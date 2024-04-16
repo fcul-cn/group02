@@ -14,9 +14,9 @@ genre_host = os.getenv("GENRE_HOST", "localhost")
 genres_channel = grpc.insecure_channel(f"{genre_host}:50055")
 genre_client = GenreServiceStub(genres_channel)
 
-# playlist_host = os.getenv("PLAYLIST_HOST", "localhost")
-# playlists_channel = grpc.insecure_channel(f"{playlist_host}:50057")
-# playlist_client = PlaylistServiceStub(playlists_channel)
+playlist_host = os.getenv("PLAYLIST_HOST", "localhost")
+playlists_channel = grpc.insecure_channel(f"{playlist_host}:50057")
+playlist_client = PlaylistServiceStub(playlists_channel)
 
 release_host = os.getenv("RELEASE_HOST", "localhost")
 release_channel = grpc.insecure_channel(f"{release_host}:50058")

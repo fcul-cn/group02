@@ -22,7 +22,6 @@ table_id = "confident-facet-329316.project.ArtistsTracks"
 
 class ArtistsTracksService(app_pb2_grpc.ArtistsTracksService):
     def getArtistTracksIds(self, request, context):
-        print("enter")
         artist_id = request.artist_id
         if artist_id <= 0:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
