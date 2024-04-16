@@ -669,47 +669,46 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: api-gateway-ingress
-annotations:
+  annotations:
     nginx.ingress.kubernetes.io/auth-url: "https://group02.cn.com/api/auth/token/validate"
     nginx.ingress.kubernetes.io/auth-signin: "https://group02.cn.com/api/auth/login"
     nginx.ingress.kubernetes.io/auth-response-headers: "authorization"
 spec:
   rules:
-  - host: group02.cn.com
-    http:
-      paths:
-      - pathType: Prefix
-        path: "/api/tracks"
-        backend:
-          service:
-            name: track-logic-rs-3
-            port:
-              number: 5000
-      - pathType: Prefix
-        path: "/api/artists"
-        backend:
-          service:
-            name: artist-logic-rs-3
-            port:
-              number: 5001
-      - pathType: Prefix
-        path: "/api/genres"
-        backend:
-          service:
-            name: genre-logic-rs-3
-            port:
-              number: 5002
-      - pathType: Prefix
-        path: "/api/playlists"
-        backend:
-          service:
-            name: playlist-logic-rs-3
-            port:
-              number: 5003
-      - pathType: Prefix
-        path: "/api/releases"
-        backend:
-          service:
-            name: release-logic-rs-3
-            port:
-              number: 5004 
+    - http:
+        paths:
+        - pathType: Prefix
+          path: "/api/tracks"
+          backend:
+            service:
+              name: track-logic-rs-3
+              port:
+                number: 5000
+        - pathType: Prefix
+          path: "/api/artists"
+          backend:
+            service:
+              name: artist-logic-rs-3
+              port:
+                number: 5001
+        - pathType: Prefix
+          path: "/api/genres"
+          backend:
+            service:
+              name: genre-logic-rs-3
+              port:
+                number: 5002
+        - pathType: Prefix
+          path: "/api/playlists"
+          backend:
+            service:
+              name: playlist-logic-rs-3
+              port:
+                number: 5003
+        - pathType: Prefix
+          path: "/api/releases"
+          backend:
+            service:
+              name: release-logic-rs-3
+              port:
+                number: 5004 
