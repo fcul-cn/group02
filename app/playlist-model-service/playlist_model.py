@@ -1,5 +1,3 @@
-import psycopg2
-from psycopg2 import sql
 from concurrent import futures
 import grpc
 import os

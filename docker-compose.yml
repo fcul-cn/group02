@@ -163,36 +163,37 @@ services:
   #     idc-net:
   #       ipv4_address: 172.100.10.10
 
-  # playlist-logic-service:
-  #   build:
-  #     context: .
-  #     dockerfile: ./app/playlist-logic-service/Dockerfile
-  #   container_name: playlist-logic-service
-  #   environment:
-  #     PLAYLIST_HOST: playlist-model-service
-  #     TRACK_HOST: track-model-service
-  #   ports:
-  #     - "5003:5003"
-  #   networks:
-  #     idc-net:
-  #       ipv4_address: 172.100.10.11
-  #   depends_on:
-  #     - playlist-model-service
+  playlist-logic-service:
+    build:
+      context: .
+      dockerfile: ./app/playlist-logic-service/Dockerfile
+    container_name: playlist-logic-service
+    environment:
+      PLAYLIST_HOST: playlist-model-service
+      TRACK_HOST: track-model-service
+    ports:
+      - "5003:5003"
+    networks:
+      idc-net:
+        ipv4_address: 172.100.10.11
+    depends_on:
+      - playlist-model-service
 
-  # playlist-model-service:
-  #   build:
-  #     context: .
-  #     dockerfile: ./app/playlist-model-service/Dockerfile
-  #   container_name: playlist-model-service
-  #   environment:
-  #     POSTGRES_HOST: ${POSTGRES_PLAYLIST_HOST}
-  #     POSTGRES_PORT: ${POSTGRES_PORT}
-  #     POSTGRES_DB: ${POSTGRES_DB}
-  #     POSTGRES_USER: ${POSTGRES_USER}
-  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-  #   networks:
-  #     idc-net:
-  #       ipv4_address: 172.100.10.12
+  playlist-model-service:
+    build:
+      context: .
+      dockerfile: ./app/playlist-model-service/Dockerfile
+    container_name: playlist-model-service
+    environment:
+      API_TOKEN: ${API_TOKEN}
+      # POSTGRES_HOST: ${POSTGRES_PLAYLIST_HOST}
+      # POSTGRES_PORT: ${POSTGRES_PORT}
+      # POSTGRES_DB: ${POSTGRES_DB}
+      # POSTGRES_USER: ${POSTGRES_USER}
+      # POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      idc-net:
+        ipv4_address: 172.100.10.12
   #   depends_on:
   #     - playlist-db
 
