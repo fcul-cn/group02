@@ -25,7 +25,7 @@ def validate_token():
         'query_params': dict(request.args),
         'data': request.json,  # If content-type is application/json
     }
-    if request.method=="GET":
+    if request.method=="GET" and '/api/playlists' not in request.path:
         return '', 200
     # Introspect the token with Auth0
     r = requests.post(f'https://{auth0_domain}/oauth/introspect', headers=json_header, data={'token': token})
@@ -78,26 +78,48 @@ def callback():
         data = {
             
         }'''
+        try:
+            # Decode the JWT token
+            decoded_token = jwt.decode(token, algorithms=["RS256"], audience=os.getenv('AUTH0_CLIENT_ID'))
+            # Extract user ID from decoded token
+            user_id = decoded_token.get('sub')
+            # You can store or use the user ID as needed
+            session['user_id'] = user_id
 
-        response = requests.request(
-            method=method,
-            url=f'http://{service}{path}',
-            headers=headers,
-            params=query_params,
-            json=data
-        )
+        except jwt.ExpiredSignatureError:
+            return 'Token expired', 401  # Token expired
+        except jwt.InvalidTokenError:
+            return 'Invalid token', 401  # Invalid token
+        
+        print(user_id)
 
-        # Send the POST request to the /api/tracks endpoint in the track-logic service
-        #response = requests.post('http://track-logic-service/api/tracks', headers=headers, json=data)
+        if method != "GET":
+            # Add user_id to data for non-GET requests
+            if data is None:
+                data = {}
+            data['user_id'] = user_id
 
-        if response.status_code == 200:
-            # Extract data from the response
-            data = response.json()
+        try:
+            response = requests.request(
+                method=method,
+                url=f'http://{service}{path}',
+                headers=headers,
+                params=query_params,
+                json=data
+            )
 
-            # Include the data in the response to the client
-            return jsonify(data), 200
-        else:
-            return 'Request to /api/tracks failed'
+            # Send the POST request to the /api/tracks endpoint in the track-logic service
+            #response = requests.post('http://track-logic-service/api/tracks', headers=headers, json=data)
+
+            if response.status_code == 200:
+                # Extract data from the response
+                data = response.json()
+                # Include the data in the response to the client
+                return jsonify(data), 200
+            else:
+                return 'Request to {path} failed'
+        except Exception as e:
+            return 'Internal error: ' + str(e), 500
     else:
         return 'Failed to log in', 401
     
