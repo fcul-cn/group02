@@ -12,10 +12,6 @@ app = Flask(__name__)
 #    load_dotenv(ENV_FILE)
 load_dotenv("auth.env")
 
-@app.route('/health', methods=['GET'])
-def health_check():
-    return jsonify({'status': 'healthy'}), 200
-
 # auth-url endpoint
 @app.route('/api/auth/token/validate', methods=['POST','GET', 'PUT', 'DELETE'])
 def validate_token():
@@ -141,11 +137,12 @@ headers = {
         url=f"https://group02.cn.com{original_request['path']}",
         headers=headers,
     )'''
-
+    
 @app.route('/health', methods=['GET'])
 def health_check():
     return jsonify({'status': 'healthy'}), 200
 
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=os.getenv("PORT", 3000))
+    app.run(host="0.0.0.0", port=os.getenv("PORT", 5055))
+
+    
