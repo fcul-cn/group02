@@ -447,6 +447,60 @@ spec:
           periodSeconds: 10   
 
 ---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: auth-logic
+  template:
+    metadata:
+      labels:
+        app: auth-logic
+    spec:
+      containers:
+      - name: auth-logic
+        image: group02-auth-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5055
+        readinessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/health"
+            port: 5055
+        livenessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/health"
+            port: 5055
+        startupProbe:
+          httpGet:
+            path: "/health"
+            port: 5055
+          failureThreshold: 5
+          periodSeconds: 10
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-logic-rs-3
+spec:
+  selector:
+    app: auth-logic
+  ports:
+    - protocol: TCP
+      port: 5055
+      targetPort: 5055
+
+---
+
 apiVersion: v1
 kind: Service
 metadata:
