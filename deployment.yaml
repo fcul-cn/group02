@@ -12,12 +12,20 @@ spec:
       labels:
         app: artist-logic
     spec:
+      imagePullSecrets:
+      - name: docker-cred
       containers:
       - name: artist-logic
-        image: group02-artist-logic-service:latest
-        imagePullPolicy: Never
+        image: guilhermedsantos/cn_group02:artistlogic
+        imagePullPolicy: Always
         ports:
-        - containerPort: 5001   
+        - containerPort: 5001
+        env:
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: json-key
+              key: API_TOKEN
         readinessProbe:
           initialDelaySeconds: 10
           httpGet:
@@ -33,7 +41,7 @@ spec:
             path: "/health"
             port: 5001
           failureThreshold: 5
-          periodSeconds: 10    
+          periodSeconds: 10 
 ---
 
 apiVersion: apps/v1
@@ -50,10 +58,18 @@ spec:
       labels:
         app: artist-model
     spec:
+      imagePullSecrets:
+      - name: docker-cred
       containers:
       - name: artist-model
-        image: group02-artist-model-service:latest
-        imagePullPolicy: Never
+        image: guilhermedsantos/cn_group02:artistmodel
+        imagePullPolicy: Always
+        env:
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: json-key
+              key: API_TOKEN
         livenessProbe:
           exec:
             command:
@@ -87,10 +103,18 @@ spec:
       labels:
         app: artists-releases-model
     spec:
+      imagePullSecrets:
+      - name: docker-cred
       containers:
       - name: artists-releases-model
-        image: group02-artists-releases-model-service:latest
-        imagePullPolicy: Never
+        image: guilhermedsantos/cn_group02:artistsreleasesmodel
+        imagePullPolicy: Always
+        env:
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: json-key
+              key: API_TOKEN
         livenessProbe:
           exec:
             command:
@@ -124,10 +148,18 @@ spec:
       labels:
         app: artists-tracks-model
     spec:
+      imagePullSecrets:
+      - name: docker-cred
       containers:
       - name: artists-tracks-model
-        image: group02-artists-tracks-model-service:latest
-        imagePullPolicy: Never
+        image: guilhermedsantos/cn_group02:artiststracksmodel
+        imagePullPolicy: Always
+        env:
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: json-key
+              key: API_TOKEN
         livenessProbe:
           exec:
             command:
@@ -161,12 +193,20 @@ spec:
       labels:
         app: genre-logic
     spec:
+      imagePullSecrets:
+      - name: docker-cred
       containers:
       - name: genre-logic
-        image: group02-genre-logic-service:latest
-        imagePullPolicy: Never
+        image: guilhermedsantos/cn_group02:genrelogic
+        imagePullPolicy: Always
         ports:
         - containerPort: 5002
+        env:
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: json-key
+              key: API_TOKEN
         readinessProbe:
           initialDelaySeconds: 10
           httpGet:
@@ -199,10 +239,18 @@ spec:
       labels:
         app: genre-model
     spec:
+      imagePullSecrets:
+      - name: docker-cred
       containers:
       - name: genre-model
-        image: group02-genre-model-service:latest
-        imagePullPolicy: Never
+        image: guilhermedsantos/cn_group02:genremodel
+        imagePullPolicy: Always
+        env:
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: json-key
+              key: API_TOKEN
         livenessProbe:
           exec:
             command:
@@ -236,12 +284,20 @@ spec:
       labels:
         app: playlist-logic
     spec:
+      imagePullSecrets:
+      - name: docker-cred
       containers:
       - name: playlist-logic
-        image: group02-playlist-logic-service:latest
-        imagePullPolicy: Never
+        image: guilhermedsantos/cn_group02:playlistlogic
+        imagePullPolicy: Always
         ports:
         - containerPort: 5003
+        env:
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: json-key
+              key: API_TOKEN
         readinessProbe:
           initialDelaySeconds: 10
           httpGet:
@@ -274,10 +330,18 @@ spec:
       labels:
         app: playlist-model
     spec:
+      imagePullSecrets:
+      - name: docker-cred
       containers:
       - name: playlist-model
-        image: group02-playlist-model-service:latest
-        imagePullPolicy: Never
+        image: guilhermedsantos/cn_group02:playlistmodel
+        imagePullPolicy: Always
+        env:
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: json-key
+              key: API_TOKEN
         livenessProbe:
           exec:
             command:
@@ -311,12 +375,20 @@ spec:
       labels:
         app: release-logic
     spec:
+      imagePullSecrets:
+      - name: docker-cred
       containers:
       - name: release-logic
-        image: group02-release-logic-service:latest
-        imagePullPolicy: Never
+        image: guilhermedsantos/cn_group02:releaselogic
+        imagePullPolicy: Always
         ports:
         - containerPort: 5004
+        env:
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: json-key
+              key: API_TOKEN
         readinessProbe:
           initialDelaySeconds: 10
           httpGet:
@@ -349,10 +421,18 @@ spec:
       labels:
         app: release-model
     spec:
+      imagePullSecrets:
+      - name: docker-cred
       containers:
       - name: release-model
-        image: group02-release-model-service:latest
-        imagePullPolicy: Never
+        image: guilhermedsantos/cn_group02:releasemodel
+        imagePullPolicy: Always
+        env:
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: json-key
+              key: API_TOKEN
         livenessProbe:
           exec:
             command:
@@ -386,12 +466,20 @@ spec:
       labels:
         app: track-logic
     spec:
+      imagePullSecrets:
+      - name: docker-cred
       containers:
       - name: track-logic
-        image: group02-track-logic-service:latest
-        imagePullPolicy: Never
+        image: guilhermedsantos/cn_group02:tracklogic
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
+        env:
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: json-key
+              key: API_TOKEN
         readinessProbe:
           initialDelaySeconds: 10
           httpGet:
@@ -424,10 +512,18 @@ spec:
       labels:
         app: track-model
     spec:
+      imagePullSecrets:
+      - name: docker-cred
       containers:
       - name: track-model
-        image: group02-track-model-service:latest
-        imagePullPolicy: Never
+        image: guilhermedsantos/cn_group02:trackmodel
+        imagePullPolicy: Always
+        env:
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: json-key
+              key: API_TOKEN
         livenessProbe:
           exec:
             command:
@@ -444,4 +540,176 @@ spec:
             - /bin/grpc_health_probe
             - -addr=:50051
           failureThreshold: 5
-          periodSeconds: 10    
+          periodSeconds: 10   
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-rs-3
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: auth-logic
+  template:
+    metadata:
+      labels:
+        app: auth-logic
+    spec:
+      imagePullSecrets:
+      - name: docker-cred
+      containers:
+      - name: auth-logic
+        image: guilhermedsantos/cn_group02:auth
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5055
+        env:
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: json-key
+              key: API_TOKEN
+        readinessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/health"
+            port: 5055
+        livenessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: "/health"
+            port: 5055
+        startupProbe:
+          httpGet:
+            path: "/health"
+            port: 5055
+          failureThreshold: 5
+          periodSeconds: 10
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-logic-rs-3
+spec:
+  selector:
+    app: auth-logic
+  ports:
+    - protocol: TCP
+      port: 5055
+      targetPort: 5055
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: track-logic-rs-3
+spec:
+  selector:
+    app: track-logic
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: artist-logic-rs-3
+spec:
+  selector:
+    app: artist-logic
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: genre-logic-rs-3
+spec:
+  selector:
+    app: genre-logic
+  ports:
+    - protocol: TCP
+      port: 5002
+      targetPort: 5002
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: playlist-logic-rs-3
+spec:
+  selector:
+    app: playlist-logic
+  ports:
+    - protocol: TCP
+      port: 5003
+      targetPort: 5003
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-logic-rs-3
+spec:
+  selector:
+    app: release-logic
+  ports:
+    - protocol: TCP
+      port: 5004
+      targetPort: 5004
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-gateway-ingress
+annotations:
+    nginx.ingress.kubernetes.io/auth-url: "https://group02.cn.com/api/auth/token/validate"
+    nginx.ingress.kubernetes.io/auth-signin: "https://group02.cn.com/api/auth/login"
+    nginx.ingress.kubernetes.io/auth-response-headers: "authorization"
+spec:
+  rules:
+  - host: group02.cn.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/api/tracks"
+        backend:
+          service:
+            name: track-logic-rs-3
+            port:
+              number: 5000
+      - pathType: Prefix
+        path: "/api/artists"
+        backend:
+          service:
+            name: artist-logic-rs-3
+            port:
+              number: 5001
+      - pathType: Prefix
+        path: "/api/genres"
+        backend:
+          service:
+            name: genre-logic-rs-3
+            port:
+              number: 5002
+      - pathType: Prefix
+        path: "/api/playlists"
+        backend:
+          service:
+            name: playlist-logic-rs-3
+            port:
+              number: 5003
+      - pathType: Prefix
+        path: "/api/releases"
+        backend:
+          service:
+            name: release-logic-rs-3
+            port:
+              number: 5004 
