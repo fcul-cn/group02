@@ -68,3 +68,7 @@ def post_releases():
             return rpc_error.details(), 403
     except Exception as e:
         return "Internal error: " + str(e), 500
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({'status': 'healthy'}), 200
