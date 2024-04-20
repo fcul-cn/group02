@@ -1039,15 +1039,13 @@ metadata:
   annotations:
     ingress.kubernetes.io/backend-protocol: "HTTPS"
     kubernetes.io/ingress.allow-http: "false"
-    #nginx.ingress.kubernetes.io/auth-url: "https://group02cn.com/api/auth/token/validate"
-    #nginx.ingress.kubernetes.io/auth-signin: "https://group02cn.com/api/auth/login"
+    #nginx.ingress.kubernetes.io/auth-url: "http://34.91.23.167/api/auth/token/validate"
+    #nginx.ingress.kubernetes.io/auth-signin: "http://34.91.23.167/api/auth/login"
     #nginx.ingress.kubernetes.io/auth-response-headers: "authorization"
 spec:
   ingressClassName: nginx
   tls:
-    - hosts:
-        - group02cn.com
-      secretName: secret-tls
+    - secretName: secret-tls
   rules:
   - http:
       paths:
@@ -1087,7 +1085,7 @@ spec:
             port:
               number: 5004
       - pathType: Prefix
-        path: "/api/auth/*"
+        path: "/api/auth/"
         backend:
           service:
             name: auth-logic

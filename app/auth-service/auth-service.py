@@ -28,6 +28,8 @@ def validate_token():
     if request.method=="GET" and '/api/playlists' not in request.path:
         return '', 200
     # Introspect the token with Auth0
+    if token is None:
+        return '', 401
     r = requests.post(f'https://{auth0_domain}/oauth/introspect', headers=json_header, data={'token': token})
     if r.status_code == 200:
         return '', 200
