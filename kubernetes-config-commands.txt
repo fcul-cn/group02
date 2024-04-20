@@ -1,0 +1,24 @@
+Keys:
+
+kubectl create secret generic json-key --from-literal "API_TOKEN=$(cat JSON-KEY.json)"
+kubectl create secret docker-registry artifact-registry --docker-server=https://europe-west4-docker.pkg.dev/ --docker-email=artifact-project-cn@confident-facet-329316.iam.gserviceaccount.com --docker-username=_json_key --docker-password="$(cat ARTIFACT-REGISTRY.json)"
+
+Artifact-Registry:
+
+docker tag 6ec691a44c60 europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-genre-logic-service
+docker push europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-genre-logic-service
+
+Cluster:
+
+gcloud container clusters create-auto hello-cluster --region=europe-west4
+gcloud container clusters get-credentials hello-cluster --region=europe-west4
+kubectl config current-context
+
+Ingress-Controller:
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.6.4/deploy/static/provider/cloud/deploy.yaml
+kubectl get pods --namespace=ingress-nginx
+
+Apply:
+
+kubectl apply -f deployment.yaml
