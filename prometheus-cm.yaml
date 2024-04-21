@@ -1,0 +1,67 @@
+scrape_configs:
+    - job_name: 'prometheus'
+      scrape_interval: 5s
+      static_configs:
+        - targets: ['localhost:9090']
+  
+    - job_name: artist-logic
+      scrape_interval: 5s
+      static_configs:
+        - targets: ['artist-logic:5001']
+    
+    - job_name: genre-logic
+      scrape_interval: 5s
+      static_configs:
+        - targets: ['genre-logic:5002']
+
+    - job_name: playlist-logic
+      scrape_interval: 5s
+      static_configs:
+        - targets: ['playlist-logic:5003']
+
+    - job_name: release-logic
+      scrape_interval: 5s
+      static_configs:
+        - targets: ['release-logic:5004']
+    
+    - job_name: track-logic
+      scrape_interval: 5s
+      static_configs:
+        - targets: ['track-logic:5000']
+
+    - job_name: artist-model
+      scrape_interval: 5s
+      static_configs:
+        - targets: ['artist-model:50052']
+    
+    - job_name: artists-releases-model
+      scrape_interval: 5s
+      static_configs:
+        - targets: ['artists-releases-model:50053']
+
+    - job_name: artists-tracks-model
+      scrape_interval: 5s
+      static_configs:
+        - targets: ['artists-tracks-model:50054']
+
+    - job_name: genre-model
+      scrape_interval: 5s
+      static_configs:
+        - targets: ['genre-model:50055']
+    
+    - job_name: playlist-model
+      scrape_interval: 5s
+      static_configs:
+        - targets: ['playlist-model:50057']
+
+    - job_name: release-model
+      scrape_interval: 5s
+      static_configs:
+        - targets: ['release-model:50058']
+
+    - job_name: track-model
+      scrape_interval: 5s
+      static_configs:
+        - targets: ['track-model:50051']
+
+    
