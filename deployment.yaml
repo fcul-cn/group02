@@ -76,20 +76,20 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "250m"
+            cpu: "100m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: "300Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5001
         readinessProbe:
-          initialDelaySeconds: 10
+          initialDelaySeconds: 100
           httpGet:
             path: "/health"
             port: 5001
         livenessProbe:
-          initialDelaySeconds: 10
+          initialDelaySeconds: 100
           httpGet:
             path: "/health"
             port: 5001
@@ -97,7 +97,7 @@ spec:
           httpGet:
             path: "/health"
             port: 5001
-          failureThreshold: 5
+          failureThreshold: 20
           periodSeconds: 10 
 ---
 
@@ -172,20 +172,20 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "250m"
+            cpu: "100m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: "300Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5002
         readinessProbe:
-          initialDelaySeconds: 10
+          initialDelaySeconds: 100
           httpGet:
             path: "/health"
             port: 5002
         livenessProbe:
-          initialDelaySeconds: 10
+          initialDelaySeconds: 100
           httpGet:
             path: "/health"
             port: 5002
@@ -193,7 +193,7 @@ spec:
           httpGet:
             path: "/health"
             port: 5002
-          failureThreshold: 5
+          failureThreshold: 20
           periodSeconds: 10
 
 ---
@@ -268,20 +268,20 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "250m"
+            cpu: "100m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: "300Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5003
         readinessProbe:
-          initialDelaySeconds: 10
+          initialDelaySeconds: 100
           httpGet:
             path: "/health"
             port: 5003
         livenessProbe:
-          initialDelaySeconds: 10
+          initialDelaySeconds: 100
           httpGet:
             path: "/health"
             port: 5003
@@ -289,7 +289,7 @@ spec:
           httpGet:
             path: "/health"
             port: 5003
-          failureThreshold: 5
+          failureThreshold: 20
           periodSeconds: 10
 
 ---
@@ -365,20 +365,20 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "250m"
+            cpu: "100m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: "300Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5004
         readinessProbe:
-          initialDelaySeconds: 10
+          initialDelaySeconds: 100
           httpGet:
             path: "/health"
             port: 5004
         livenessProbe:
-          initialDelaySeconds: 10
+          initialDelaySeconds: 100
           httpGet:
             path: "/health"
             port: 5004
@@ -386,7 +386,7 @@ spec:
           httpGet:
             path: "/health"
             port: 5004
-          failureThreshold: 5
+          failureThreshold: 20
           periodSeconds: 10
 ---
 
@@ -462,20 +462,20 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "250m"
+            cpu: "100m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: "300Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
         readinessProbe:
-          initialDelaySeconds: 10
+          initialDelaySeconds: 100
           httpGet:
             path: "/health"
             port: 5000
         livenessProbe:
-          initialDelaySeconds: 10
+          initialDelaySeconds: 100
           httpGet:
             path: "/health"
             port: 5000
@@ -483,7 +483,7 @@ spec:
           httpGet:
             path: "/health"
             port: 5000
-          failureThreshold: 5
+          failureThreshold: 20
           periodSeconds: 10
 ---
 
@@ -522,20 +522,20 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "250m"
+            cpu: "100m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: "300Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5055
         readinessProbe:
-          initialDelaySeconds: 10
+          initialDelaySeconds: 100
           httpGet:
             path: "/health"
             port: 5055
         livenessProbe:
-          initialDelaySeconds: 10
+          initialDelaySeconds: 100
           httpGet:
             path: "/health"
             port: 5055
@@ -543,7 +543,7 @@ spec:
           httpGet:
             path: "/health"
             port: 5055
-          failureThreshold: 5
+          failureThreshold: 20
           periodSeconds: 10
 ---
 
@@ -585,10 +585,10 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "250m"
+            cpu: "100m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: "300Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -601,17 +601,19 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50052
+          initialDelaySeconds: 100  
         readinessProbe:
           exec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50052
+          initialDelaySeconds: 100  
         startupProbe:
           exec:
             command:
             - /bin/grpc_health_probe
-            - -addr=:50052
-          failureThreshold: 5
+            - -addr=:50052           
+          failureThreshold: 20
           periodSeconds: 10    
 
 ---
@@ -652,10 +654,10 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "250m"
+            cpu: "100m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: "300Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -668,17 +670,19 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50053
+          initialDelaySeconds: 100  
         readinessProbe:
           exec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50053
+          initialDelaySeconds: 100  
         startupProbe:
           exec:
             command:
             - /bin/grpc_health_probe
-            - -addr=:50053
-          failureThreshold: 5
+            - -addr=:50053 
+          failureThreshold: 20
           periodSeconds: 10
 
 ---
@@ -719,10 +723,10 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "250m"
+            cpu: "100m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: "300Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -735,17 +739,19 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50054
+          initialDelaySeconds: 100  
         readinessProbe:
           exec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50054
+          initialDelaySeconds: 100  
         startupProbe:
           exec:
             command:
             - /bin/grpc_health_probe
-            - -addr=:50054
-          failureThreshold: 5
+            - -addr=:50054           
+          failureThreshold: 20
           periodSeconds: 10    
 
 ---
@@ -786,10 +792,10 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "250m"
+            cpu: "100m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: "300Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -802,17 +808,19 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50055
+          initialDelaySeconds: 100  
         readinessProbe:
           exec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50055
+          initialDelaySeconds: 100  
         startupProbe:
           exec:
             command:
             - /bin/grpc_health_probe
-            - -addr=:50055
-          failureThreshold: 5
+            - -addr=:50055 
+          failureThreshold: 20
           periodSeconds: 10
 
 ---
@@ -853,10 +861,10 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "250m"
+            cpu: "100m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: "300Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -869,17 +877,19 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50057
+          initialDelaySeconds: 100  
         readinessProbe:
           exec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50057
+          initialDelaySeconds: 100  
         startupProbe:
           exec:
             command:
             - /bin/grpc_health_probe
-            - -addr=:50057
-          failureThreshold: 5
+            - -addr=:50057 
+          failureThreshold: 20
           periodSeconds: 10    
 
 ---
@@ -920,10 +930,10 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "250m"
+            cpu: "100m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: "300Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -936,17 +946,19 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50058
+          initialDelaySeconds: 100  
         readinessProbe:
           exec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50058
+          initialDelaySeconds: 100  
         startupProbe:
           exec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50058
-          failureThreshold: 5
+          failureThreshold: 20
           periodSeconds: 10    
 
 ---
@@ -987,10 +999,10 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "250m"
+            cpu: "100m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: "300Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -1003,17 +1015,19 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50051
+          initialDelaySeconds: 100  
         readinessProbe:
           exec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50051
+          initialDelaySeconds: 100  
         startupProbe:
           exec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50051
-          failureThreshold: 5
+          failureThreshold: 20
           periodSeconds: 10   
 
 ---
