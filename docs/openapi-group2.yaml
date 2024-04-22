@@ -342,6 +342,23 @@ paths:
       summary: "Get a Genre's tracks"
       parameters:
         - $ref: "#/components/parameters/genre_id"
+        - name: offset
+          in: query
+          description: "Offset for pagination"
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+        - name: limit
+          in: query
+          description: "Limit for pagination"
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100  # Adjust maximum as needed
       responses:
         "200":
           description: "Successfully got a Genre's tracks"

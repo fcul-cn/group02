@@ -107,8 +107,8 @@ def update_genre(genre_id):
 def get_genre_tracks(genre_id):
     try:
         print(f"genre_id: {genre_id}")
-        offset = request.args.get('offset')
-        limit = request.args.get('limit')
+        offset = request.args.get('offset', default=0)
+        limit = request.args.get('limit', default=10)
         req = GetGenreRequest(genre_id=genre_id)
         genre_client.GetGenre(req)
         req = GetGenreTracksRequest(genre_id=genre_id, limit=int(limit), offset=int(offset))
