@@ -204,6 +204,34 @@ components:
       required: True
       schema:
         type: "number"
+    access_token:
+      name: "access_token"
+      description: "Access token from Auth0"
+      in: path
+      required: True
+      schema:
+        type: "string"
+    expires_in:
+      name: "expires_in"
+      description: "Expiration time for token"
+      in: path
+      required: True
+      schema:
+        type: "number"
+    token_type:
+      name: "token_type"
+      description: "Type of token from Auth0"
+      in: path
+      required: True
+      schema:
+        type: "string"
+    state:
+      name: "state"
+      description: "State sent to Auth0"
+      in: path
+      required: True
+      schema:
+        type: "string"
         
 paths:
   /artists/{artist_id}:
@@ -572,3 +600,28 @@ paths:
           description: "Playlist's id not found"
         "400":
           description: "Bad request body"
+  /callback:
+    get:
+      operationId: "callback"
+      tags:
+        - "Auth"
+      summary: "Receive token and state from Auth0"
+      parameters:
+        - $ref: "#/components/parameters/access_token"
+        - $ref: "#/components/parameters/expires_in"
+        - $ref: "#/components/parameters/token_type"
+        - $ref: "#/components/parameters/state"
+      responses:
+        "200":
+          description: "Successfully did what requested"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/Track'
+                - $ref: '#/components/schemas/Playlist'
+                - $ref: '#/components/schemas/Artist'
+                - $ref: '#/components/schemas/Genre'
+                - $ref: '#/components/schemas/Release'
+        "404":
+          description: "The request operation was not done successfully"

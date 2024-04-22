@@ -62,7 +62,7 @@ def login():
     return redirect(f"https://{auth0_domain}/authorize?audience=https://{auth0_domain}/api/v2/&response_type=token&client_id={client_id}&redirect_uri={redirect_uri}&state={nonce}")
     
 
-@app.route('/callback')
+@app.route('/api/callback')
 def callback():
     user_id=''
     raw_url = request.environ.get('REQUEST_URI')
