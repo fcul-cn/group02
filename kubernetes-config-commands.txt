@@ -2,6 +2,7 @@ Keys:
 
 kubectl create secret generic json-key --from-literal "API_TOKEN=$(cat JSON-KEY.json)"
 kubectl create secret docker-registry artifact-registry --docker-server=https://europe-west4-docker.pkg.dev/ --docker-email=artifact-project-cn@confident-facet-329316.iam.gserviceaccount.com --docker-username=_json_key --docker-password="$(cat ARTIFACT-REGISTRY.json)"
+kubectl create secret tls tls-secret --key key.pem --cert cert.pem
 
 Artifact-Registry:
 
@@ -13,6 +14,7 @@ Cluster:
 gcloud container clusters create-auto hello-cluster --region=europe-west4
 gcloud container clusters get-credentials hello-cluster --region=europe-west4
 kubectl config current-context
+gcloud container clusters delete hello-cluster --region=europe-west4
 
 Ingress-Controller:
 

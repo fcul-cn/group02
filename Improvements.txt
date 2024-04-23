@@ -1,0 +1,5 @@
+Phase 6 progress:
+
+Kubernetes:
+    - Removed unnecessary probes (readiness and startup)
+    - Add rolling update strategy

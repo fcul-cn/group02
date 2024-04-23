@@ -23,10 +23,16 @@ kind: Deployment
 metadata:
   name: artist-logic
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: artist-logic
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  minReadySeconds: 5
   template:
     metadata:
       labels:
@@ -76,29 +82,18 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "100m"
+            cpu: "50m"
           limits:
-            memory: "300Mi"
-            cpu: "150m"
+            memory: "128Mi"
+            cpu: "80m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5001
-        readinessProbe:
-          initialDelaySeconds: 100
-          httpGet:
-            path: "/health"
-            port: 5001
         livenessProbe:
-          initialDelaySeconds: 100
+          initialDelaySeconds: 10
           httpGet:
             path: "/health"
             port: 5001
-        startupProbe:
-          httpGet:
-            path: "/health"
-            port: 5001
-          failureThreshold: 20
-          periodSeconds: 10 
 ---
 
 apiVersion: v1
@@ -119,10 +114,16 @@ kind: Deployment
 metadata:
   name: genre-logic
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: genre-logic
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  minReadySeconds: 5    
   template:
     metadata:
       labels:
@@ -172,29 +173,18 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "100m"
+            cpu: "50m"
           limits:
-            memory: "300Mi"
-            cpu: "150m"
+            memory: "128Mi"
+            cpu: "80m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5002
-        readinessProbe:
-          initialDelaySeconds: 100
-          httpGet:
-            path: "/health"
-            port: 5002
         livenessProbe:
-          initialDelaySeconds: 100
+          initialDelaySeconds: 10
           httpGet:
             path: "/health"
             port: 5002
-        startupProbe:
-          httpGet:
-            path: "/health"
-            port: 5002
-          failureThreshold: 20
-          periodSeconds: 10
 
 ---
 
@@ -215,10 +205,16 @@ kind: Deployment
 metadata:
   name: playlist-logic
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: playlist-logic
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  minReadySeconds: 5    
   template:
     metadata:
       labels:
@@ -268,29 +264,18 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "100m"
+            cpu: "50m"
           limits:
-            memory: "300Mi"
-            cpu: "150m"
+            memory: "128Mi"
+            cpu: "80m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5003
-        readinessProbe:
-          initialDelaySeconds: 100
-          httpGet:
-            path: "/health"
-            port: 5003
         livenessProbe:
-          initialDelaySeconds: 100
+          initialDelaySeconds: 10
           httpGet:
             path: "/health"
             port: 5003
-        startupProbe:
-          httpGet:
-            path: "/health"
-            port: 5003
-          failureThreshold: 20
-          periodSeconds: 10
 
 ---
 
@@ -312,10 +297,16 @@ kind: Deployment
 metadata:
   name: release-logic
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: release-logic
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  minReadySeconds: 5  
   template:
     metadata:
       labels:
@@ -365,29 +356,18 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "100m"
+            cpu: "50m"
           limits:
-            memory: "300Mi"
-            cpu: "150m"
+            memory: "128Mi"
+            cpu: "80m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5004
-        readinessProbe:
-          initialDelaySeconds: 100
-          httpGet:
-            path: "/health"
-            port: 5004
         livenessProbe:
-          initialDelaySeconds: 100
+          initialDelaySeconds: 10
           httpGet:
             path: "/health"
             port: 5004
-        startupProbe:
-          httpGet:
-            path: "/health"
-            port: 5004
-          failureThreshold: 20
-          periodSeconds: 10
 ---
 
 apiVersion: v1
@@ -409,10 +389,16 @@ kind: Deployment
 metadata:
   name: track-logic
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: track-logic
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  minReadySeconds: 5    
   template:
     metadata:
       labels:
@@ -462,29 +448,18 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "100m"
+            cpu: "50m"
           limits:
-            memory: "300Mi"
-            cpu: "150m"
+            memory: "128Mi"
+            cpu: "80m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
-        readinessProbe:
-          initialDelaySeconds: 100
-          httpGet:
-            path: "/health"
-            port: 5000
         livenessProbe:
-          initialDelaySeconds: 100
+          initialDelaySeconds: 10
           httpGet:
             path: "/health"
             port: 5000
-        startupProbe:
-          httpGet:
-            path: "/health"
-            port: 5000
-          failureThreshold: 20
-          periodSeconds: 10
 ---
 
 apiVersion: v1
@@ -505,10 +480,16 @@ kind: Deployment
 metadata:
   name: auth
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: auth-logic
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  minReadySeconds: 5  
   template:
     metadata:
       labels:
@@ -522,29 +503,18 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "100m"
+            cpu: "50m"
           limits:
-            memory: "300Mi"
-            cpu: "150m"
+            memory: "128Mi"
+            cpu: "80m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5055
-        readinessProbe:
-          initialDelaySeconds: 100
-          httpGet:
-            path: "/health"
-            port: 5055
         livenessProbe:
-          initialDelaySeconds: 100
+          initialDelaySeconds: 10
           httpGet:
             path: "/health"
             port: 5055
-        startupProbe:
-          httpGet:
-            path: "/health"
-            port: 5055
-          failureThreshold: 20
-          periodSeconds: 10
 ---
 
 apiVersion: v1
@@ -568,14 +538,20 @@ kind: Deployment
 metadata:
   name: artist-model
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: artist-model
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  minReadySeconds: 5    
   template:
     metadata:
       labels:
-        app: artist-model
+        app: artist-model      
     spec:
       imagePullSecrets:
       - name: artifact-registry
@@ -585,10 +561,10 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "100m"
+            cpu: "50m"
           limits:
-            memory: "300Mi"
-            cpu: "150m"
+            memory: "128Mi"
+            cpu: "80m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -601,20 +577,8 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50052
-          initialDelaySeconds: 100  
-        readinessProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:50052
-          initialDelaySeconds: 100  
-        startupProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:50052           
-          failureThreshold: 20
-          periodSeconds: 10    
+          initialDelaySeconds: 10
+        
 
 ---
 
@@ -637,10 +601,16 @@ kind: Deployment
 metadata:
   name: artists-releases-model
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: artists-releases-model
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  minReadySeconds: 5
   template:
     metadata:
       labels:
@@ -654,10 +624,10 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "100m"
+            cpu: "50m"
           limits:
-            memory: "300Mi"
-            cpu: "150m"
+            memory: "128Mi"
+            cpu: "80m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -670,21 +640,8 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50053
-          initialDelaySeconds: 100  
-        readinessProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:50053
-          initialDelaySeconds: 100  
-        startupProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:50053 
-          failureThreshold: 20
-          periodSeconds: 10
-
+          initialDelaySeconds: 10
+        
 ---
 
 apiVersion: v1
@@ -706,10 +663,16 @@ kind: Deployment
 metadata:
   name: artists-tracks-model
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: artists-tracks-model
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  minReadySeconds: 5
   template:
     metadata:
       labels:
@@ -723,10 +686,10 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "100m"
+            cpu: "50m"
           limits:
-            memory: "300Mi"
-            cpu: "150m"
+            memory: "128Mi"
+            cpu: "80m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -739,20 +702,7 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50054
-          initialDelaySeconds: 100  
-        readinessProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:50054
-          initialDelaySeconds: 100  
-        startupProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:50054           
-          failureThreshold: 20
-          periodSeconds: 10    
+          initialDelaySeconds: 10
 
 ---
 
@@ -775,10 +725,16 @@ kind: Deployment
 metadata:
   name: genre-model
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: genre-model
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  minReadySeconds: 5
   template:
     metadata:
       labels:
@@ -792,10 +748,10 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "100m"
+            cpu: "50m"
           limits:
-            memory: "300Mi"
-            cpu: "150m"
+            memory: "128Mi"
+            cpu: "80m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -808,20 +764,7 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50055
-          initialDelaySeconds: 100  
-        readinessProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:50055
-          initialDelaySeconds: 100  
-        startupProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:50055 
-          failureThreshold: 20
-          periodSeconds: 10
+          initialDelaySeconds: 10
 
 ---
 
@@ -844,10 +787,16 @@ kind: Deployment
 metadata:
   name: playlist-model
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: playlist-model
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  minReadySeconds: 5
   template:
     metadata:
       labels:
@@ -861,10 +810,10 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "100m"
+            cpu: "50m"
           limits:
-            memory: "300Mi"
-            cpu: "150m"
+            memory: "128Mi"
+            cpu: "80m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -877,20 +826,7 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50057
-          initialDelaySeconds: 100  
-        readinessProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:50057
-          initialDelaySeconds: 100  
-        startupProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:50057 
-          failureThreshold: 20
-          periodSeconds: 10    
+          initialDelaySeconds: 10
 
 ---
 
@@ -913,10 +849,16 @@ kind: Deployment
 metadata:
   name: release-model
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: release-model
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  minReadySeconds: 5
   template:
     metadata:
       labels:
@@ -930,10 +872,10 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "100m"
+            cpu: "50m"
           limits:
-            memory: "300Mi"
-            cpu: "150m"
+            memory: "128Mi"
+            cpu: "80m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -946,20 +888,7 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50058
-          initialDelaySeconds: 100  
-        readinessProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:50058
-          initialDelaySeconds: 100  
-        startupProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:50058
-          failureThreshold: 20
-          periodSeconds: 10    
+          initialDelaySeconds: 10  
 
 ---
 
@@ -982,10 +911,16 @@ kind: Deployment
 metadata:
   name: track-model
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: track-model
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  minReadySeconds: 5
   template:
     metadata:
       labels:
@@ -999,10 +934,10 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "100m"
+            cpu: "50m"
           limits:
-            memory: "300Mi"
-            cpu: "150m"
+            memory: "128Mi"
+            cpu: "80m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -1015,20 +950,7 @@ spec:
             command:
             - /bin/grpc_health_probe
             - -addr=:50051
-          initialDelaySeconds: 100  
-        readinessProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:50051
-          initialDelaySeconds: 100  
-        startupProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:50051
-          failureThreshold: 20
-          periodSeconds: 10   
+          initialDelaySeconds: 10   
 
 ---
 
@@ -1139,7 +1061,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 200Mi
+          averageValue: 100Mi
 
 ---
 
@@ -1166,7 +1088,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 200Mi
+          averageValue: 100Mi
 
 ---
 
@@ -1193,7 +1115,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 200Mi
+          averageValue: 100Mi
 
 ---
 
@@ -1220,7 +1142,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 200Mi
+          averageValue: 100Mi
 
 ---
 
@@ -1247,7 +1169,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 200Mi
+          averageValue: 100Mi
 
 ---
 
@@ -1274,7 +1196,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 200Mi
+          averageValue: 100Mi
 
 ---
 
@@ -1301,7 +1223,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 200Mi
+          averageValue: 100Mi
 
 ---
 
@@ -1328,7 +1250,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 200Mi
+          averageValue: 100Mi
 
 ---
 
@@ -1355,7 +1277,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 200Mi
+          averageValue: 100Mi
 
 ---
 
@@ -1382,7 +1304,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 200Mi
+          averageValue: 100Mi
 
 ---
 
@@ -1409,7 +1331,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 200Mi
+          averageValue: 100Mi
 
 ---
 
@@ -1436,7 +1358,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 200Mi
+          averageValue: 100Mi
 
 ---
 
@@ -1463,5 +1385,5 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 200Mi
+          averageValue: 100Mi
 
