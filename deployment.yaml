@@ -81,11 +81,11 @@ spec:
                 name: "config"
         resources:
           requests:
-            memory: "1000Mi"
-            cpu: "500m"
+            memory: "500Mi"
+            cpu: "200m"
           limits:
-            memory: "1800Mi"
-            cpu: "550m"
+            memory: "800Mi"
+            cpu: "250m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5001
@@ -172,11 +172,11 @@ spec:
                 name: "config"
         resources:
           requests:
-            memory: "1000Mi"
-            cpu: "500m"
+            memory: "500Mi"
+            cpu: "200m"
           limits:
-            memory: "1800Mi"
-            cpu: "550m"
+            memory: "800Mi"
+            cpu: "250m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5002
@@ -263,11 +263,11 @@ spec:
                 name: "config"
         resources:
           requests:
-            memory: "1000Mi"
-            cpu: "500m"
+            memory: "500Mi"
+            cpu: "200m"
           limits:
-            memory: "1800Mi"
-            cpu: "550m"
+            memory: "800Mi"
+            cpu: "250m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5003
@@ -355,11 +355,11 @@ spec:
                 name: "config"
         resources:
           requests:
-            memory: "1000Mi"
-            cpu: "500m"
+            memory: "500Mi"
+            cpu: "200m"
           limits:
-            memory: "1800Mi"
-            cpu: "550m"
+            memory: "800Mi"
+            cpu: "250m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5004
@@ -447,11 +447,11 @@ spec:
                 name: "config"
         resources:
           requests:
-            memory: "1000Mi"
-            cpu: "500m"
+            memory: "500Mi"
+            cpu: "200m"
           limits:
-            memory: "1800Mi"
-            cpu: "550m"
+            memory: "800Mi"
+            cpu: "250m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
@@ -502,11 +502,11 @@ spec:
         image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-auth-service:latest
         resources:
           requests:
-            memory: "1000Mi"
-            cpu: "500m"
+            memory: "500Mi"
+            cpu: "200m"
           limits:
-            memory: "1800Mi"
-            cpu: "550m"
+            memory: "800Mi"
+            cpu: "250m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5055
@@ -560,11 +560,11 @@ spec:
         image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-artist-model-service:latest
         resources:
           requests:
-            memory: "1000Mi"
-            cpu: "500m"
+            memory: "500Mi"
+            cpu: "200m"
           limits:
-            memory: "1800Mi"
-            cpu: "550m"
+            memory: "800Mi"
+            cpu: "250m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -623,11 +623,11 @@ spec:
         image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-artists-releases-model-service:latest
         resources:
           requests:
-            memory: "1000Mi"
-            cpu: "500m"
+            memory: "500Mi"
+            cpu: "200m"
           limits:
-            memory: "1800Mi"
-            cpu: "550m"
+            memory: "800Mi"
+            cpu: "250m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -685,11 +685,11 @@ spec:
         image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-artists-tracks-model-service:latest
         resources:
           requests:
-            memory: "1000Mi"
-            cpu: "500m"
+            memory: "500Mi"
+            cpu: "200m"
           limits:
-            memory: "1800Mi"
-            cpu: "550m"
+            memory: "800Mi"
+            cpu: "250m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -747,11 +747,11 @@ spec:
         image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-genre-model-service:latest
         resources:
           requests:
-            memory: "1000Mi"
-            cpu: "500m"
+            memory: "500Mi"
+            cpu: "200m"
           limits:
-            memory: "1800Mi"
-            cpu: "550m"
+            memory: "800Mi"
+            cpu: "250m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -809,11 +809,11 @@ spec:
         image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-playlist-model-service:latest
         resources:
           requests:
-            memory: "1000Mi"
-            cpu: "500m"
+            memory: "500Mi"
+            cpu: "200m"
           limits:
-            memory: "1800Mi"
-            cpu: "550m"
+            memory: "800Mi"
+            cpu: "250m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -871,11 +871,11 @@ spec:
         image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-release-model-service:latest
         resources:
           requests:
-            memory: "1000Mi"
-            cpu: "500m"
+            memory: "500Mi"
+            cpu: "200m"
           limits:
-            memory: "1800Mi"
-            cpu: "550m"
+            memory: "800Mi"
+            cpu: "250m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -933,11 +933,11 @@ spec:
         image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-track-model-service:latest
         resources:
           requests:
-            memory: "1000Mi"
-            cpu: "500m"
+            memory: "500Mi"
+            cpu: "200m"
           limits:
-            memory: "1800Mi"
-            cpu: "550m"
+            memory: "800Mi"
+            cpu: "250m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -968,74 +968,6 @@ spec:
 
 ---
 
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: api-gateway-ingress
-  annotations:
-    ingress.kubernetes.io/backend-protocol: "HTTPS"
-    kubernetes.io/ingress.allow-http: "false"
-    #nginx.ingress.kubernetes.io/auth-url: "http://34.91.23.167/api/auth/token/validate"
-    #nginx.ingress.kubernetes.io/auth-signin: "http://34.91.23.167/api/auth/login"
-    #nginx.ingress.kubernetes.io/auth-response-headers: "authorization"
-spec:
-  ingressClassName: nginx
-  tls:
-    - secretName: secret-tls
-  rules:
-  - http:
-      paths:
-      - pathType: Prefix
-        path: "/api/tracks"
-        backend:
-          service:
-            name: track-logic
-            port:
-              number: 5000
-      - pathType: Prefix
-        path: "/api/artists"
-        backend:
-          service:
-            name: artist-logic
-            port:
-              number: 5001
-      - pathType: Prefix
-        path: "/api/genres"
-        backend:
-          service:
-            name: genre-logic
-            port:
-              number: 5002
-      - pathType: Prefix
-        path: "/api/playlists"
-        backend:
-          service:
-            name: playlist-logic
-            port:
-              number: 5003
-      - pathType: Prefix
-        path: "/api/releases"
-        backend:
-          service:
-            name: release-logic
-            port:
-              number: 5004
-      - pathType: Prefix
-        path: "/api/auth/"
-        backend:
-          service:
-            name: auth-logic
-            port:
-              number: 5055
-      - pathType: Prefix
-        path: "/callback"
-        backend:
-          service:
-            name: auth-logic
-            port:
-              number: 5055 
-
----
 #HORIZONTAL POD AUTOSCALING
 
 apiVersion: autoscaling/v2
@@ -1061,7 +993,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 1600Mi
+          averageValue: 700Mi
 
 ---
 
@@ -1088,7 +1020,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 1600Mi
+          averageValue: 700Mi
 
 ---
 
@@ -1115,7 +1047,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 1600Mi
+          averageValue: 700Mi
 
 ---
 
@@ -1142,7 +1074,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 1600Mi
+          averageValue: 700Mi
 
 ---
 
@@ -1169,7 +1101,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 1600Mi
+          averageValue: 700Mi
 
 ---
 
@@ -1196,7 +1128,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 1600Mi
+          averageValue: 700Mi
 
 ---
 
@@ -1223,7 +1155,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 1600Mi
+          averageValue: 700Mi
 
 ---
 
@@ -1250,7 +1182,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 1600Mi
+          averageValue: 700Mi
 
 ---
 
@@ -1277,7 +1209,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 1600Mi
+          averageValue: 700Mi
 
 ---
 
@@ -1304,7 +1236,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 1600Mi
+          averageValue: 700Mi
 
 ---
 
@@ -1331,7 +1263,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 1600Mi
+          averageValue: 700Mi
 
 ---
 
@@ -1358,7 +1290,7 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 1600Mi
+          averageValue: 700Mi
 
 ---
 
@@ -1385,5 +1317,141 @@ spec:
         name: memory
         target:
           type: AverageValue
-          averageValue: 1600Mi
+          averageValue: 700Mi
 
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: ingress-gateway
+  namespace: default
+spec:
+  selector:
+    istio: ingressgateway # use istio default ingress gateway
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+      privateKey: /etc/istio/ingressgateway-certs/tls.key # must be the same as secret
+    hosts:
+    - "*"
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: track-istio
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - ingress-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /api/tracks
+    route:
+    - destination:
+        port:
+          number: 5000
+        host: track-logic
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: artists-istio
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - ingress-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /api/artists
+    route:
+    - destination:
+        port:
+          number: 5001
+        host: artist-logic
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: genre-istio
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - ingress-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /api/genres
+    route:
+    - destination:
+        port:
+          number: 5002
+        host: genre-logic
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: playlist-istio
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - ingress-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /api/playlists
+    route:
+    - destination:
+        port:
+          number: 5003
+        host: playlist-logic
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: release-istio
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - ingress-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /api/releases
+    route:
+    - destination:
+        port:
+          number: 5004
+        host: release-logic
+---
+
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: "default"
+spec:
+  mtls:
+    mode: STRICT
