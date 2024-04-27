@@ -1318,7 +1318,6 @@ spec:
         target:
           type: AverageValue
           averageValue: 700Mi
-
 ---
 
 apiVersion: networking.istio.io/v1alpha3
@@ -1340,13 +1339,6 @@ spec:
       privateKey: /etc/istio/ingressgateway-certs/tls.key # must be the same as secret
     hosts:
     - "*"
-  - port:
-      number: 80
-      name: http
-      protocol: HTTP
-    hosts:
-    - "*"
-
 ---
 
 apiVersion: networking.istio.io/v1alpha3
