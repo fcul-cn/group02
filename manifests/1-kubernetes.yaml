@@ -2,7 +2,6 @@ apiVersion: "v1"
 kind: "ConfigMap"
 metadata:
   name: "config"
-  namespace: "staging"
   labels:
     app: "config"
 data:
@@ -21,8 +20,7 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: artist-logic
-  namespace: staging
+  name: artist-logic 
 spec:
   replicas: 3
   selector:
@@ -36,9 +34,10 @@ spec:
   minReadySeconds: 5
   template:
     metadata:
-      namespace: staging
       labels:
         app: artist-logic
+        istio-injection: enabled
+        prometheus-monitoring: enabled
     spec:
       imagePullSecrets:
       - name: artifact-registry
@@ -102,7 +101,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: artist-logic
-  namespace: staging
 spec:
   selector:
     app: artist-logic
@@ -116,7 +114,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: genre-logic
-  namespace: staging
+  
 spec:
   replicas: 3
   selector:
@@ -130,9 +128,10 @@ spec:
   minReadySeconds: 5    
   template:
     metadata:
-      namespace: staging
       labels:
         app: genre-logic
+        istio-injection: enabled
+        prometheus-monitoring: enabled
     spec:
       imagePullSecrets:
       - name: artifact-registry
@@ -197,7 +196,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: genre-logic
-  namespace: staging
 spec:
   selector:
     app: genre-logic
@@ -210,7 +208,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: playlist-logic
-  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -224,9 +221,10 @@ spec:
   minReadySeconds: 5    
   template:
     metadata:
-      namespace: staging
       labels:
         app: playlist-logic
+        istio-injection: enabled
+        prometheus-monitoring: enabled
     spec:
       imagePullSecrets:
       - name: artifact-registry
@@ -290,8 +288,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: playlist-logic
-  namespace: staging
+  name: playlist-logic 
 spec:
   selector:
     app: playlist-logic
@@ -305,7 +302,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: release-logic
-  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -319,9 +315,10 @@ spec:
   minReadySeconds: 5  
   template:
     metadata:
-      namespace: staging
       labels:
         app: release-logic
+        istio-injection: enabled
+        prometheus-monitoring: enabled
     spec:
       imagePullSecrets:
       - name: artifact-registry
@@ -385,7 +382,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: release-logic
-  namespace: staging
 spec:
   selector:
     app: release-logic
@@ -400,7 +396,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: track-logic
-  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -414,9 +409,10 @@ spec:
   minReadySeconds: 5    
   template:
     metadata:
-      namespace: staging
       labels:
         app: track-logic
+        istio-injection: enabled
+        prometheus-monitoring: enabled
     spec:
       imagePullSecrets:
       - name: artifact-registry
@@ -480,7 +476,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: track-logic
-  namespace: staging
 spec:
   selector:
     app: track-logic
@@ -494,7 +489,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: auth
-  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -507,10 +501,11 @@ spec:
     type: RollingUpdate
   minReadySeconds: 5  
   template:
-    metadata:
-      namespace: staging
+    metadata:  
       labels:
         app: auth-logic
+        istio-injection: enabled
+        prometheus-monitoring: enabled
     spec:
       imagePullSecrets:
       - name: artifact-registry
@@ -538,7 +533,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: auth-logic
-  namespace: staging
 spec:
   selector:
     app: auth-logic
@@ -555,7 +549,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: artist-model
-  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -569,9 +562,10 @@ spec:
   minReadySeconds: 5    
   template:
     metadata:
-      namespace: staging
       labels:
-        app: artist-model      
+        app: artist-model
+        istio-injection: enabled
+        prometheus-monitoring: enabled    
     spec:
       imagePullSecrets:
       - name: artifact-registry
@@ -605,8 +599,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: artist-model
-  namespace: staging
+  name: artist-model 
 spec:
   selector:
     app: artist-model
@@ -620,8 +613,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: artists-releases-model
-  namespace: staging
+  name: artists-releases-model 
 spec:
   replicas: 3
   selector:
@@ -635,9 +627,10 @@ spec:
   minReadySeconds: 5
   template:
     metadata:
-      namespace: staging
       labels:
         app: artists-releases-model
+        istio-injection: enabled
+        prometheus-monitoring: enabled
     spec:
       imagePullSecrets:
       - name: artifact-registry
@@ -671,7 +664,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: artists-releases-model
-  namespace: staging
 spec:
   selector:
     app: artists-releases-model
@@ -686,7 +678,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: artists-tracks-model
-  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -700,9 +691,10 @@ spec:
   minReadySeconds: 5
   template:
     metadata:
-      namespace: staging
       labels:
         app: artists-tracks-model
+        istio-injection: enabled
+        prometheus-monitoring: enabled
     spec:
       imagePullSecrets:
       - name: artifact-registry
@@ -736,7 +728,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: artists-tracks-model
-  namespace: staging
 spec:
   selector:
     app: artists-tracks-model
@@ -751,7 +742,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: genre-model
-  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -764,10 +754,11 @@ spec:
     type: RollingUpdate
   minReadySeconds: 5
   template:
-    metadata:
-      namespace: staging
+    metadata:    
       labels:
         app: genre-model
+        istio-injection: enabled
+        prometheus-monitoring: enabled
     spec:
       imagePullSecrets:
       - name: artifact-registry
@@ -801,7 +792,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: genre-model
-  namespace: staging
 spec:
   selector:
     app: genre-model
@@ -816,7 +806,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: playlist-model
-  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -829,10 +818,11 @@ spec:
     type: RollingUpdate
   minReadySeconds: 5
   template:
-    metadata:
-      namespace: staging
+    metadata: 
       labels:
         app: playlist-model
+        istio-injection: enabled
+        prometheus-monitoring: enabled
     spec:
       imagePullSecrets:
       - name: artifact-registry
@@ -865,8 +855,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: playlist-model
-  namespace: staging
+  name: playlist-model 
 spec:
   selector:
     app: playlist-model
@@ -881,7 +870,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: release-model
-  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -894,10 +882,11 @@ spec:
     type: RollingUpdate
   minReadySeconds: 5
   template:
-    metadata:
-      namespace: staging
+    metadata:  
       labels:
         app: release-model
+        istio-injection: enabled
+        prometheus-monitoring: enabled
     spec:
       imagePullSecrets:
       - name: artifact-registry
@@ -931,7 +920,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: release-model
-  namespace: staging
 spec:
   selector:
     app: release-model
@@ -945,8 +933,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: track-model
-  namespace: staging
+  name: track-model 
 spec:
   replicas: 3
   selector:
@@ -960,9 +947,10 @@ spec:
   minReadySeconds: 5
   template:
     metadata:
-      namespace: staging
       labels:
         app: track-model
+        istio-injection: enabled
+        prometheus-monitoring: enabled
     spec:
       imagePullSecrets:
       - name: artifact-registry
@@ -996,7 +984,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: track-model
-  namespace: staging
 spec:
   selector:
     app: track-model
@@ -1013,7 +1000,6 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: artist-logic-hpa
-  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1041,7 +1027,6 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: artist-model-hpa
-  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1069,7 +1054,6 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: artists-releases-model-hpa
-  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1097,7 +1081,6 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: artists-tracks-model-hpa
-  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1125,7 +1108,6 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: genre-logic-hpa
-  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1153,7 +1135,6 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: genre-model-hpa
-  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1181,7 +1162,6 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: playlist-logic-hpa
-  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1209,7 +1189,6 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: playlist-model-hpa
-  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1237,7 +1216,6 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: release-logic-hpa
-  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1265,7 +1243,6 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: release-model-hpa
-  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1293,7 +1270,6 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: track-logic-hpa
-  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1321,7 +1297,6 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: track-model-hpa
-  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1348,8 +1323,7 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: auth-rs-hpa
-  namespace: staging
+  name: auth-rs-hpa 
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

@@ -7,14 +7,13 @@ gcloud container clusters create hello-cluster \
   --zone=europe-west4-a
 
 #Docker and Artifact Registry Secrets
-kubectl apply -f namespace.yaml
-kubectl create secret generic json-key --from-literal "API_TOKEN=$(cat JSON-KEY.json)" -n staging
-kubectl create secret docker-registry artifact-registry --docker-server=https://europe-west4-docker.pkg.dev/ --docker-email=artifact-project-cn@confident-facet-329316.iam.gserviceaccount.com --docker-username=_json_key --docker-password="$(cat ARTIFACT-REGISTRY.json)" -n staging
+kubectl create secret generic json-key --from-literal "API_TOKEN=$(cat JSON-KEY.json)" 
+kubectl create secret docker-registry artifact-registry --docker-server=https://europe-west4-docker.pkg.dev/ --docker-email=artifact-project-cn@confident-facet-329316.iam.gserviceaccount.com --docker-username=_json_key --docker-password="$(cat ARTIFACT-REGISTRY.json)"
 
 #Istio
 curl -L https://istio.io/downloadIstio | sh -
 export PATH="$PATH:/home/$USER/group02/istio-1.21.2/bin"
-istioctl install
+yes | istioctl install
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=*"
 kubectl create -n istio-system secret tls istio-ingressgateway-certs --key tls.key --cert tls.crt
 kubectl apply -n istio-system -f - <<EOF
@@ -26,6 +25,7 @@ spec:
   mtls:
     mode: STRICT
 EOF
+kubectl label namespace default istio-injection=enabled prometheus-monitoring=enabled
 
 #Deploy
 kubectl apply -f manifests
