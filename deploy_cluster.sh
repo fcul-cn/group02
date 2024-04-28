@@ -6,12 +6,31 @@ gcloud container clusters create hello-cluster \
   --machine-type=n1-standard-8 \
   --zone=europe-west4-a
 
-#Secrets
-kubectl create secret generic json-key --from-literal "API_TOKEN=$(cat JSON-KEY.json)"
-kubectl create secret docker-registry artifact-registry --docker-server=https://europe-west4-docker.pkg.dev/ --docker-email=artifact-project-cn@confident-facet-329316.iam.gserviceaccount.com --docker-username=_json_key --docker-password="$(cat ARTIFACT-REGISTRY.json)"
+#Docker and Artifact Registry Secrets
+kubectl apply -f namespace.yaml
+kubectl create secret generic json-key --from-literal "API_TOKEN=$(cat JSON-KEY.json)" -n staging
+kubectl create secret docker-registry artifact-registry --docker-server=https://europe-west4-docker.pkg.dev/ --docker-email=artifact-project-cn@confident-facet-329316.iam.gserviceaccount.com --docker-username=_json_key --docker-password="$(cat ARTIFACT-REGISTRY.json)" -n staging
 
-#Deployment
-kubectl apply -f deployment.yaml
+#Istio
+curl -L https://istio.io/downloadIstio | sh -
+export PATH="$PATH:/home/$USER/group02/istio-1.21.2/bin"
+istioctl install
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=*"
+kubectl create -n istio-system secret tls istio-ingressgateway-certs --key tls.key --cert tls.crt
+kubectl apply -n istio-system -f - <<EOF
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+spec:
+  mtls:
+    mode: STRICT
+EOF
+
+#Deploy
+kubectl apply -f manifests
+
+
 
 
 

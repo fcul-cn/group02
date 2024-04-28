@@ -2,7 +2,7 @@ apiVersion: "v1"
 kind: "ConfigMap"
 metadata:
   name: "config"
-  namespace: "default"
+  namespace: "staging"
   labels:
     app: "config"
 data:
@@ -22,6 +22,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: artist-logic
+  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -35,6 +36,7 @@ spec:
   minReadySeconds: 5
   template:
     metadata:
+      namespace: staging
       labels:
         app: artist-logic
     spec:
@@ -100,6 +102,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: artist-logic
+  namespace: staging
 spec:
   selector:
     app: artist-logic
@@ -113,6 +116,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: genre-logic
+  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -126,6 +130,7 @@ spec:
   minReadySeconds: 5    
   template:
     metadata:
+      namespace: staging
       labels:
         app: genre-logic
     spec:
@@ -192,6 +197,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: genre-logic
+  namespace: staging
 spec:
   selector:
     app: genre-logic
@@ -204,6 +210,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: playlist-logic
+  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -217,6 +224,7 @@ spec:
   minReadySeconds: 5    
   template:
     metadata:
+      namespace: staging
       labels:
         app: playlist-logic
     spec:
@@ -283,6 +291,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: playlist-logic
+  namespace: staging
 spec:
   selector:
     app: playlist-logic
@@ -296,6 +305,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: release-logic
+  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -309,6 +319,7 @@ spec:
   minReadySeconds: 5  
   template:
     metadata:
+      namespace: staging
       labels:
         app: release-logic
     spec:
@@ -374,6 +385,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: release-logic
+  namespace: staging
 spec:
   selector:
     app: release-logic
@@ -388,6 +400,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: track-logic
+  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -401,6 +414,7 @@ spec:
   minReadySeconds: 5    
   template:
     metadata:
+      namespace: staging
       labels:
         app: track-logic
     spec:
@@ -466,6 +480,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: track-logic
+  namespace: staging
 spec:
   selector:
     app: track-logic
@@ -479,6 +494,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: auth
+  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -492,6 +508,7 @@ spec:
   minReadySeconds: 5  
   template:
     metadata:
+      namespace: staging
       labels:
         app: auth-logic
     spec:
@@ -521,6 +538,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: auth-logic
+  namespace: staging
 spec:
   selector:
     app: auth-logic
@@ -537,6 +555,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: artist-model
+  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -550,6 +569,7 @@ spec:
   minReadySeconds: 5    
   template:
     metadata:
+      namespace: staging
       labels:
         app: artist-model      
     spec:
@@ -586,6 +606,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: artist-model
+  namespace: staging
 spec:
   selector:
     app: artist-model
@@ -600,6 +621,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: artists-releases-model
+  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -613,6 +635,7 @@ spec:
   minReadySeconds: 5
   template:
     metadata:
+      namespace: staging
       labels:
         app: artists-releases-model
     spec:
@@ -648,6 +671,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: artists-releases-model
+  namespace: staging
 spec:
   selector:
     app: artists-releases-model
@@ -662,6 +686,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: artists-tracks-model
+  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -675,6 +700,7 @@ spec:
   minReadySeconds: 5
   template:
     metadata:
+      namespace: staging
       labels:
         app: artists-tracks-model
     spec:
@@ -710,6 +736,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: artists-tracks-model
+  namespace: staging
 spec:
   selector:
     app: artists-tracks-model
@@ -724,6 +751,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: genre-model
+  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -737,6 +765,7 @@ spec:
   minReadySeconds: 5
   template:
     metadata:
+      namespace: staging
       labels:
         app: genre-model
     spec:
@@ -772,6 +801,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: genre-model
+  namespace: staging
 spec:
   selector:
     app: genre-model
@@ -786,6 +816,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: playlist-model
+  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -799,6 +830,7 @@ spec:
   minReadySeconds: 5
   template:
     metadata:
+      namespace: staging
       labels:
         app: playlist-model
     spec:
@@ -834,6 +866,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: playlist-model
+  namespace: staging
 spec:
   selector:
     app: playlist-model
@@ -848,6 +881,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: release-model
+  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -861,6 +895,7 @@ spec:
   minReadySeconds: 5
   template:
     metadata:
+      namespace: staging
       labels:
         app: release-model
     spec:
@@ -896,6 +931,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: release-model
+  namespace: staging
 spec:
   selector:
     app: release-model
@@ -910,6 +946,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: track-model
+  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -923,6 +960,7 @@ spec:
   minReadySeconds: 5
   template:
     metadata:
+      namespace: staging
       labels:
         app: track-model
     spec:
@@ -958,6 +996,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: track-model
+  namespace: staging
 spec:
   selector:
     app: track-model
@@ -974,6 +1013,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: artist-logic-hpa
+  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1001,6 +1041,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: artist-model-hpa
+  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1028,6 +1069,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: artists-releases-model-hpa
+  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1055,6 +1097,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: artists-tracks-model-hpa
+  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1082,6 +1125,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: genre-logic-hpa
+  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1109,6 +1153,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: genre-model-hpa
+  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1136,6 +1181,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: playlist-logic-hpa
+  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1163,6 +1209,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: playlist-model-hpa
+  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1190,6 +1237,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: release-logic-hpa
+  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1217,6 +1265,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: release-model-hpa
+  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1244,6 +1293,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: track-logic-hpa
+  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1271,6 +1321,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: track-model-hpa
+  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1298,6 +1349,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: auth-rs-hpa
+  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -1318,132 +1370,4 @@ spec:
         target:
           type: AverageValue
           averageValue: 700Mi
----
 
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: ingress-gateway
-  namespace: default
-spec:
-  selector:
-    istio: ingressgateway # use istio default ingress gateway
-  servers:
-  - port:
-      number: 443
-      name: https
-      protocol: HTTPS
-    tls:
-      mode: SIMPLE
-      serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
-      privateKey: /etc/istio/ingressgateway-certs/tls.key # must be the same as secret
-    hosts:
-    - "*"
----
-
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: track-istio
-spec:
-  hosts:
-  - "*"
-  gateways:
-  - ingress-gateway
-  http:
-  - match:
-    - uri:
-        prefix: /api/tracks
-    route:
-    - destination:
-        port:
-          number: 5000
-        host: track-logic
----
-
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: artists-istio
-spec:
-  hosts:
-  - "*"
-  gateways:
-  - ingress-gateway
-  http:
-  - match:
-    - uri:
-        prefix: /api/artists
-    route:
-    - destination:
-        port:
-          number: 5001
-        host: artist-logic
----
-
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: genre-istio
-spec:
-  hosts:
-  - "*"
-  gateways:
-  - ingress-gateway
-  http:
-  - match:
-    - uri:
-        prefix: /api/genres
-    route:
-    - destination:
-        port:
-          number: 5002
-        host: genre-logic
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: playlist-istio
-spec:
-  hosts:
-  - "*"
-  gateways:
-  - ingress-gateway
-  http:
-  - match:
-    - uri:
-        prefix: /api/playlists
-    route:
-    - destination:
-        port:
-          number: 5003
-        host: playlist-logic
----
-
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: release-istio
-spec:
-  hosts:
-  - "*"
-  gateways:
-  - ingress-gateway
-  http:
-  - match:
-    - uri:
-        prefix: /api/releases
-    route:
-    - destination:
-        port:
-          number: 5004
-        host: release-logic
----
-
-apiVersion: security.istio.io/v1beta1
-kind: PeerAuthentication
-metadata:
-  name: "default"
-spec:
-  mtls:
-    mode: STRICT
