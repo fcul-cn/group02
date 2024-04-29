@@ -12,6 +12,7 @@ data:
   RELEASE_HOST: "release-model"
   ARTISTS_RELEASES_HOST: "artists-releases-model"
   ARTISTS_TRACKS_HOST: "artists-tracks-model"
+  PROJECT_ID: "fcul-cn-ads.project"
   
 ---
 
@@ -586,6 +587,11 @@ spec:
             secretKeyRef:
               name: json-key
               key: API_TOKEN
+        - name: "PROJECT_ID"
+          valueFrom:
+            configMapKeyRef:
+              key: "PROJECT_ID"
+              name: "config"
         livenessProbe:
           exec:
             command:
@@ -651,6 +657,11 @@ spec:
             secretKeyRef:
               name: json-key
               key: API_TOKEN
+        - name: "PROJECT_ID"
+          valueFrom:
+            configMapKeyRef:
+              key: "PROJECT_ID"
+              name: "config"
         livenessProbe:
           exec:
             command:
@@ -715,6 +726,11 @@ spec:
             secretKeyRef:
               name: json-key
               key: API_TOKEN
+        - name: "PROJECT_ID"
+          valueFrom:
+            configMapKeyRef:
+              key: "PROJECT_ID"
+              name: "config"
         livenessProbe:
           exec:
             command:
@@ -779,6 +795,11 @@ spec:
             secretKeyRef:
               name: json-key
               key: API_TOKEN
+        - name: "PROJECT_ID"
+          valueFrom:
+            configMapKeyRef:
+              key: "PROJECT_ID"
+              name: "config"
         livenessProbe:
           exec:
             command:
@@ -843,6 +864,11 @@ spec:
             secretKeyRef:
               name: json-key
               key: API_TOKEN
+        - name: "PROJECT_ID"
+          valueFrom:
+            configMapKeyRef:
+              key: "PROJECT_ID"
+              name: "config"
         livenessProbe:
           exec:
             command:
@@ -907,6 +933,11 @@ spec:
             secretKeyRef:
               name: json-key
               key: API_TOKEN
+        - name: "PROJECT_ID"
+          valueFrom:
+            configMapKeyRef:
+              key: "PROJECT_ID"
+              name: "config"
         livenessProbe:
           exec:
             command:
@@ -971,6 +1002,11 @@ spec:
             secretKeyRef:
               name: json-key
               key: API_TOKEN
+        - name: "PROJECT_ID"
+          valueFrom:
+            configMapKeyRef:
+              key: "PROJECT_ID"
+              name: "config"
         livenessProbe:
           exec:
             command:

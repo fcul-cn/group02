@@ -12,10 +12,11 @@ from google.oauth2 import service_account
 import json, os
 
 json_string = os.environ.get('API_TOKEN')
+project_id = os.environ.get('PROJECT_ID')
 json_file = json.loads(json_string)
 credentials = service_account.Credentials.from_service_account_info(json_file)
 client = bigquery.Client(credentials=credentials, location="europe-west4")
-table_id = "confident-facet-329316.project.Tracks"
+table_id = f"{project_id}.Tracks"
 
 class TrackService(app_pb2_grpc.TrackServiceServicer):
     def getTrack(self, request, context):

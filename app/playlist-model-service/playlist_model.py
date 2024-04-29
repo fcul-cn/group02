@@ -21,11 +21,12 @@ from google.oauth2 import service_account
 import json, os
 
 json_string = os.environ.get('API_TOKEN')
+project_id = os.environ.get('PROJECT_ID')
 json_file = json.loads(json_string)
 credentials = service_account.Credentials.from_service_account_info(json_file)
 client = bigquery.Client(credentials=credentials, location="europe-west4")
-table_id_playlists = "confident-facet-329316.project.Playlists"
-table_id_playlists_tracks = "confident-facet-329316.project.PlaylistsTracks"
+table_id_playlists = f"{project_id}.Playlists"
+table_id_playlists_tracks = f"{project_id}.PlaylistsTracks"
 
 
 class PlaylistService(app_pb2_grpc.PlaylistServiceServicer):
