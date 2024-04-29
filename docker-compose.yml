@@ -28,6 +28,7 @@ services:
     container_name: track-model-service
     environment:
       API_TOKEN: ${API_TOKEN}
+      PROJECT_ID: ${PROJECT_ID}
       # POSTGRES_HOST: ${POSTGRES_TRACK_HOST}
       # POSTGRES_PORT: ${POSTGRES_PORT}
       # POSTGRES_DB: ${POSTGRES_DB}
@@ -83,6 +84,7 @@ services:
     container_name: artist-model-service
     environment:
       API_TOKEN: ${API_TOKEN}
+      PROJECT_ID: ${PROJECT_ID}
       # POSTGRES_HOST: ${POSTGRES_ARTIST_HOST}
       # POSTGRES_PORT: ${POSTGRES_PORT}
       # POSTGRES_DB: ${POSTGRES_DB}
@@ -135,6 +137,7 @@ services:
     container_name: genre-model-service
     environment:
       API_TOKEN: ${API_TOKEN}
+      PROJECT_ID: ${PROJECT_ID}
       # POSTGRES_HOST: ${POSTGRES_GENRE_HOST}
       # POSTGRES_PORT: ${POSTGRES_PORT}
       # POSTGRES_DB: ${POSTGRES_DB}
@@ -186,6 +189,7 @@ services:
     container_name: playlist-model-service
     environment:
       API_TOKEN: ${API_TOKEN}
+      PROJECT_ID: ${PROJECT_ID}
       # POSTGRES_HOST: ${POSTGRES_PLAYLIST_HOST}
       # POSTGRES_PORT: ${POSTGRES_PORT}
       # POSTGRES_DB: ${POSTGRES_DB}
@@ -239,6 +243,7 @@ services:
     container_name: release-model-service
     environment:
       API_TOKEN: ${API_TOKEN}
+      PROJECT_ID: ${PROJECT_ID}
       # POSTGRES_HOST: ${POSTGRES_RELEASE_HOST}
       # POSTGRES_PORT: ${POSTGRES_PORT}
       # POSTGRES_DB: ${POSTGRES_DB}
@@ -275,6 +280,7 @@ services:
     container_name: artists-releases-model-service
     environment:
       API_TOKEN: ${API_TOKEN}
+      PROJECT_ID: ${PROJECT_ID}
       # POSTGRES_HOST: ${POSTGRES_ARTISTS_RELEASES_HOST}
       # POSTGRES_PORT: ${POSTGRES_PORT}
       # POSTGRES_DB: ${POSTGRES_DB}
@@ -311,6 +317,7 @@ services:
     container_name: artists-tracks-model-service
     environment:
       API_TOKEN: ${API_TOKEN}
+      PROJECT_ID: ${PROJECT_ID}
       # POSTGRES_HOST: ${POSTGRES_ARTISTS_TRACKS_HOST}
       # POSTGRES_PORT: ${POSTGRES_PORT}
       # POSTGRES_DB: ${POSTGRES_DB}
