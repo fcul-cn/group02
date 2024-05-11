@@ -12,7 +12,7 @@ data:
   RELEASE_HOST: "release-model"
   ARTISTS_RELEASES_HOST: "artists-releases-model"
   ARTISTS_TRACKS_HOST: "artists-tracks-model"
-  PROJECT_ID: "fcul-cn-ads"
+  PROJECT_ID: "fcul-cn-ads.project"
 ---
 
 #LOGIC DEPLOYMENTS AND SERVICES
