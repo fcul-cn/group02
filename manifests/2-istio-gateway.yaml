@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: ingress-gateway  
+  name: ingress-gateway
 spec:
   selector:
     istio: ingressgateway # use istio default ingress gateway
@@ -61,7 +61,7 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: genre-istio  
+  name: genre-istio 
 spec:
   hosts:
   - "*"
@@ -100,7 +100,7 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: release-istio 
+  name: release-istio
 spec:
   hosts:
   - "*"

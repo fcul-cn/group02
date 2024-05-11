@@ -1,9 +1,9 @@
 apiVersion: "v1"
 kind: "ConfigMap"
 metadata:
-  name: "config"
+  name: config
   labels:
-    app: "config"
+    app: config
 data:
   ARTIST_HOST: "artist-model"
   GENRE_HOST: "genre-model"
@@ -12,8 +12,7 @@ data:
   RELEASE_HOST: "release-model"
   ARTISTS_RELEASES_HOST: "artists-releases-model"
   ARTISTS_TRACKS_HOST: "artists-tracks-model"
-  PROJECT_ID: "fcul-cn-ads.project"
-  
+  PROJECT_ID: "fcul-cn-ads"
 ---
 
 #LOGIC DEPLOYMENTS AND SERVICES
@@ -44,43 +43,43 @@ spec:
       - name: artifact-registry
       containers:
       - name: artist-logic
-        image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-artist-logic-service:latest
+        image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-artist-logic-service:latest
         env:
-          - name: "ARTIST_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "ARTIST_HOST"
-                name: "config"
-          - name: "ARTISTS_RELEASES_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "ARTISTS_RELEASES_HOST"
-                name: "config"
-          - name: "RELEASE_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "RELEASE_HOST"
-                name: "config"
-          - name: "GENRE_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "GENRE_HOST"
-                name: "config"
-          - name: "PLAYLIST_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "PLAYLIST_HOST"
-                name: "config"
-          - name: "TRACK_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "TRACK_HOST"
-                name: "config"
-          - name: "ARTISTS_TRACKS_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "ARTISTS_TRACKS_HOST"
-                name: "config"
+        - name: ARTIST_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: ARTIST_HOST
+              name: config
+        - name: ARTISTS_RELEASES_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: ARTISTS_RELEASES_HOST
+              name: config
+        - name: RELEASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: RELEASE_HOST
+              name: config
+        - name: GENRE_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: GENRE_HOST
+              name: config
+        - name: PLAYLIST_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: PLAYLIST_HOST
+              name: config
+        - name: TRACK_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: TRACK_HOST
+              name: config
+        - name: ARTISTS_TRACKS_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: ARTISTS_TRACKS_HOST
+              name: config   
         resources:
           requests:
             memory: "500Mi"
@@ -114,8 +113,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: genre-logic
-  
+  name: genre-logic 
 spec:
   replicas: 3
   selector:
@@ -138,43 +136,43 @@ spec:
       - name: artifact-registry
       containers:
       - name: genre-logic
-        image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-genre-logic-service:latest
+        image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-genre-logic-service:latest
         env:
-          - name: "ARTIST_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "ARTIST_HOST"
-                name: "config"
-          - name: "ARTISTS_RELEASES_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "ARTISTS_RELEASES_HOST"
-                name: "config"
-          - name: "RELEASE_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "RELEASE_HOST"
-                name: "config"
-          - name: "GENRE_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "GENRE_HOST"
-                name: "config"
-          - name: "PLAYLIST_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "PLAYLIST_HOST"
-                name: "config"
-          - name: "TRACK_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "TRACK_HOST"
-                name: "config"
-          - name: "ARTISTS_TRACKS_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "ARTISTS_TRACKS_HOST"
-                name: "config"
+        - name: ARTIST_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: ARTIST_HOST
+              name: config
+        - name: ARTISTS_RELEASES_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: ARTISTS_RELEASES_HOST
+              name: config
+        - name: RELEASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: RELEASE_HOST
+              name: config
+        - name: GENRE_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: GENRE_HOST
+              name: config
+        - name: PLAYLIST_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: PLAYLIST_HOST
+              name: config
+        - name: TRACK_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: TRACK_HOST
+              name: config
+        - name: ARTISTS_TRACKS_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: ARTISTS_TRACKS_HOST
+              name: config   
         resources:
           requests:
             memory: "500Mi"
@@ -231,43 +229,43 @@ spec:
       - name: artifact-registry
       containers:
       - name: playlist-logic
-        image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-playlist-logic-service:latest
+        image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-playlist-logic-service:latest
         env:
-          - name: "ARTIST_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "ARTIST_HOST"
-                name: "config"
-          - name: "ARTISTS_RELEASES_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "ARTISTS_RELEASES_HOST"
-                name: "config"
-          - name: "RELEASE_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "RELEASE_HOST"
-                name: "config"
-          - name: "GENRE_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "GENRE_HOST"
-                name: "config"
-          - name: "PLAYLIST_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "PLAYLIST_HOST"
-                name: "config"
-          - name: "TRACK_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "TRACK_HOST"
-                name: "config"
-          - name: "ARTISTS_TRACKS_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "ARTISTS_TRACKS_HOST"
-                name: "config"
+        - name: ARTIST_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: ARTIST_HOST
+              name: config
+        - name: ARTISTS_RELEASES_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: ARTISTS_RELEASES_HOST
+              name: config
+        - name: RELEASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: RELEASE_HOST
+              name: config
+        - name: GENRE_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: GENRE_HOST
+              name: config
+        - name: PLAYLIST_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: PLAYLIST_HOST
+              name: config
+        - name: TRACK_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: TRACK_HOST
+              name: config
+        - name: ARTISTS_TRACKS_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: ARTISTS_TRACKS_HOST
+              name: config
         resources:
           requests:
             memory: "500Mi"
@@ -325,43 +323,43 @@ spec:
       - name: artifact-registry
       containers:
       - name: release-logic
-        image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-release-logic-service:latest
+        image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-release-logic-service:latest
         env:
-          - name: "ARTIST_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "ARTIST_HOST"
-                name: "config"
-          - name: "ARTISTS_RELEASES_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "ARTISTS_RELEASES_HOST"
-                name: "config"
-          - name: "RELEASE_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "RELEASE_HOST"
-                name: "config"
-          - name: "GENRE_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "GENRE_HOST"
-                name: "config"
-          - name: "PLAYLIST_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "PLAYLIST_HOST"
-                name: "config"
-          - name: "TRACK_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "TRACK_HOST"
-                name: "config"
-          - name: "ARTISTS_TRACKS_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "ARTISTS_TRACKS_HOST"
-                name: "config"
+        - name: ARTIST_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: ARTIST_HOST
+              name: config
+        - name: ARTISTS_RELEASES_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: ARTISTS_RELEASES_HOST
+              name: config
+        - name: RELEASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: RELEASE_HOST
+              name: config
+        - name: GENRE_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: GENRE_HOST
+              name: config
+        - name: PLAYLIST_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: PLAYLIST_HOST
+              name: config
+        - name: TRACK_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: TRACK_HOST
+              name: config
+        - name: ARTISTS_TRACKS_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: ARTISTS_TRACKS_HOST
+              name: config
         resources:
           requests:
             memory: "500Mi"
@@ -419,43 +417,43 @@ spec:
       - name: artifact-registry
       containers:
       - name: track-logic
-        image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-track-logic-service:latest
+        image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-track-logic-service:latest
         env:
-          - name: "ARTIST_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "ARTIST_HOST"
-                name: "config"
-          - name: "ARTISTS_RELEASES_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "ARTISTS_RELEASES_HOST"
-                name: "config"
-          - name: "RELEASE_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "RELEASE_HOST"
-                name: "config"
-          - name: "GENRE_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "GENRE_HOST"
-                name: "config"
-          - name: "PLAYLIST_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "PLAYLIST_HOST"
-                name: "config"
-          - name: "TRACK_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "TRACK_HOST"
-                name: "config"
-          - name: "ARTISTS_TRACKS_HOST"
-            valueFrom:
-              configMapKeyRef:
-                key: "ARTISTS_TRACKS_HOST"
-                name: "config"
+        - name: ARTIST_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: ARTIST_HOST
+              name: config
+        - name: ARTISTS_RELEASES_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: ARTISTS_RELEASES_HOST
+              name: config
+        - name: RELEASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: RELEASE_HOST
+              name: config
+        - name: GENRE_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: GENRE_HOST
+              name: config
+        - name: PLAYLIST_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: PLAYLIST_HOST
+              name: config
+        - name: TRACK_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: TRACK_HOST
+              name: config
+        - name: ARTISTS_TRACKS_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: ARTISTS_TRACKS_HOST
+              name: config
         resources:
           requests:
             memory: "500Mi"
@@ -512,7 +510,7 @@ spec:
       - name: artifact-registry
       containers:
       - name: auth-logic
-        image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-auth-service:latest
+        image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-auth-service:latest
         resources:
           requests:
             memory: "500Mi"
@@ -572,7 +570,7 @@ spec:
       - name: artifact-registry
       containers:
       - name: artist-model
-        image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-artist-model-service:latest
+        image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-artist-model-service:latest
         resources:
           requests:
             memory: "500Mi"
@@ -587,11 +585,11 @@ spec:
             secretKeyRef:
               name: json-key
               key: API_TOKEN
-        - name: "PROJECT_ID"
+        - name: PROJECT_ID
           valueFrom:
             configMapKeyRef:
-              key: "PROJECT_ID"
-              name: "config"
+              key: PROJECT_ID
+              name: config              
         livenessProbe:
           exec:
             command:
@@ -642,7 +640,7 @@ spec:
       - name: artifact-registry
       containers:
       - name: artists-releases-model
-        image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-artists-releases-model-service:latest
+        image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-artists-releases-model-service:latest
         resources:
           requests:
             memory: "500Mi"
@@ -657,11 +655,11 @@ spec:
             secretKeyRef:
               name: json-key
               key: API_TOKEN
-        - name: "PROJECT_ID"
+        - name: PROJECT_ID
           valueFrom:
             configMapKeyRef:
-              key: "PROJECT_ID"
-              name: "config"
+              key: PROJECT_ID
+              name: config         
         livenessProbe:
           exec:
             command:
@@ -711,7 +709,7 @@ spec:
       - name: artifact-registry
       containers:
       - name: artists-tracks-model
-        image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-artists-tracks-model-service:latest
+        image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-artists-tracks-model-service:latest
         resources:
           requests:
             memory: "500Mi"
@@ -726,11 +724,11 @@ spec:
             secretKeyRef:
               name: json-key
               key: API_TOKEN
-        - name: "PROJECT_ID"
+        - name: PROJECT_ID
           valueFrom:
             configMapKeyRef:
-              key: "PROJECT_ID"
-              name: "config"
+              key: PROJECT_ID
+              name: config         
         livenessProbe:
           exec:
             command:
@@ -780,7 +778,7 @@ spec:
       - name: artifact-registry
       containers:
       - name: genre-model
-        image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-genre-model-service:latest
+        image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-genre-model-service:latest
         resources:
           requests:
             memory: "500Mi"
@@ -795,11 +793,11 @@ spec:
             secretKeyRef:
               name: json-key
               key: API_TOKEN
-        - name: "PROJECT_ID"
+        - name: PROJECT_ID
           valueFrom:
             configMapKeyRef:
-              key: "PROJECT_ID"
-              name: "config"
+              key: PROJECT_ID
+              name: config         
         livenessProbe:
           exec:
             command:
@@ -849,7 +847,7 @@ spec:
       - name: artifact-registry
       containers:
       - name: playlist-model
-        image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-playlist-model-service:latest
+        image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-playlist-model-service:latest
         resources:
           requests:
             memory: "500Mi"
@@ -864,11 +862,11 @@ spec:
             secretKeyRef:
               name: json-key
               key: API_TOKEN
-        - name: "PROJECT_ID"
+        - name: PROJECT_ID
           valueFrom:
             configMapKeyRef:
-              key: "PROJECT_ID"
-              name: "config"
+              key: PROJECT_ID
+              name: config         
         livenessProbe:
           exec:
             command:
@@ -918,7 +916,7 @@ spec:
       - name: artifact-registry
       containers:
       - name: release-model
-        image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-release-model-service:latest
+        image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-release-model-service:latest
         resources:
           requests:
             memory: "500Mi"
@@ -933,11 +931,11 @@ spec:
             secretKeyRef:
               name: json-key
               key: API_TOKEN
-        - name: "PROJECT_ID"
+        - name: PROJECT_ID
           valueFrom:
             configMapKeyRef:
-              key: "PROJECT_ID"
-              name: "config"
+              key: PROJECT_ID
+              name: config            
         livenessProbe:
           exec:
             command:
@@ -987,7 +985,7 @@ spec:
       - name: artifact-registry
       containers:
       - name: track-model
-        image: europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-track-model-service:latest
+        image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-track-model-service:latest
         resources:
           requests:
             memory: "500Mi"
@@ -1002,11 +1000,11 @@ spec:
             secretKeyRef:
               name: json-key
               key: API_TOKEN
-        - name: "PROJECT_ID"
+        - name: PROJECT_ID
           valueFrom:
             configMapKeyRef:
-              key: "PROJECT_ID"
-              name: "config"
+              key: PROJECT_ID
+              name: config      
         livenessProbe:
           exec:
             command:

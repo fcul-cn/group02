@@ -8,7 +8,7 @@ gcloud container clusters create hello-cluster \
 
 #Docker and Artifact Registry Secrets
 kubectl create secret generic json-key --from-literal "API_TOKEN=$(cat JSON-KEY.json)" 
-kubectl create secret docker-registry artifact-registry --docker-server=https://europe-west4-docker.pkg.dev/ --docker-email=artifact-project-cn@confident-facet-329316.iam.gserviceaccount.com --docker-username=_json_key --docker-password="$(cat ARTIFACT-REGISTRY.json)"
+kubectl create secret docker-registry artifact-registry --docker-server=https://europe-west4-docker.pkg.dev/ --docker-email=artifact-registry@fcul-cn-ads.iam.gserviceaccount.com --docker-username=_json_key --docker-password="$(cat ARTIFACT-REGISTRY.json)"
 
 #Istio
 curl -L https://istio.io/downloadIstio | sh -
