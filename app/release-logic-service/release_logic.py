@@ -28,7 +28,7 @@ def get_release(release_id):
             "release_title": response.release.release_title,
             "release_date": response.release.release_date,
             "release_url": response.release.release_url,
-            "updated_on": response.release.updated_on,
+            "updated_on": response.release.updated_on
         }, 200
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
@@ -57,7 +57,7 @@ def post_releases():
             "release_title": response.release.release_title,
             "release_date": response.release.release_date,
             "release_url": response.release.release_url,
-            "updated_on": response.release.updated_on,
+            "updated_on": response.release.updated_on
         }, 201   
     except grpc.RpcError as rpc_error:
         if rpc_error.code() == grpc.StatusCode.NOT_FOUND:
