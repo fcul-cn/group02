@@ -115,3 +115,29 @@ spec:
         port:
           number: 5004
         host: release-logic
+
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  generation: 4
+  name: grafana-vs
+spec:
+  gateways:
+    - ingress-gateway
+  hosts:
+    - '*'
+  http:
+    - headers:
+        request:
+          add:
+            Host: my.fqdn.com
+      match:
+        - uri:
+            prefix: /grafana
+      route:
+        - destination:
+            host: grafana.svc
+            port:
+              number: 80

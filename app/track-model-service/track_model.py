@@ -18,6 +18,7 @@ credentials = service_account.Credentials.from_service_account_info(json_file)
 client = bigquery.Client(credentials=credentials, location="europe-west4")
 table_id = f"{project_id}.Tracks"
 
+
 class TrackService(app_pb2_grpc.TrackServiceServicer):
     def getTrack(self, request, context):
         if request.track_id <= 0:

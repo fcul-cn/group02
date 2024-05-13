@@ -411,7 +411,7 @@ spec:
       labels:
         app: track-logic
         istio-injection: enabled
-        prometheus-monitoring: enabled
+        prometheus-monitoring: enabled  
     spec:
       imagePullSecrets:
       - name: artifact-registry
@@ -504,7 +504,7 @@ spec:
       labels:
         app: auth-logic
         istio-injection: enabled
-        prometheus-monitoring: enabled
+        prometheus-monitoring: enabled 
     spec:
       imagePullSecrets:
       - name: artifact-registry
