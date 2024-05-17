@@ -190,15 +190,15 @@ spec:
             - name: GF_PATHS_PROVISIONING
               value: /etc/grafana/provisioning
             - name: "GF_AUTH_ANONYMOUS_ENABLED"
-              value: "true"
-            - name: "GF_AUTH_ANONYMOUS_ORG_ROLE"
-              value: "Admin"
-            - name: "GF_AUTH_BASIC_ENABLED"
               value: "false"
-            - name: "GF_SECURITY_ADMIN_PASSWORD"
-              value: "admin"
-            - name: "GF_SECURITY_ADMIN_USER"
-              value: "admin"
+            - name: "GF_AUTH_ANONYMOUS_ORG_ROLE"
+              value: "Viewer"
+            - name: "GF_AUTH_BASIC_ENABLED"
+              value: "true"
+            - name: GF_SECURITY_CSRF_ADDITIONAL_HEADERS
+              value: ""
+            - name: GF_SECURITY_CSRF_TRUSTED_ORIGINS
+              value: "8080-cs-288471917264-default.cs-europe-west1-iuzs.cloudshell.dev"  
             - name: GF_SECURITY_ADMIN_USER
               valueFrom:
                 secretKeyRef:
