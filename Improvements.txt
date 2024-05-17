@@ -1,5 +1,14 @@
-Phase 6 progress:
+Phase 6 - Phase 8 progress:
 
 Kubernetes:
     - Removed unnecessary probes (readiness and startup)
     - Add rolling update strategy
+
+Istio:
+    Migrate to version 1.22.0
+
+Prometheus:
+    Finnaly working, gets metrics from Istio Control Plane
+
+Grafana:
+    CSRF origin not allowed fixed

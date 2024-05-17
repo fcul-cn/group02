@@ -7,8 +7,8 @@ metadata:
     app.kubernetes.io/component: server
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/instance: prometheus
-    app.kubernetes.io/version: v2.48.0
-    helm.sh/chart: prometheus-25.8.0
+    app.kubernetes.io/version: v2.51.1
+    helm.sh/chart: prometheus-25.19.1
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: prometheus
   name: prometheus
@@ -24,8 +24,8 @@ metadata:
     app.kubernetes.io/component: server
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/instance: prometheus
-    app.kubernetes.io/version: v2.48.0
-    helm.sh/chart: prometheus-25.8.0
+    app.kubernetes.io/version: v2.51.1
+    helm.sh/chart: prometheus-25.19.1
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: prometheus
   name: prometheus
@@ -383,8 +383,8 @@ metadata:
     app.kubernetes.io/component: server
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/instance: prometheus
-    app.kubernetes.io/version: v2.48.0
-    helm.sh/chart: prometheus-25.8.0
+    app.kubernetes.io/version: v2.51.1
+    helm.sh/chart: prometheus-25.19.1
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: prometheus
   name: prometheus
@@ -435,8 +435,8 @@ metadata:
     app.kubernetes.io/component: server
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/instance: prometheus
-    app.kubernetes.io/version: v2.48.0
-    helm.sh/chart: prometheus-25.8.0
+    app.kubernetes.io/version: v2.51.1
+    helm.sh/chart: prometheus-25.19.1
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: prometheus
   name: prometheus
@@ -457,8 +457,8 @@ metadata:
     app.kubernetes.io/component: server
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/instance: prometheus
-    app.kubernetes.io/version: v2.48.0
-    helm.sh/chart: prometheus-25.8.0
+    app.kubernetes.io/version: v2.51.1
+    helm.sh/chart: prometheus-25.19.1
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: prometheus
   name: prometheus
@@ -484,8 +484,8 @@ metadata:
     app.kubernetes.io/component: server
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/instance: prometheus
-    app.kubernetes.io/version: v2.48.0
-    helm.sh/chart: prometheus-25.8.0
+    app.kubernetes.io/version: v2.51.1
+    helm.sh/chart: prometheus-25.19.1
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: prometheus
   name: prometheus
@@ -514,8 +514,8 @@ spec:
         app.kubernetes.io/component: server
         app.kubernetes.io/name: prometheus
         app.kubernetes.io/instance: prometheus
-        app.kubernetes.io/version: v2.48.0
-        helm.sh/chart: prometheus-25.8.0
+        app.kubernetes.io/version: v2.51.1
+        helm.sh/chart: prometheus-25.19.1
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: prometheus
         
@@ -525,7 +525,7 @@ spec:
       serviceAccountName: prometheus
       containers:
         - name: prometheus-server-configmap-reload
-          image: "ghcr.io/prometheus-operator/prometheus-config-reloader:v0.67.0"
+          image: "ghcr.io/prometheus-operator/prometheus-config-reloader:v0.72.0"
           imagePullPolicy: "IfNotPresent"
           args:
             - --watched-dir=/etc/config
@@ -536,7 +536,7 @@ spec:
               readOnly: true
 
         - name: prometheus-server
-          image: "prom/prometheus:v2.48.0"
+          image: "prom/prometheus:v2.51.1"
           imagePullPolicy: "IfNotPresent"
           args:
             - --storage.tsdb.retention.time=15d
