@@ -126,3 +126,211 @@ spec:
   mtls:
     mode: STRICT
 
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: auth-istio
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - ingress-gateway
+  http:
+  - match:
+    - uri:
+        exact: /api/auth/login
+    - uri:
+        exact: /api/auth/logout
+    - uri:
+        exact: /api/auth/callback
+    route:
+    - destination:
+        port:
+          number: 5055
+        host: auth-logic
+
+---
+
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: auth0
+spec:
+  jwtRules:
+  - issuer: "https://dev-ajv2y52zheuy2djo.us.auth0.com/"
+    jwksUri: "https://dev-ajv2y52zheuy2djo.us.auth0.com/.well-known/jwks.json"
+    fromHeaders:
+    - name: "Cookie"
+      prefix: "istio="
+
+---
+
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: artist-logic-ap
+spec:
+  selector:
+    matchLabels:
+      app: artist-logic
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals: ["*"]
+    to:
+    - operation:
+        methods: ["POST"]
+        paths: ["/artists"]
+    when:
+    - key: request.auth.claims[permissions]
+      values: ["write:artists"]
+  - to:
+    - operation:
+        methods: ["GET"]
+
+---
+
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: genre-logic-ap
+spec:
+  selector:
+    matchLabels:
+      app: genre-logic
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals: ["*"]
+    to:
+    - operation:
+        methods: ["POST"]
+        paths: ["/genres"]
+    when:
+    - key: request.auth.claims[permissions]
+      values: ["write:genres"]
+  - from:
+    - source:
+        principals: ["*"]
+    to:
+    - operation:
+        methods: ["PUT"]
+        paths: ["/genres/{genre_id}"]
+    when:
+    - key: request.auth.claims[permissions]
+      values: ["write:genres"]
+  - to:
+    - operation:
+        methods: ["GET"]
+  
+---
+
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: release-logic-ap
+spec:
+  selector:
+    matchLabels:
+      app: release-logic
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals: ["*"]
+    to:
+    - operation:
+        methods: ["POST"]
+        paths: ["/releases"]
+    when:
+    - key: request.auth.claims[permissions]
+      values: ["write:releases"]
+  - to:
+    - operation:
+        methods: ["GET"]
+
+---
+
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: playlist-logic-ap
+spec:
+  selector:
+    matchLabels:
+      app: playlist-logic
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals: ["*"]
+    to:
+    - operation:
+        methods: ["POST"]
+        paths: ["/playlists"]
+    when:
+    - key: request.auth.claims[permissions]
+      values: ["write:playlists"]
+  - from:
+    - source:
+        principals: ["*"]
+    to:
+    - operation:
+        methods: ["PUT"]
+        paths: ["/playlists/{playlist_id}/tracks"]
+    when:
+    - key: request.auth.claims[permissions]
+      values: ["write:playlists"]
+  - from:
+    - source:
+        principals: ["*"]
+    to:
+    - operation:
+        methods: ["DELETE"]
+        paths: ["/playlists/{playlist_id}"]
+    when:
+    - key: request.auth.claims[permissions]
+      values: ["write:playlists"]
+  - to:
+    - operation:
+        methods: ["GET"]
+
+---
+
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: track-logic-ap
+spec:
+  selector:
+    matchLabels:
+      app: track-logic
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals: ["*"]
+    to:
+    - operation:
+        methods: ["POST"]
+        paths: ["/tracks"]
+    when:
+    - key: request.auth.claims[permissions]
+      values: ["write:tracks"]
+  - from:
+    - source:
+        principals: ["*"]
+    to:
+    - operation:
+        methods: ["DELETE"]
+        paths: ["/tracks/{track_id}"]
+    when:
+    - key: request.auth.claims[permissions]
+      values: ["write:tracks"]
+  - to:
+    - operation:
+        methods: ["GET"]

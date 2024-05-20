@@ -13,6 +13,22 @@ data:
   ARTISTS_RELEASES_HOST: "artists-releases-model"
   ARTISTS_TRACKS_HOST: "artists-tracks-model"
   PROJECT_ID: "fcul-cn-ads.project"
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-credentials
+type: Opaque
+stringData:
+  BASE_URL: https://34.32.245.123/api
+  AUTH0_CALLBACK_URL: https://34.32.245.123/api/auth/callback
+  AUTH0_CLIENT_ID: vr7relcLhhRrzAGzqGXUIqvFCGKtbA7K
+  AUTH0_CLIENT_SECRET: zYMOPVZTh37Fvi0B27rYyD6RVs-pSKPjALk0_ChhoemJ2chSQoT462rXpc0WeRi8
+  AUTH0_DOMAIN: dev-ajv2y52zheuy2djo.us.auth0.com
+  AUTH0_AUDIENCE: https://34.90.166.175/api
+
 ---
 
 #LOGIC DEPLOYMENTS AND SERVICES
@@ -511,6 +527,37 @@ spec:
       containers:
       - name: auth-logic
         image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-auth-service:latest
+        env:
+        - name: BASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-credentials
+              key: BASE_URL
+        - name: AUTH0_CALLBACK_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-credentials
+              key: AUTH0_CALLBACK_URL
+        - name: AUTH0_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: app-credentials
+              key: AUTH0_CLIENT_ID        
+        - name: AUTH0_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: app-credentials
+              key: AUTH0_CLIENT_SECRET
+        - name: AUTH0_DOMAIN
+          valueFrom:
+            secretKeyRef:
+              name: app-credentials
+              key: AUTH0_DOMAIN
+        - name: AUTH0_AUDIENCE
+          valueFrom:
+            secretKeyRef:
+              name: app-credentials
+              key: AUTH0_AUDIENCE
         resources:
           requests:
             memory: "500Mi"
