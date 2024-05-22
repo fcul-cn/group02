@@ -17,6 +17,7 @@ yes | istioctl install
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=*"
 kubectl create -n istio-system secret tls istio-ingressgateway-certs --key tls.key --cert tls.crt
 kubectl create secret generic grafana-admin-credentials --from-env-file=grafana-admin-credentials.env -n istio-system
+kubectl create secret generic app-credentials --from-env-file=app-credentials.env
 kubectl label namespace default istio-injection=enabled prometheus-monitoring=enabled
 
 #Deploy
