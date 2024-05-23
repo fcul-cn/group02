@@ -12,3 +12,7 @@ Prometheus:
 
 Grafana:
     CSRF origin not allowed fixed
+    Created dashboard with cpu and memory usage, process time and timeout
+
+Auth0:
+    Fully working

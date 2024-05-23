@@ -4,8 +4,6 @@ import os
 import threading
 from app_pb2 import GetTrackRequest, DeleteTrackRequest, AddTrackRequest, GetTrackGenreRequest, NewTrack, GetGenreRequest, DeleteTrackFromPlaylistsRequest, GetReleaseRequest, AddTrackArtistsRequest
 from app_pb2_grpc import TrackServiceStub, GenreServiceStub, PlaylistServiceStub, ReleaseServiceStub, ArtistsTracksServiceStub
-from prometheus_client import Gauge, Counter, start_http_server
-
 
 app = Flask(__name__)
 
@@ -29,17 +27,7 @@ artists_tracks_host = os.getenv("ARTISTS_TRACKS_HOST", "localhost")
 artists_tracks_channel = grpc.insecure_channel(f"{artists_tracks_host}:50054")
 artists_tracks_client = ArtistsTracksServiceStub(artists_tracks_channel)
 
-
-requests_total = Counter('requests_total', 'Total number of HTTP requests.')
-requests_in_progress = Gauge('requests_in_progress', 'Number of HTTP requests in progress.')
-
-def start_metrics_server():
-    start_http_server(5000)
-
-threading.Thread(target=start_metrics_server).start()
-
 @app.get("/api/tracks/<int:track_id>")
-@requests_in_progress.track_inprogress()
 def get_track(track_id):
     try:
         request = GetTrackRequest(track_id=track_id)
