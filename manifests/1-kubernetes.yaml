@@ -83,11 +83,11 @@ spec:
               name: config   
         resources:
           requests:
-            memory: "500Mi"
-            cpu: "200m"
+            memory: "100Mi"
+            cpu: "80m"
           limits:
-            memory: "800Mi"
-            cpu: "250m"
+            memory: "200Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5001
@@ -176,11 +176,11 @@ spec:
               name: config   
         resources:
           requests:
-            memory: "500Mi"
-            cpu: "200m"
+            memory: "100Mi"
+            cpu: "80m"
           limits:
-            memory: "800Mi"
-            cpu: "250m"
+            memory: "200Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5002
@@ -269,11 +269,11 @@ spec:
               name: config
         resources:
           requests:
-            memory: "500Mi"
-            cpu: "200m"
+            memory: "100Mi"
+            cpu: "80m"
           limits:
-            memory: "800Mi"
-            cpu: "250m"
+            memory: "200Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5003
@@ -363,11 +363,11 @@ spec:
               name: config
         resources:
           requests:
-            memory: "500Mi"
-            cpu: "200m"
+            memory: "100Mi"
+            cpu: "80m"
           limits:
-            memory: "800Mi"
-            cpu: "250m"
+            memory: "200Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5004
@@ -457,11 +457,11 @@ spec:
               name: config
         resources:
           requests:
-            memory: "500Mi"
-            cpu: "200m"
+            memory: "100Mi"
+            cpu: "80m"
           limits:
-            memory: "800Mi"
-            cpu: "250m"
+            memory: "200Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
@@ -545,11 +545,11 @@ spec:
               key: AUTH0_AUDIENCE
         resources:
           requests:
-            memory: "500Mi"
-            cpu: "200m"
+            memory: "100Mi"
+            cpu: "80m"
           limits:
-            memory: "800Mi"
-            cpu: "250m"
+            memory: "200Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         ports:
         - containerPort: 5055
@@ -605,11 +605,11 @@ spec:
         image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-artist-model-service:latest
         resources:
           requests:
-            memory: "500Mi"
-            cpu: "200m"
+            memory: "100Mi"
+            cpu: "80m"
           limits:
-            memory: "800Mi"
-            cpu: "250m"
+            memory: "200Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -675,11 +675,11 @@ spec:
         image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-artists-releases-model-service:latest
         resources:
           requests:
-            memory: "500Mi"
-            cpu: "200m"
+            memory: "100Mi"
+            cpu: "80m"
           limits:
-            memory: "800Mi"
-            cpu: "250m"
+            memory: "200Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -744,11 +744,11 @@ spec:
         image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-artists-tracks-model-service:latest
         resources:
           requests:
-            memory: "500Mi"
-            cpu: "200m"
+            memory: "100Mi"
+            cpu: "80m"
           limits:
-            memory: "800Mi"
-            cpu: "250m"
+            memory: "200Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -813,11 +813,11 @@ spec:
         image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-genre-model-service:latest
         resources:
           requests:
-            memory: "500Mi"
-            cpu: "200m"
+            memory: "100Mi"
+            cpu: "80m"
           limits:
-            memory: "800Mi"
-            cpu: "250m"
+            memory: "200Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -882,11 +882,11 @@ spec:
         image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-playlist-model-service:latest
         resources:
           requests:
-            memory: "500Mi"
-            cpu: "200m"
+            memory: "100Mi"
+            cpu: "80m"
           limits:
-            memory: "800Mi"
-            cpu: "250m"
+            memory: "200Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -951,11 +951,11 @@ spec:
         image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-release-model-service:latest
         resources:
           requests:
-            memory: "500Mi"
-            cpu: "200m"
+            memory: "100Mi"
+            cpu: "80m"
           limits:
-            memory: "800Mi"
-            cpu: "250m"
+            memory: "200Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN
@@ -1020,11 +1020,11 @@ spec:
         image: europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-track-model-service:latest
         resources:
           requests:
-            memory: "500Mi"
-            cpu: "200m"
+            memory: "100Mi"
+            cpu: "80m"
           limits:
-            memory: "800Mi"
-            cpu: "250m"
+            memory: "200Mi"
+            cpu: "150m"
         imagePullPolicy: Always
         env:
         - name: API_TOKEN

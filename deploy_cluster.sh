@@ -3,7 +3,7 @@
 #Cluster
 gcloud container clusters create hello-cluster \
   --num-nodes=3 \
-  --machine-type=n1-standard-8 \
+  --machine-type=n1-standard-4 \
   --zone=europe-west4-a
 
 #Docker and Artifact Registry Secrets
