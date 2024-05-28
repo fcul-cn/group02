@@ -6,3 +6,4 @@ dataset/
 *.env
 istio-1.21.2
 istio-1.22.0
+__pycache__
