@@ -600,12 +600,30 @@ paths:
           description: "Playlist's id not found"
         "400":
           description: "Bad request body"
-  /callback:
+  /auth/login:
+    get:
+      operationId: "login"
+      tags:
+        - "Auth"
+      summary: "Create session using Auth0"
+      responses:
+        "200":
+          description: "Successfully did what requested"
+  /auth/logout:
+    get:
+      operationId: "logout"
+      tags:
+        - "Auth"
+      summary: "End session"
+      responses:
+        "200":
+          description: "Successfully did what requested"
+  /auth/callback:
     get:
       operationId: "callback"
       tags:
         - "Auth"
-      summary: "Receive token and state from Auth0"
+      summary: "Auth0 callback endpoint"
       parameters:
         - $ref: "#/components/parameters/access_token"
         - $ref: "#/components/parameters/expires_in"
@@ -614,14 +632,3 @@ paths:
       responses:
         "200":
           description: "Successfully did what requested"
-          content:
-            application/json:
-              schema:
-                oneOf:
-                - $ref: '#/components/schemas/Track'
-                - $ref: '#/components/schemas/Playlist'
-                - $ref: '#/components/schemas/Artist'
-                - $ref: '#/components/schemas/Genre'
-                - $ref: '#/components/schemas/Release'
-        "404":
-          description: "The request operation was not done successfully"
