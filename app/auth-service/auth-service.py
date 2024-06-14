@@ -61,9 +61,9 @@ def callback():
 
 @app.route('/api/auth/logout')
 def logout():
-    session.clear()
-    params = {'returnTo': url_for('front', _external=True), 'client_id': AUTH0_CLIENT_ID}
-    return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
+    response = make_response(redirect(os.environ['BASE_URL'] + '/genres'))
+    response.set_cookie('istio', '', expires=0)
+    return response
 
 @app.route('/health', methods=['GET'])
 def health_check():

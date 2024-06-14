@@ -32,7 +32,6 @@ def get_track(track_id):
     try:
         request = GetTrackRequest(track_id=track_id)
         response = track_client.getTrack(request)
-        requests_total.inc()
         return {
             "track_id": response.track.track_id,
             "title": response.track.title,

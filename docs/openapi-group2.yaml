@@ -290,6 +290,25 @@ paths:
                   $ref: '#/components/schemas/Release'
         "404":
           description: "Artist's id not found"
+  /artists/{artist_id}/tracks:
+    get:
+      operationId: "artists.get_tracks"
+      tags:
+        - "Artists"
+      summary: "Get an Artist's tracks"
+      parameters:
+        - $ref: "#/components/parameters/artist_id"
+      responses:
+        "200":
+          description: "Successfully returned all artist's tracks"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Track'
+        "404":
+          description: "Artist's id not found"
   /genres:
     get:
       operationId: "genres.get_all"

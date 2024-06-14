@@ -1,47 +1,48 @@
 Keys:
 
 kubectl create secret generic json-key --from-literal "API_TOKEN=$(cat JSON-KEY.json)"
-kubectl create secret docker-registry artifact-registry --docker-server=https://europe-west4-docker.pkg.dev/ --docker-email=artifact-registry@fcul-cn-ads.iam.gserviceaccount.com --docker-username=_json_key --docker-password="$(cat ARTIFACT-REGISTRY.json)"
+kubectl create secret docker-registry artifact-registry --docker-server=https://europe-west4-docker.pkg.dev/ --docker-email=artifact-registry@fcul123-415115.iam.gserviceaccount.com --docker-username=_json_key --docker-password="$(cat ARTIFACT-REGISTRY.json)"
 #kubectl create secret tls tls-secret --key key.pem --cert cert.pem
 
 Artifact-Registry:
 
-docker tag 310120f66e58 europe-west4-docker.pkg.dev/confident-facet-329316/cngrupo02/group02-release-logic-service 
-docker tag 0498239dc000 europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-artist-logic-service 
-docker tag 310120f66e58 europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-release-logic-service 
-docker tag 69f238c46b98 europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-genre-logic-service 
-docker tag 25184383f10a europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-track-logic-service
-docker tag 683b31d3e392 europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-playlist-logic-service 
-docker tag f2e260f9c438 europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-auth-service 
-docker tag 258bf7a01f1e europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-release-model-service 
-docker tag 988a38ed5edc europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-artists-releases-model-service 
-docker tag 68854c8a4d02 europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-artists-tracks-model-service 
-docker tag 9c90d5ae1644 europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-genre-model-service 
-docker tag c28a18547947 europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-track-model-service 
-docker tag 833b3202dd7f europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-artist-model-service 
-docker tag 2e7d1a7aada2 europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-playlist-model-service
+docker tag 310120f66e58 europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-release-logic-service 
+docker tag 0498239dc000 europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-artist-logic-service 
+docker tag 310120f66e58 europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-release-logic-service 
+docker tag 69f238c46b98 europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-genre-logic-service 
+docker tag 25184383f10a europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-track-logic-service
+docker tag 683b31d3e392 europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-playlist-logic-service 
+docker tag f2e260f9c438 europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-auth-service 
+docker tag 258bf7a01f1e europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-release-model-service 
+docker tag 988a38ed5edc europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-artists-releases-model-service 
+docker tag 68854c8a4d02 europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-artists-tracks-model-service 
+docker tag 9c90d5ae1644 europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-genre-model-service 
+docker tag c28a18547947 europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-track-model-service 
+docker tag 833b3202dd7f europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-artist-model-service 
+docker tag 2e7d1a7aada2 europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-playlist-model-service
 
-docker push europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-release-logic-service 
-docker push europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-artist-logic-service 
-docker push europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-release-logic-service 
-docker push europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-genre-logic-service 
-docker push europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-track-logic-service 
-docker push europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-playlist-logic-service 
-docker push europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-auth-service
-docker push europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-release-model-service 
-docker push europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-artists-releases-model-service 
-docker push europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-artists-tracks-model-service 
-docker push europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-genre-model-service 
-docker push europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-track-model-service 
-docker push europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-artist-model-service 
-docker push europe-west4-docker.pkg.dev/fcul-cn-ads/cngrupo02/group02-playlist-model-service
+docker push europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-release-logic-service 
+docker push europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-artist-logic-service 
+docker push europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-release-logic-service 
+docker push europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-genre-logic-service 
+docker push europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-track-logic-service 
+docker push europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-playlist-logic-service 
+docker push europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-auth-service
+docker push europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-release-model-service 
+docker push europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-artists-releases-model-service 
+docker push europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-artists-tracks-model-service 
+docker push europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-genre-model-service 
+docker push europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-track-model-service 
+docker push europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-artist-model-service 
+docker push europe-west4-docker.pkg.dev/fcul123-415115/cngroup02/group02-playlist-model-service
 
 Cluster:
 
 gcloud container clusters create hello-cluster \
   --num-nodes=3 \
   --machine-type=n1-standard-8 \
-  --zone=europe-west4-a
+  --zone=europe-west4-a \
+    --disk-type pd-standard
 
 #gcloud container clusters create-auto hello-cluster --region=europe-west4
 #gcloud container clusters get-credentials hello-cluster --region=europe-west4

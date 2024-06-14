@@ -333,4 +333,4 @@ spec:
       values: ["write:tracks"]
   - to:
     - operation:
-        methods: ["GET"]
+        methods: ["GET"]      

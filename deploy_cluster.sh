@@ -4,7 +4,8 @@
 gcloud container clusters create hello-cluster \
   --num-nodes=3 \
   --machine-type=n1-standard-4 \
-  --zone=europe-west4-a
+  --zone=europe-west4-a \
+  --disk-type pd-standard
 
 #Docker and Artifact Registry Secrets
 kubectl create secret generic json-key --from-literal "API_TOKEN=$(cat JSON-KEY.json)" 
