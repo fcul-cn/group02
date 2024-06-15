@@ -205,7 +205,7 @@ spec:
     to:
     - operation:
         methods: ["POST"]
-        paths: ["/artists"]
+        paths: ["/api/artists"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:artists"]
@@ -231,7 +231,7 @@ spec:
     to:
     - operation:
         methods: ["POST"]
-        paths: ["/genres"]
+        paths: ["/api/genres"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:genres"]
@@ -241,7 +241,7 @@ spec:
     to:
     - operation:
         methods: ["PUT"]
-        paths: ["/genres/{genre_id}"]
+        paths: ["/api/genres/*"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:genres"]
@@ -267,7 +267,7 @@ spec:
     to:
     - operation:
         methods: ["POST"]
-        paths: ["/releases"]
+        paths: ["/api/releases"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:releases"]
@@ -293,7 +293,7 @@ spec:
     to:
     - operation:
         methods: ["POST"]
-        paths: ["/playlists"]
+        paths: ["/api/playlists"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:playlists"]
@@ -303,7 +303,7 @@ spec:
     to:
     - operation:
         methods: ["PUT"]
-        paths: ["/playlists/{playlist_id}/tracks"]
+        paths: ["/api/playlists/*/tracks"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:playlists"]
@@ -313,7 +313,7 @@ spec:
     to:
     - operation:
         methods: ["DELETE"]
-        paths: ["/playlists/{playlist_id}"]
+        paths: ["/api/playlists/*"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:playlists"]
@@ -339,7 +339,7 @@ spec:
     to:
     - operation:
         methods: ["POST"]
-        paths: ["/tracks"]
+        paths: ["/api/tracks"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:tracks"]
@@ -349,7 +349,7 @@ spec:
     to:
     - operation:
         methods: ["DELETE"]
-        paths: ["/tracks/{track_id}"]
+        paths: ["/api/tracks/*"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:tracks"]

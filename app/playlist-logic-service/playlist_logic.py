@@ -3,6 +3,7 @@ import grpc
 import os
 from app_pb2 import GetPlaylistRequest, DeletePlaylistRequest, AddPlaylistRequest, GetPlaylistTracksRequest, UpdatePlaylistRequest, NewPlaylist, GetTrackRequest
 from app_pb2_grpc import PlaylistServiceStub, TrackServiceStub
+import requests
 
 app = Flask(__name__)
 
@@ -17,8 +18,8 @@ track_client = TrackServiceStub(tracks_channel)
 @app.get("/api/playlists/<int:playlist_id>")
 def get_playlist(playlist_id):
     try:
-        request = GetPlaylistRequest(playlist_id=playlist_id)
-        response = playlist_client.getPlaylist(request)
+        req = GetPlaylistRequest(playlist_id=playlist_id)
+        response = playlist_client.getPlaylist(req)
         return {
             "playlist_id": response.playlist.playlist_id,
             "user_id": response.playlist.user_id,
@@ -36,8 +37,14 @@ def get_playlist(playlist_id):
 @app.delete("/api/playlists/<int:playlist_id>")
 def delete_playlist(playlist_id):
     try:
-        request = DeletePlaylistRequest(playlist_id=playlist_id)
-        response = playlist_client.deletePlaylist(request)
+        cookie = request.cookies.get('istio')
+        user = get_user(cookie)
+        req = GetPlaylistRequest(playlist_id=playlist_id)
+        response = playlist_client.getPlaylist(req)
+        if user != response.playlist.user_id:
+            return "You not the owner of the playlist", 401
+        req = DeletePlaylistRequest(playlist_id=playlist_id)
+        response = playlist_client.deletePlaylist(req)
         return {
             "playlist_id": response.playlist.playlist_id,
             "user_id": response.playlist.user_id,
@@ -55,9 +62,11 @@ def delete_playlist(playlist_id):
 @app.post("/api/playlists")
 def post_playlist():
     try:
+        cookie = request.cookies.get('istio')
+        user = get_user(cookie)
         request_body = request.json
         add_request = AddPlaylistRequest(playlist=NewPlaylist(
-            user_id=int(request_body['user_id']),
+            user_id= user,
             playlist_name=str(request_body['playlist_name'])
         ))
         response = playlist_client.addPlaylist(add_request)
@@ -109,6 +118,12 @@ def get_playlist_tracks(playlist_id):
 @app.put("/api/playlists/<int:playlist_id>/tracks")
 def update_playlist_tracks(playlist_id):
     try:
+        cookie = request.cookies.get('istio')
+        user = get_user(cookie)
+        req = GetPlaylistRequest(playlist_id=playlist_id)
+        response = playlist_client.getPlaylist(req)
+        if user != response.playlist.user_id:
+            return "You not the owner of the playlist", 401
         request_body = request.json
         tracks_to_add=request_body["add"]
         tracks_to_delete=request_body["delete"]
@@ -137,3 +152,16 @@ def update_playlist_tracks(playlist_id):
 @app.route('/health', methods=['GET'])
 def health_check():
     return jsonify({'status': 'healthy'}), 200
+
+def get_user(cookie):
+    domain = os.environ['AUTH0_DOMAIN']
+    url = f"https://{domain}/userinfo"
+    print(url)
+    headers = {
+        "Authorization": f"Bearer {cookie}",
+        "Content-Type": "application/json"  # Adjust content type as needed
+    }
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()  # Raise an exception for bad responses
+    return response.json()['sub']  # If expecting JSON response
+

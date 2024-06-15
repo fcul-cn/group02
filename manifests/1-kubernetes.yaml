@@ -242,6 +242,11 @@ spec:
             configMapKeyRef:
               key: ARTISTS_RELEASES_HOST
               name: config
+        - name: AUTH0_DOMAIN
+          valueFrom:
+            secretKeyRef:
+              name: app-credentials
+              key: AUTH0_DOMAIN
         - name: RELEASE_HOST
           valueFrom:
             configMapKeyRef:

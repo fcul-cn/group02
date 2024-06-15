@@ -77,9 +77,9 @@ class PlaylistService(app_pb2_grpc.PlaylistServiceServicer):
         )   
 
     def addPlaylist(self, request, context):
-        if request.playlist.user_id <= 0:
+        if not request.playlist.user_id:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-            context.set_details("User's id must be higher than 0.")
+            context.set_details("User's id cannot be empty")
             context.abort()
         if not request.playlist.playlist_name:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)

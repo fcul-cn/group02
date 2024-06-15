@@ -126,7 +126,7 @@ message Playlist {
 
 message NewPlaylist {
     string playlist_name = 1;
-    int32 user_id = 2;
+    string user_id = 2;
 }
 
 message GetPlaylistRequest {

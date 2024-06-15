@@ -146,8 +146,6 @@ components:
       properties:
         playlist_name:
           type: "string"
-        user_id:
-          type: "number"
     UpdatePlaylistTracks:
       type: "object"
       properties:

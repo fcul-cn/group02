@@ -31,3 +31,4 @@ urllib3==1.26.12
 Werkzeug==2.2.2
 prometheus_client
 psutil
+requests
