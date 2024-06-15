@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, redirect, request, session, url_for, make_response
+from flask import Flask, jsonify, redirect, request, session, url_for, make_response, render_template_string
 import os
 import base64
 import secrets
@@ -14,7 +14,7 @@ AUTH0_AUDIENCE = os.environ['AUTH0_AUDIENCE']
 AUTH0_BASE_URL = 'https://' + AUTH0_DOMAIN
 
 app = Flask(__name__)
-secret_key = secrets.token_bytes(32)  # Generate a 32-byte (256-bit) secret key
+secret_key = secrets.token_bytes(32)
 app.secret_key = secret_key
 
 oauth = OAuth(app)
@@ -30,38 +30,46 @@ auth0 = oauth.register(
     },
 )
 
-state_request = dict()
-
 def generate_state():
     random_bytes = os.urandom(32)
     state = base64.urlsafe_b64encode(random_bytes).decode('utf-8')
     return state
 
-@app.route('/api/auth/login', methods=['GET', 'POST'])
+@app.route('/api/auth/login')
 def login():
     session_state = generate_state()
     session['state'] = session_state
-    print('login ' + session_state)
     return auth0.authorize_redirect(redirect_uri=AUTH0_CALLBACK_URL, audience=AUTH0_AUDIENCE, state=session_state)
 
-@app.route('/api/auth/callback')
+@app.route('/api/auth/callback', methods=['GET', 'POST'])
 def callback():
     session_state = session.pop('state', None)
     if request.args.get('state') != session_state:
         return 'Invalid state', 400
     response = auth0.authorize_access_token()
     access_token = response['access_token']
-    # session['access_token'] = access_token
-    # userinfoResponse = auth0.get('userinfo')
-    # userinfo = userinfoResponse.json()
-    # session['user'] = userinfo['nickname']
     redirect_response = make_response(redirect(os.environ['BASE_URL'] + '/genres'))
     redirect_response.set_cookie('istio', value=access_token, httponly=True, secure=True)
     return redirect_response
 
 @app.route('/api/auth/logout')
 def logout():
-    response = make_response(redirect(os.environ['BASE_URL'] + '/genres'))
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Logged Out</title>
+    </head>
+    <body>
+        <h1>Logged Out Successfully</h1>
+        <p>You have been successfully logged out.</p>
+    </body>
+    </html>
+    """
+    rendered_template = render_template_string(html_content)
+    response = make_response(rendered_template)
     response.set_cookie('istio', '', expires=0)
     return response
 

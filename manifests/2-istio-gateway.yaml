@@ -18,6 +18,28 @@ spec:
 
 ---
 
+apiVersion: v1
+kind: Service
+metadata:
+  name: istio-ingressgateway
+  namespace: istio-system
+  annotations:
+    cloud.google.com/load-balancer-type: "External"
+    cloud.google.com/load-balancer-ip: "35.204.113.30"
+spec:
+  type: LoadBalancer
+  selector:
+    app: istio-ingressgateway
+  ports:
+  - name: http2
+    port: 80
+    targetPort: 8080
+  - name: https
+    port: 443
+    targetPort: 8443
+
+---
+
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
@@ -162,8 +184,8 @@ spec:
   - issuer: "https://dev-ajv2y52zheuy2djo.us.auth0.com/"
     jwksUri: "https://dev-ajv2y52zheuy2djo.us.auth0.com/.well-known/jwks.json"
     fromHeaders:
-    - name: "Cookie"
-      prefix: "istio="
+    - name: "Authorization"
+      prefix: "Bearer "
 
 ---
 
@@ -333,4 +355,60 @@ spec:
       values: ["write:tracks"]
   - to:
     - operation:
-        methods: ["GET"]      
+        methods: ["GET"]
+
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: jwt-redirect-filter
+  namespace: istio-system
+spec:
+  workloadSelector:
+    labels:
+      istio: ingressgateway  # Applies to the Istio ingress gateway
+  configPatches:
+  - applyTo: HTTP_FILTER
+    match:
+      context: GATEWAY
+      listener:
+        filterChain:
+          filter:
+            name: "envoy.filters.network.http_connection_manager"
+            subFilter:
+              name: "envoy.filters.http.router"
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: envoy.filters.http.lua
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+          inline_code: |
+            function envoy_on_request(request_handle)
+                local path = request_handle:headers():get(":path")
+            
+                if string.match(path, "^/api/auth/") then
+                  return
+                end
+
+                local cookies = request_handle:headers():get("cookie")
+                local jwt_token = nil
+                if cookies ~= nil then
+                    for cookie in string.gmatch(cookies, "[^;]+") do
+                        local key, value = string.match(cookie, "(%s*istio%s*)=(%s*[^;]+)")
+                        if key ~= nil and value ~= nil then
+                            jwt_token = value
+                            request_handle:headers():add("Authorization", "Bearer " .. jwt_token)
+                            break
+                        end
+                    end
+                end
+
+                if jwt_token == nil then
+                    request_handle:respond(
+                        {[":status"] = "302", ["Location"] = "https://35.204.113.30/api/auth/login"},
+                        "Redirecting to login"
+                    )
+                end
+              end
