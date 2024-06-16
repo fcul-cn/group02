@@ -14,7 +14,7 @@ artist_host = os.getenv("ARTIST_HOST", "localhost")
 artists_channel = grpc.insecure_channel(f"{artist_host}:50052")
 artist_client = ArtistServiceStub(artists_channel)
 
-artist_release_host = os.getenv("ARTIST_RELEASE_HOST", "localhost")
+artist_release_host = os.getenv("ARTISTS_RELEASES_HOST", "localhost")
 artist_release_channel = grpc.insecure_channel(f"{artist_release_host}:50053")
 artist_release_client = ArtistsReleasesServiceStub(artist_release_channel)
 
