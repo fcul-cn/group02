@@ -13,15 +13,16 @@
 				{
 					"name": "GET Track by id",
 					"request": {
+						"auth": {
+							"type": "bearer"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/api/tracks/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/tracks/1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
 								"api",
 								"tracks",
@@ -37,12 +38,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/api/tracks/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/tracks/1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
 								"api",
 								"tracks",
@@ -59,7 +58,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"title\": \"string\",\r\n  \"mix\": \"string\",\r\n  \"is_remixed\": true,\r\n  \"release_id\": 1,\r\n  \"release_date\": \"2024-03-27\",\r\n  \"genre_id\": 1,\r\n  \"subgenre_id\": 1,\r\n  \"track_url\": \"string\",\r\n  \"bpm\": 0,\r\n  \"duration\": 0\r\n}",
+							"raw": "{\r\n    \"artists_ids\":[1,2,3],\r\n    \"track\": {\r\n        \"title\": \"string6\",\r\n        \"mix\": \"strin6\",\r\n        \"is_remixed\": true,\r\n        \"release_id\": 1,\r\n        \"release_date\": \"2024-03-27\",\r\n        \"genre_id\": 1,\r\n        \"subgenre_id\": 1,\r\n        \"track_url\": \"string6\",\r\n        \"bpm\": 0,\r\n        \"duration\": \"04:30\"\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -67,12 +66,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/tracks",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/tracks",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
 								"api",
 								"tracks"
@@ -87,12 +84,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/api/tracks/1/genre",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/tracks/1/genre",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
 								"api",
 								"tracks",
@@ -114,12 +109,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5001/api/artists/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/artists/1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5001",
 							"path": [
 								"api",
 								"artists",
@@ -132,11 +125,21 @@
 				{
 					"name": "Add artist",
 					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"artist_name\": \"aaaa\",\r\n    \"artist_url\": \"aaaaa@aaa\",\r\n    \"artist_updated_at\": \"2024-03-27\"\r\n}",
+							"raw": "{\r\n    \"artist_name\": \"lol\",\r\n    \"artist_url\": \"lol\",\r\n    \"artist_updated_at\": \"2023-09-14 16:19:57\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -144,12 +147,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5001/api/artists",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/artists",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5001",
 							"path": [
 								"api",
 								"artists"
@@ -162,7 +163,39 @@
 					"name": "GET artists releases",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/artists/1/releases",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"artists",
+								"1",
+								"releases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get artist tracks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/artists/1/tracks",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"artists",
+								"1",
+								"tracks"
+							]
+						}
 					},
 					"response": []
 				}
@@ -177,12 +210,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5002/api/genres/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/genres/1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5002",
 							"path": [
 								"api",
 								"genres",
@@ -198,12 +229,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5002/api/genres",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/genres",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5002",
 							"path": [
 								"api",
 								"genres"
@@ -219,7 +248,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"genre_name\": \"string\",\r\n  \"genre_url\": \"string\"\r\n}",
+							"raw": "{\r\n  \"genre_name\": \"string1\",\r\n  \"genre_url\": \"string1\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -227,12 +256,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5002/api/genres",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/genres",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5002",
 							"path": [
 								"api",
 								"genres"
@@ -256,12 +283,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5002/api/genres/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/genres/1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5002",
 							"path": [
 								"api",
 								"genres",
@@ -277,17 +302,25 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5002/api/genres/1/tracks",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/genres/1/tracks?offset=5&limit=10",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5002",
 							"path": [
 								"api",
 								"genres",
 								"1",
 								"tracks"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "5"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
 							]
 						}
 					},
@@ -304,12 +337,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5004/api/releases/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/releases/1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5004",
 							"path": [
 								"api",
 								"releases",
@@ -326,7 +357,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"release_title\": \"string\",\r\n  \"release_date\": \"2024-04-02\",\r\n  \"release_url\": \"string\",\r\n  \"artists_ids\": [\r\n    0\r\n  ]\r\n}",
+							"raw": "{\r\n    \"artists_ids\": [1,2], \r\n    \"release_title\":\"asQWEaa\",\r\n    \"release_url\":\"aadQEWa@alunos.fc.ul.pt\",\r\n    \"release_date\":\"2023-02-10\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -334,12 +365,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5004/api/releases",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/releases",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5004",
 							"path": [
 								"api",
 								"releases"
@@ -356,15 +385,23 @@
 				{
 					"name": "GET Playlist by id",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImRzeVNJcVg2MEliY0tWSUVQel9qbiJ9.eyJpc3MiOiJodHRwczovL2Rldi1hanYyeTUyemhldXkyZGpvLnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDEwNDkwMzQwMzMxMzA0NDkxMzMxNiIsImF1ZCI6WyJodHRwczovLzM0LjkwLjE2Ni4xNzUvYXBpIiwiaHR0cHM6Ly9kZXYtYWp2Mnk1MnpoZXV5MmRqby51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNzE4NDcxNjQ1LCJleHAiOjE3MTg1NTgwNDUsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUiLCJhenAiOiJ2cjdyZWxjTGhoUnJ6QUd6cUdYVUlxdkZDR0t0YkE3SyIsInBlcm1pc3Npb25zIjpbInJlYWQ6YXJ0aXN0cyIsInJlYWQ6Z2VucmVzIiwicmVhZDpwbGF5bGlzdHMiLCJyZWFkOnJlbGVhc2VzIiwicmVhZDp0cmFja3MiLCJ3cml0ZTphcnRpc3RzIiwid3JpdGU6Z2VucmVzIiwid3JpdGU6cGxheWxpc3RzIiwid3JpdGU6cmVsZWFzZXMiLCJ3cml0ZTp0cmFja3MiXX0.fbA9-uC_4M8wWLQyAR8IActSmDGjqhGNWsA1PQ6NwKAL0usy2OHTaWR8vvHZaCPcTHxY5uH6Wx-ZAVZ4w7oWvREZCbwaSzvhtzyI2SGkgGUQMTKLjcrMAl0IIaUeWKe0_RgjDkzuncIZ7FJBr-cylcZzNQl1_k_C6EW1eyp0M7yUZXR_Z8jmiCyk8B28Q47fynyO0H0DIMWsOe0zXzDkS4p4LZh0yxU2KAcdnp00Dra--g9UBiuvIO29P-AlureLNla460gKHs6KhbrDLJpMO8MeXNOP7Mk_IPZEkudZ0jTyaoKIcQF9G4P28Cqv6x0vK7GlkjAeWGCAaYZ_AlR-Vw",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/api/playlists/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/playlists/1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
 								"api",
 								"playlists",
@@ -380,12 +417,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/api/playlists/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/playlists/1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
 								"api",
 								"playlists",
@@ -402,7 +437,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"playlist_name\": \"string\",\r\n  \"user_id\": 1\r\n}",
+							"raw": "{\r\n  \"playlist_name\": \"string2\",\r\n  \"user_id\": 1\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -410,12 +445,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5003/api/playlists",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/playlists",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5003",
 							"path": [
 								"api",
 								"playlists"
@@ -430,17 +463,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/api/playlists/1/track",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/playlists/1/tracks",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
 								"api",
 								"playlists",
 								"1",
-								"track"
+								"tracks"
 							]
 						}
 					},
@@ -453,7 +484,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"add\": [\r\n    1\r\n  ],\r\n  \"delete\": [\r\n    \r\n  ]\r\n}",
+							"raw": "{\r\n  \"add\": [\r\n    \r\n  ],\r\n  \"delete\": [\r\n    1000\r\n  ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -461,16 +492,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5003/api/playlists/1/tracks",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/playlists/6/tracks",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5003",
 							"path": [
 								"api",
 								"playlists",
-								"1",
+								"6",
 								"tracks"
 							]
 						}
