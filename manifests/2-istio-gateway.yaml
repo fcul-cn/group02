@@ -23,20 +23,31 @@ kind: Service
 metadata:
   name: istio-ingressgateway
   namespace: istio-system
-  annotations:
-    cloud.google.com/load-balancer-type: "External"
-    cloud.google.com/load-balancer-ip: "35.204.113.30"
+  labels:
+    app: istio-ingressgateway
+    istio: ingressgateway
 spec:
   type: LoadBalancer
   selector:
     app: istio-ingressgateway
   ports:
+  - name: status-port
+    port: 15021
+    targetPort: 15021
+    protocol: TCP
   - name: http2
     port: 80
     targetPort: 8080
+    protocol: TCP
   - name: https
     port: 443
     targetPort: 8443
+    protocol: TCP
+  - name: tls
+    port: 15443
+    targetPort: 15443
+    protocol: TCP
+  loadBalancerIP: 34.90.127.247
 
 ---
 
@@ -205,7 +216,7 @@ spec:
     to:
     - operation:
         methods: ["POST"]
-        paths: ["/api/artists"]
+        paths: ["/artists"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:artists"]
@@ -231,7 +242,7 @@ spec:
     to:
     - operation:
         methods: ["POST"]
-        paths: ["/api/genres"]
+        paths: ["/genres"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:genres"]
@@ -241,7 +252,7 @@ spec:
     to:
     - operation:
         methods: ["PUT"]
-        paths: ["/api/genres/*"]
+        paths: ["/genres/{genre_id}"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:genres"]
@@ -267,7 +278,7 @@ spec:
     to:
     - operation:
         methods: ["POST"]
-        paths: ["/api/releases"]
+        paths: ["/releases"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:releases"]
@@ -293,7 +304,7 @@ spec:
     to:
     - operation:
         methods: ["POST"]
-        paths: ["/api/playlists"]
+        paths: ["/playlists"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:playlists"]
@@ -303,7 +314,7 @@ spec:
     to:
     - operation:
         methods: ["PUT"]
-        paths: ["/api/playlists/*/tracks"]
+        paths: ["/playlists/{playlist_id}/tracks"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:playlists"]
@@ -313,7 +324,7 @@ spec:
     to:
     - operation:
         methods: ["DELETE"]
-        paths: ["/api/playlists/*"]
+        paths: ["/playlists/{playlist_id}"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:playlists"]
@@ -339,7 +350,7 @@ spec:
     to:
     - operation:
         methods: ["POST"]
-        paths: ["/api/tracks"]
+        paths: ["/tracks"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:tracks"]
@@ -349,7 +360,7 @@ spec:
     to:
     - operation:
         methods: ["DELETE"]
-        paths: ["/api/tracks/*"]
+        paths: ["/tracks/{track_id}"]
     when:
     - key: request.auth.claims[permissions]
       values: ["write:tracks"]
@@ -407,7 +418,7 @@ spec:
 
                 if jwt_token == nil then
                     request_handle:respond(
-                        {[":status"] = "302", ["Location"] = "https://35.204.113.30/api/auth/login"},
+                        {[":status"] = "302", ["Location"] = "https://34.90.127.247/api/auth/login"},
                         "Redirecting to login"
                     )
                 end

@@ -23,11 +23,3 @@ kubectl label namespace default istio-injection=enabled prometheus-monitoring=en
 
 #Deploy
 kubectl apply -f manifests
-
-
-
-
-
-
-
-
