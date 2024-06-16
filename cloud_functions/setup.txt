@@ -1,0 +1,33 @@
+Cloud Scheduler jobs:
+
+    Target Type: HTTP
+    HTTP Method: POST
+    Headers:
+        Name:Value
+        Content-Type:application/json
+        User-Agent:Google-Cloud-Scheduler
+    URL_example: https://europe-west1-fcul123-415115.cloudfunctions.net/daily_logs
+    Auth header: Add OIDC token
+    daily:
+        Frequency: 10 0 * * *
+    weekly:
+        Frequency: 30 15 * * 7
+
+Cloud Storage:
+    warm_logs bucket: 
+        Storage Class: Nearline
+        Format of filename: logs-2024-06-13.json
+        Rule: 	Delete object; 30+ days since object was created
+    cold_logs bucket: 
+        Storage Class: Coldline
+        Format of filename: weekly-logs-2024-06-09-to-2024-06-15.json
+
+Cloud Functions:
+    daily_logs:
+        Environment Variables:
+            WARM_BUCKET: warm_logs
+            PROJECT_ID: fcul123-415115
+    weekly_logs:
+        Environment Variables:
+            WARM_BUCKET: warm_logs
+            COLD_BUCKET: cold_logs
