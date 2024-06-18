@@ -1,0 +1,6 @@
+# Function dependencies, for example:
+# package>=version
+google-cloud-logging
+google-cloud-storage
+Flask<3.0
+functions-framework==3.*

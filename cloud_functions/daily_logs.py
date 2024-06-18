@@ -26,7 +26,6 @@ def daily_logs(request):
             #print("Environment variables are not set")
             return 'Environment variables not set', 500
 
-        # Create a Cloud Logging client
         logging_client = logging.Client(project=project_id)
         #print("clientt", logging_client)
 
@@ -37,15 +36,12 @@ def daily_logs(request):
 
         start_timestamp = datetime(yesterday.year, yesterday.month, yesterday.day)
         end_timestamp = start_timestamp + timedelta(days=1) - timedelta(microseconds=1)
-        #print("starttime", start_timestamp)
-        #print("endtime", end_timestamp)
         #filter_ = f'severity>=ERROR AND timestamp>="{start_timestamp.strftime("%Y-%m-%dT%H:%M:%SZ")}" AND timestamp<="{end_timestamp.strftime("%Y-%m-%dT%H:%M:%SZ")}"'
-        filter_ = f'severity>=ERROR AND NOT textPayload:"cert" AND NOT textPayload:"/health" AND NOT textPayload:"Running" AND NOT textPayload:"WARNING" AND NOT textPayload:"CTRL+C" AND timestamp>="{start_timestamp.strftime("%Y-%m-%dT%H:%M:%SZ")}" AND timestamp<="{end_timestamp.strftime("%Y-%m-%dT%H:%M:%SZ")}"'
-        #print("filter", filter_)
-        
+        filter_ = f'severity>=ERROR AND NOT textPayload:"cert" AND NOT textPayload:"/health" AND NOT textPayload:"Running" AND NOT textPayload:"WARNING" AND NOT textPayload:"CTRL+C" AND NOT "/healthcheck" AND timestamp>="{start_timestamp.strftime("%Y-%m-%dT%H:%M:%SZ")}" AND timestamp<="{end_timestamp.strftime("%Y-%m-%dT%H:%M:%SZ")}"'
         logs = logging_client.list_entries(
             filter_=filter_,
-            order_by=logging.DESCENDING
+            order_by=logging.DESCENDING,
+            page_size=2500
         )
         #print("logs", logs)
         log_data = {}

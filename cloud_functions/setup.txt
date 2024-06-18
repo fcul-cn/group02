@@ -1,5 +1,4 @@
 Cloud Scheduler jobs:
-
     Target Type: HTTP
     HTTP Method: POST
     Headers:
@@ -8,10 +7,22 @@ Cloud Scheduler jobs:
         User-Agent:Google-Cloud-Scheduler
     URL_example: https://europe-west1-fcul123-415115.cloudfunctions.net/daily_logs
     Auth header: Add OIDC token
+    Service Account: cloud-scheduler-invoker
     daily:
         Frequency: 10 0 * * *
+        Body:{
+                "message": "Hello World"
+            }
     weekly:
-        Frequency: 30 15 * * 7
+        Frequency: 30 0 * * 7
+        Body:{
+                "number_of_top_tracks": 20
+            }
+    recommendations:
+        Frequency: 40 0 * * 7
+        Body:{
+                "user_id": "google-oauth2|103476544606640723634"
+            }
 
 Cloud Storage:
     warm_logs bucket: 
@@ -21,6 +32,11 @@ Cloud Storage:
     cold_logs bucket: 
         Storage Class: Coldline
         Format of filename: weekly-logs-2024-06-09-to-2024-06-15.json
+    track_recommendations bucket:
+        Storage Class: Standard
+        Format of filename1: recommendations-google-oauth2|103476544606640723634-2024-06-16-to-2024-06-22.json
+        Format of filename2: top-weekly-tracks-2024-06-16-to-2024-06-22.json
+        Rule: Set to Nearline; 30+ days since object was created
 
 Cloud Functions:
     daily_logs:
@@ -31,3 +47,10 @@ Cloud Functions:
         Environment Variables:
             WARM_BUCKET: warm_logs
             COLD_BUCKET: cold_logs
+    test:
+        Environment Variables:
+            PROJECT_ID: fcul123-415115
+            TRACK_RECOMMENDATIONS: track_recommendations
+
+Secret Manager:
+    Secret for BigQuery authentication for test cloud function
