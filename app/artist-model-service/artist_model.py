@@ -13,7 +13,8 @@ from grpc_health.v1.health import HealthServicer
 from grpc_health.v1 import health_pb2, health_pb2_grpc
 from google.cloud import bigquery
 from google.oauth2 import service_account
-import json, os
+import json
+import os
 
 json_string = os.environ.get('API_TOKEN')
 project_id = os.environ.get('PROJECT_ID')
@@ -21,6 +22,7 @@ json_file = json.loads(json_string)
 credentials = service_account.Credentials.from_service_account_info(json_file)
 client = bigquery.Client(credentials=credentials, location="europe-west4")
 table_id = f"{project_id}.Artists"
+
 
 class ArtistService(app_pb2_grpc.ArtistService):
     def getArtist(self, request, context):

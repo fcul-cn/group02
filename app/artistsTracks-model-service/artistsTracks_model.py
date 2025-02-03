@@ -21,6 +21,7 @@ credentials = service_account.Credentials.from_service_account_info(json_file)
 client = bigquery.Client(credentials=credentials, location="europe-west4")
 table_id = f"{project_id}.ArtistsTracks"
 
+
 class ArtistsTracksService(app_pb2_grpc.ArtistsTracksService):
     def getArtistTracksIds(self, request, context):
         artist_id = request.artist_id
@@ -56,11 +57,13 @@ class ArtistsTracksService(app_pb2_grpc.ArtistsTracksService):
                 client.insert_rows_json(table_id, row_to_insert)
         return AddTrackArtistsResponse()
 
+
 class HealthServicer(health_pb2_grpc.HealthServicer):
     def Check(self, request, context):
         return health_pb2.HealthCheckResponse(
             status=health_pb2.HealthCheckResponse.SERVING)
-        
+
+
 def serve():
     interceptors = [ExceptionToStatusInterceptor()]
     server = grpc.server(

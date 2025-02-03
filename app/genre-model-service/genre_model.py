@@ -27,9 +27,12 @@ credentials = service_account.Credentials.from_service_account_info(json_file)
 client = bigquery.Client(credentials=credentials, location="europe-west4")
 table_id = f"{project_id}.Genres"
 
+
 class GenreService(app_pb2_grpc.GenreServiceServicer):
+    
+    
     def GetGenresList(self, request, context):
-        query = f"SELECT * FROM {table_id}" 
+        query = f"SELECT * FROM {table_id}"
         query_job = client.query(query)
         result = query_job.result()
         rows = list(result)
@@ -46,12 +49,13 @@ class GenreService(app_pb2_grpc.GenreServiceServicer):
             )
         return GetGenresListResponse(genres=genres)
 
+    
     def GetGenre(self, request, context):
         if request.genre_id <= 0:
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             context.set_details("Genre's id must be higher than 0.")
             context.abort()
-        query = f"SELECT * FROM {table_id} WHERE genre_id = {request.genre_id};" 
+        query = f"SELECT * FROM {table_id} WHERE genre_id = {request.genre_id};"
         query_job = client.query(query)
         result = query_job.result()
         if result.total_rows == 0:
@@ -59,8 +63,7 @@ class GenreService(app_pb2_grpc.GenreServiceServicer):
             context.set_details("Genre not found.")
             context.abort()
         row = list(result)[0]
-        return GetGenreResponse(genre=
-            Genre(
+        return GetGenreResponse(genre=Genre(
                 genre_id=row[0],
                 genre_name=row[1],
                 song_count=row[2],
@@ -68,6 +71,7 @@ class GenreService(app_pb2_grpc.GenreServiceServicer):
                 updated_on=str(row[4]),
             )
         )
+
 
     def AddGenre(self, request, context):
         if not request.genre.genre_name or not request.genre.genre_url:
@@ -111,6 +115,7 @@ class GenreService(app_pb2_grpc.GenreServiceServicer):
             )
         )
 
+    
     def UpdateGenre(self, request, context):
         print("Entered UpdateGenre")
         if not request.genre_name or not request.genre_url:
@@ -154,12 +159,16 @@ class GenreService(app_pb2_grpc.GenreServiceServicer):
                 updated_on=str(row[4]),
             )
         )
-    
+
+   
 class HealthServicer(health_pb2_grpc.HealthServicer):
+    
+    
     def Check(self, request, context):
         return health_pb2.HealthCheckResponse(
             status=health_pb2.HealthCheckResponse.SERVING)
-        
+
+
 def serve():
     interceptors = [ExceptionToStatusInterceptor()]
     server = grpc.server(

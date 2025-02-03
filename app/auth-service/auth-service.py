@@ -30,16 +30,19 @@ auth0 = oauth.register(
     },
 )
 
+
 def generate_state():
     random_bytes = os.urandom(32)
     state = base64.urlsafe_b64encode(random_bytes).decode('utf-8')
     return state
+
 
 @app.route('/api/auth/login')
 def login():
     session_state = generate_state()
     session['state'] = session_state
     return auth0.authorize_redirect(redirect_uri=AUTH0_CALLBACK_URL, audience=AUTH0_AUDIENCE, state=session_state)
+
 
 @app.route('/api/auth/callback', methods=['GET', 'POST'])
 def callback():
@@ -51,6 +54,7 @@ def callback():
     redirect_response = make_response(redirect(os.environ['BASE_URL'] + '/genres'))
     redirect_response.set_cookie('istio', value=access_token, httponly=True, secure=True)
     return redirect_response
+
 
 @app.route('/api/auth/logout')
 def logout():
@@ -72,6 +76,7 @@ def logout():
     response = make_response(rendered_template)
     response.set_cookie('istio', '', expires=0)
     return response
+
 
 @app.route('/health', methods=['GET'])
 def health_check():

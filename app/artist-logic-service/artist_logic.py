@@ -1,9 +1,9 @@
 from flask import Flask, jsonify
 import grpc
 import os
-from app_pb2 import GetArtistRequest, AddArtistRequest, NewArtist, GetArtistReleasesIdsRequest, GetReleaseRequest, GetArtistTracksIdsRequest, GetTrackRequest 
+from app_pb2 import GetArtistRequest, AddArtistRequest, NewArtist, GetArtistReleasesIdsRequest, GetReleaseRequest, GetArtistTracksIdsRequest, GetTrackRequest
 from flask import request
-from app_pb2_grpc import ArtistServiceStub, ArtistsReleasesServiceStub, ReleaseServiceStub, ArtistsTracksServiceStub, TrackServiceStub 
+from app_pb2_grpc import ArtistServiceStub, ArtistsReleasesServiceStub, ReleaseServiceStub, ArtistsTracksServiceStub, TrackServiceStub
 
 app = Flask(__name__)
 
@@ -46,6 +46,7 @@ def get_artist(artist_id):
     except Exception as e:
         return "Internal error: " + str(e), 500
 
+
 @app.post("/api/artists")
 def add_artist():
     try:
@@ -53,7 +54,7 @@ def add_artist():
         add_request = AddArtistRequest(artist=NewArtist(
             artist_name=str(request_body['artist_name']),
             artist_url=str(request_body['artist_url']),
-            artist_updated_at = str(request_body['artist_updated_at'])
+            artist_updated_at=str(request_body['artist_updated_at'])
         ))
         response = artist_client.addArtist(add_request)
         return {
@@ -68,6 +69,7 @@ def add_artist():
             return rpc_error.details(), 400
     except Exception as e:
         return "Internal error: " + str(e), 500
+
 
 @app.get("/api/artists/<int:artist_id>/releases")
 def getArtistReleases(artist_id):
@@ -95,6 +97,7 @@ def getArtistReleases(artist_id):
             return rpc_error.details(), 400
     except Exception as e:
         return "Internal error: " + str(e), 500
+
 
 @app.get("/api/artists/<int:artist_id>/tracks")
 def getArtistTracks(artist_id):
@@ -129,6 +132,7 @@ def getArtistTracks(artist_id):
             return rpc_error.details(), 400
     except Exception as e:
         return "Internal error: " + str(e), 500
+
 
 @app.route('/health', methods=['GET'])
 def health_check():
