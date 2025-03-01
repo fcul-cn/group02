@@ -11,10 +11,10 @@ clickclick==20.10.2
 connexion==2.14.1
 flask-marshmallow==0.14.0
 Flask-SQLAlchemy==3.0.2
-idna==3.4
+idna==3.7
 inflection==0.5.1
 itsdangerous==2.1.2
-Jinja2==3.1.2
+Jinja2==3.1.5
 jsonschema==4.16.0
 MarkupSafe==2.1.1
 marshmallow==3.18.0
